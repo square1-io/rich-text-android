@@ -13,8 +13,7 @@ import java.util.regex.Pattern;
 public class LinksUtils {
 
     public interface ParseLinkCallback {
-
-        public void onLinkParsed(Object callingObject, String result, TLinkType type);
+         void onLinkParsed(Object callingObject, String result, TLinkType type);
     }
 
    public enum TLinkType {
