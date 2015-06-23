@@ -35,6 +35,7 @@ import java.util.ListIterator;
 import java.util.Stack;
 import java.util.regex.Matcher;
 
+import io.square1.richtextlib.parser.StringTokenizer;
 import io.square1.richtextlib.style.*;
 import io.square1.richtextlib.R;
 
@@ -121,9 +122,12 @@ public class RichText {
         HtmlToSpannedConverter converter = null;
         try {
 
-            Parser parser = new Parser();
-            parser.setProperty(Parser.schemaProperty, HtmlParser.schema);
-            converter = new HtmlToSpannedConverter(source, parser, style, callback);
+            Parser reader = new Parser();
+            reader.setProperty(Parser.schemaProperty, HtmlParser.schema);
+
+           // XMLReader reader = new StringTokenizer(new char[]{'<','['},new char[]{'>',']'});
+
+            converter = new HtmlToSpannedConverter(source, reader, style, callback);
             converter.convert();
 
         } catch (Exception e) {
@@ -134,7 +138,7 @@ public class RichText {
     }
 
 
-static class HtmlToSpannedConverter implements ContentHandler, LinksUtils.ParseLinkCallback{
+static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseLinkCallback{
 
     private static final float[] HEADER_SIZES = {
         1.5f, 1.4f, 1.3f, 1.2f, 1.1f, 1f,
@@ -270,8 +274,9 @@ static class HtmlToSpannedConverter implements ContentHandler, LinksUtils.ParseL
             start(spannable, new Super());
         }else  if(tag.equalsIgnoreCase("iframe")){
             startIFrame(spannable,attributes);
-        }
-        else if (tag.equalsIgnoreCase("sub")) {
+        } else  if(tag.equalsIgnoreCase("soundcloud")){
+          startSoundCloud(spannable, attributes);
+        } else if (tag.equalsIgnoreCase("sub")) {
             start(spannable, new Sub());
         } else if (tag.length() == 2 &&
                    Character.toLowerCase(tag.charAt(0)) == 'h' &&
@@ -504,13 +509,28 @@ static class HtmlToSpannedConverter implements ContentHandler, LinksUtils.ParseL
 
     private  void startIFrame(SpannableStringBuilder text, Attributes attributes) {
         String href = attributes.getValue("", "src");
-        if( LinksUtils.parseLink( mStack.peek() , href,this) == false) {
+        if( EmbedUtils.parseLink(mStack.peek(), href, this) == false) {
             int len = text.length();
             text.setSpan(new Href(href), len, len, Spannable.SPAN_MARK_MARK);
         }
     }
 
     private static void endIFrame(SpannableStringBuilder text) {
+        endA(text);
+    }
+
+    private  void startSoundCloud(SpannableStringBuilder text, Attributes attributes) {
+
+        buildNewSpannable();
+        String src = attributes.getValue("", "src");
+        // mSpannableStringBuilder.append("\uFFFC");
+        HashMap<String,Object> attrs = new HashMap<>();
+        attrs.put(RichText.EMBED_TYPE, EmbedUtils.TEmbedType.ESoundCloud);
+        mCallback.onElementFound(RichText.TNodeType.EEmbed, src, attrs);
+
+    }
+
+    private static void endSoundCloud(SpannableStringBuilder text) {
         endA(text);
     }
 
@@ -663,7 +683,7 @@ static class HtmlToSpannedConverter implements ContentHandler, LinksUtils.ParseL
             mSpannableStringBuilder.append(buffer);
 
             CharSequence link = mAccumulatedText.subSequence( matchStart, matchEnd);
-            if( LinksUtils.parseLink( mAccumulatedText , String.valueOf(link), this) == false){
+            if( EmbedUtils.parseLink(mAccumulatedText, String.valueOf(link), this) == false){
                 mSpannableStringBuilder.append(link);
             }
 
@@ -686,7 +706,7 @@ static class HtmlToSpannedConverter implements ContentHandler, LinksUtils.ParseL
     }
 
     @Override
-    public void onLinkParsed(Object callingObject, String result, LinksUtils.TLinkType type) {
+    public void onLinkParsed(Object callingObject, String result, EmbedUtils.TEmbedType type) {
         //we have to remove embeds from quotes tags
         buildNewSpannable();
         HashMap<String,Object> attrs = new HashMap<>();

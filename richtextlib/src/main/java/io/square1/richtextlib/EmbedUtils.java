@@ -10,13 +10,13 @@ import java.util.regex.Pattern;
 /**
  * Created by roberto on 12/06/15.
  */
-public class LinksUtils {
+public class EmbedUtils {
 
     public interface ParseLinkCallback {
-         void onLinkParsed(Object callingObject, String result, TLinkType type);
+         void onLinkParsed(Object callingObject, String result, TEmbedType type);
     }
 
-   public enum TLinkType {
+   public enum TEmbedType {
         EYoutube,
         EGfycat,
         ESoundCloud,
@@ -32,19 +32,19 @@ public class LinksUtils {
 
         String result = getTweetId(link);
         if(TextUtils.isEmpty(result) == false){
-             callback.onLinkParsed(calling, result, TLinkType.ETwitter);
+             callback.onLinkParsed(calling, result, TEmbedType.ETwitter);
              return true;
         }
 
         result = getYoutubeVideoId(link);
         if(TextUtils.isEmpty(result) == false){
-            callback.onLinkParsed(calling, result, TLinkType.EYoutube);
+            callback.onLinkParsed(calling, result, TEmbedType.EYoutube);
             return true;
         }
 
         result = getGfycatId(link);
         if(TextUtils.isEmpty(result) == false){
-            callback.onLinkParsed(calling, result, TLinkType.EGfycat);
+            callback.onLinkParsed(calling, result, TEmbedType.EGfycat);
             return true;
         }
 

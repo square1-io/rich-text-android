@@ -1,13 +1,96 @@
 package io.square1.richtextlib.parser;
-
 import android.text.TextUtils;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.DTDHandler;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.AttributesImpl;
+
+import java.io.IOException;
+import java.io.Reader;
 
 import java.util.HashMap;
 
 /**
  * Created by roberto on 14/04/15.
  */
-public class StringTokenizer {
+public class StringTokenizer implements XMLReader {
+
+    @Override
+    public boolean getFeature(String name) throws SAXNotRecognizedException, SAXNotSupportedException {
+        return false;
+    }
+
+    @Override
+    public void setFeature(String name, boolean value) throws SAXNotRecognizedException, SAXNotSupportedException {
+
+    }
+
+    @Override
+    public Object getProperty(String name) throws SAXNotRecognizedException, SAXNotSupportedException {
+        return null;
+    }
+
+    @Override
+    public void setProperty(String name, Object value) throws SAXNotRecognizedException, SAXNotSupportedException {
+
+    }
+
+    @Override
+    public void setEntityResolver(EntityResolver resolver) {
+
+    }
+
+    @Override
+    public EntityResolver getEntityResolver() {
+        return null;
+    }
+
+    @Override
+    public void setDTDHandler(DTDHandler handler) {
+
+    }
+
+    @Override
+    public DTDHandler getDTDHandler() {
+        return null;
+    }
+
+    @Override
+    public void setContentHandler(ContentHandler handler) {
+        mObserver = handler;
+    }
+
+    @Override
+    public ContentHandler getContentHandler() {
+        return mObserver;
+    }
+
+    @Override
+    public void setErrorHandler(ErrorHandler handler) {
+
+    }
+
+    @Override
+    public ErrorHandler getErrorHandler() {
+        return null;
+    }
+
+    @Override
+    public void parse(InputSource input) throws IOException, SAXException {
+        mScanner = input.getCharacterStream();
+        parse();
+    }
+
+    @Override
+    public void parse(String systemId) throws IOException, SAXException {
+
+    }
 
     public static class TagDelimiter {
 
@@ -35,32 +118,20 @@ public class StringTokenizer {
         }
     }
 
-    public interface StringTokenizerObserver {
-         boolean onTokenFound(String token, HashMap<String, String> attributes);
-         void onTextFound(String text);
 
-        public void endReached();
-    }
-
-   private StringTokenizerObserver mObserver;
-   private StringScanner mScanner;
+   private ContentHandler mObserver;
+   private Reader mScanner;
    private char[] mOpenTokenDelimiters;
    private char[] mCloseTokenDelimiters;
 
 
-    StringTokenizer(String text, char[] openTokenDelimiters,
-                    char[] closeTokenDelimiter,
-                    StringTokenizerObserver observer){
-
-        mObserver = observer;
-        mScanner = new StringScanner(text);
-
+    public StringTokenizer(char[] openTokenDelimiters, char[] closeTokenDelimiter){
         mOpenTokenDelimiters = openTokenDelimiters;
         mCloseTokenDelimiters = closeTokenDelimiter;
     }
 
-    public final void parse(){
 
+    private final void parse(){
 
         //initial state is nothing was opened yet, so we assume closed is = true
         boolean tagOpened = false;
@@ -68,12 +139,15 @@ public class StringTokenizer {
 
         StringBuilder currentToken = new StringBuilder();
 
-        while (mScanner.hasNext() == true) {
+        int current = -1;
+        try { current = mScanner.read();}catch (Exception e){}
 
-            try {
+        while (current >= 0) {
 
-                final char next = mScanner.next();
-                final char nextNext = mScanner.afterNext();
+                final char next = (char)current;
+                try { current = mScanner.read();}catch (Exception e){}
+                final char nextNext = (char)current;
+
                 final boolean nextNextSpecial = isSpecialChar(nextNext);
 
                 /// opening tag
@@ -81,8 +155,10 @@ public class StringTokenizer {
 
                     //was there any text in between tags ?
                     final String text = currentToken.toString();
+
                     if(TextUtils.isEmpty(text) == false) {
-                        mObserver.onTextFound(text);
+                        char[] chars = text.toCharArray();
+                        try{ mObserver.characters(chars,0,chars.length);} catch (Exception ex){};
                     }
 
                     tagClosed = false;
@@ -95,27 +171,36 @@ public class StringTokenizer {
 
                     tagClosed = true;
                     tagOpened = false;
-                    HashMap<String,String> attr = new HashMap<>();
+
+                    AttributesImpl attr = new AttributesImpl();
                     String token = parseTokenAttributes(currentToken.toString(),attr);
-                    mObserver.onTokenFound(token, attr);
+
+                    try {
+                        StringBuilder builder = new StringBuilder(token);
+                        if(cleanClosingToken(builder) == true){
+                            token = builder.toString();
+                            mObserver.endElement(token, token, token);
+                        }else {
+                            mObserver.startElement(token, token, token, attr);
+                        }
+                    }catch (Exception e){}
+
                     currentToken.setLength(0);
 
                 }else{
-
                     currentToken.append(next);
-
                 }
-
-            } catch (StringScanner.EndReachedException exc) {
-
-            }
         }
 
         final String text = currentToken.toString();
         if(TextUtils.isEmpty(text) == false) {
-            mObserver.onTextFound(text);
+            char[] chars = text.toCharArray();
+            try {
+                mObserver.characters(chars, 0, chars.length);
+            }catch (Exception e){}
         }
-        mObserver.endReached();
+
+        try { mObserver.endDocument();}catch (Exception e){}
     }
 
     private String parseTokenAttributes(String string, HashMap<String, String> attrs) {
@@ -136,6 +221,29 @@ public class StringTokenizer {
         }
         return parts[0];
     }
+
+
+    private String parseTokenAttributes(String string, AttributesImpl attrs) {
+        String[] parts = string.split(" ");
+        if(parts.length > 1){
+
+            for(int index = 1; index < parts.length; index ++){
+                String[] attr = parts[index].split("=");
+
+                if(attr.length > 0) {
+
+                    String key = attr[0];
+                    String value = attr.length == 2 ?
+                            TextUtils.isEmpty(attr[1]) ? "" : attr[1] : "";
+
+                    attrs.addAttribute(key, key, key, key, removeQuotes(value));
+                }
+            }
+
+        }
+        return parts[0];
+    }
+
 
 
     private boolean isOpenDelimiter(char current){
@@ -166,6 +274,21 @@ public class StringTokenizer {
 
 
 
+    /**
+     * get a stringbuilder containing a token, returns true if
+     * the token starts with / .
+     *  upon return the Stringbuilder contains the token with the removed / is present
+     * @param token
+     * @return
+     */
+    public boolean cleanClosingToken(StringBuilder token){
+        char first = token.charAt(0);
+        if(first == '/'){
+            token.delete(0,1);
+            return true;
+        }
+        return false;
+    }
 
 
 }
