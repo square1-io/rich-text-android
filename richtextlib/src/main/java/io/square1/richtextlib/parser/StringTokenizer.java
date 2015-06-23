@@ -1,5 +1,8 @@
 package io.square1.richtextlib.parser;
 import android.text.TextUtils;
+import android.util.SparseArray;
+
+import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;
 import org.xml.sax.EntityResolver;
@@ -14,12 +17,103 @@ import org.xml.sax.helpers.AttributesImpl;
 import java.io.IOException;
 import java.io.Reader;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
  * Created by roberto on 14/04/15.
  */
 public class StringTokenizer implements XMLReader {
+
+    private static class Attribute {
+
+        public String uri;
+        public String localName;
+        public String value;
+
+        Attribute(String uri, String localName, Object value){
+            this.localName = localName;
+            this.uri = uri;
+            this.value = String.valueOf(value);
+        }
+
+    }
+    private static class InternalAttributes implements Attributes {
+
+        HashMap<String,Attribute> mValues;
+        SparseArray<Attribute> mOrderedValues;
+
+        public InternalAttributes(){
+            mValues = new HashMap<>();
+            mOrderedValues = new SparseArray<>();
+        }
+
+        public void add(Attribute attribute){
+            mValues.put(attribute.localName,attribute);
+            mOrderedValues.append(mOrderedValues.size(),attribute);
+        }
+
+
+        @Override
+        public int getLength() {
+            return mValues.size();
+        }
+
+        @Override
+        public String getURI(int index) {
+            return mOrderedValues.valueAt(index).uri;
+        }
+
+        @Override
+        public String getLocalName(int index) {
+            return mOrderedValues.valueAt(index).localName;
+        }
+
+        @Override
+        public String getQName(int index) {
+            return mOrderedValues.valueAt(index).localName;
+        }
+
+        @Override
+        public String getType(int index) {
+            return "";
+        }
+
+        @Override
+        public String getValue(int index) {
+            return mOrderedValues.valueAt(index).value;
+        }
+
+        @Override
+        public int getIndex(String uri, String localName) {
+            return 0;
+        }
+
+        @Override
+        public int getIndex(String qName) {
+            return 0;
+        }
+
+        @Override
+        public String getType(String uri, String localName) {
+            return null;
+        }
+
+        @Override
+        public String getType(String qName) {
+            return null;
+        }
+
+        @Override
+        public String getValue(String uri, String localName) {
+            return getValue(localName);
+        }
+
+        @Override
+        public String getValue(String localName) {
+            return mValues.get(localName).value;
+        }
+    }
 
     @Override
     public boolean getFeature(String name) throws SAXNotRecognizedException, SAXNotSupportedException {
@@ -172,7 +266,7 @@ public class StringTokenizer implements XMLReader {
                     tagClosed = true;
                     tagOpened = false;
 
-                    AttributesImpl attr = new AttributesImpl();
+                    InternalAttributes attr = new InternalAttributes();
                     String token = parseTokenAttributes(currentToken.toString(),attr);
 
                     try {
@@ -223,7 +317,7 @@ public class StringTokenizer implements XMLReader {
     }
 
 
-    private String parseTokenAttributes(String string, AttributesImpl attrs) {
+    private String parseTokenAttributes(String string, InternalAttributes attrs) {
         String[] parts = string.split(" ");
         if(parts.length > 1){
 
@@ -236,7 +330,7 @@ public class StringTokenizer implements XMLReader {
                     String value = attr.length == 2 ?
                             TextUtils.isEmpty(attr[1]) ? "" : attr[1] : "";
 
-                    attrs.addAttribute(key, key, key, key, removeQuotes(value));
+                    attrs.add(new Attribute(key, key, removeQuotes(value)));
                 }
             }
 

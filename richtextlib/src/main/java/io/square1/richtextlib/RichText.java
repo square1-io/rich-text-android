@@ -113,19 +113,28 @@ public class RichText {
 
     public static void fromHtml(Context context, String source, RichTextCallback callback) {
         Style defaultStyle = getDefault(context);
-        fromHtml(context, source, defaultStyle, callback);
+        fromHtml(context, source, defaultStyle, callback,false);
 
     }
 
-    public static void fromHtml(Context context, String source, Style style, RichTextCallback callback)  {
+    public static void fromHtml(Context context, String source, RichTextCallback callback, boolean parseWordPressTags) {
+        Style defaultStyle = getDefault(context);
+        fromHtml(context, source, defaultStyle, callback, parseWordPressTags);
+
+    }
+
+    public static void fromHtml(Context context, String source, Style style, RichTextCallback callback, boolean parseWordPressTags)  {
 
         HtmlToSpannedConverter converter = null;
         try {
 
-            Parser reader = new Parser();
-            reader.setProperty(Parser.schemaProperty, HtmlParser.schema);
-
-           // XMLReader reader = new StringTokenizer(new char[]{'<','['},new char[]{'>',']'});
+            XMLReader reader = null;
+            if(parseWordPressTags == false) {
+                reader = new Parser();
+                reader.setProperty(Parser.schemaProperty, HtmlParser.schema);
+            }else {
+                reader = new StringTokenizer(new char[]{'<', '['}, new char[]{'>', ']'});
+            }
 
             converter = new HtmlToSpannedConverter(source, reader, style, callback);
             converter.convert();
