@@ -13,13 +13,20 @@ import io.square1.richtextlib.R;
  */
 public interface Style {
 
+    int USE_DEFAULT = Integer.MIN_VALUE;
+
+    Context getApplicationContext();
 
     /**
      * Bitmap image used when showing a quote
      * @return
      */
      Bitmap quoteBitmap();
+
+    /**
+     * text color to be used for H1... headers
+     */
      int headerColor();
-
-
+    int maxImageWidth();
+    int maxImageHeight();
 }

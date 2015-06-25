@@ -9,13 +9,16 @@ import android.provider.Browser;
 import android.text.style.ClickableSpan;
 import android.view.View;
 
+import io.square1.richtextlib.ui.RichTextView;
+import io.square1.richtextlib.util.UniqueId;
+
 public class URLSpan extends ClickableSpan implements P2ParcelableSpan {
 
     public static final Parcelable.Creator<URLSpan> CREATOR  = P2ParcelableCreator.get(URLSpan.class);
 
-    public static final int TYPE = 13;
+    public static final int TYPE = UniqueId.getType();
 
-     URLSpan(){}
+
 
     @Override
     public int getType() {
@@ -58,5 +61,20 @@ public class URLSpan extends ClickableSpan implements P2ParcelableSpan {
     @Override
     public void readFromParcel(Parcel in) {
         mURL = in.readString();
+    }
+
+    @Override
+    public void onAttachedToView(RichTextView view) {
+
+    }
+
+    @Override
+    public void onDetachedFromView(RichTextView view) {
+
+    }
+
+    @Override
+    public void onSpannedSetToView(RichTextView view){
+
     }
 }

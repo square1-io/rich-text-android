@@ -8,11 +8,14 @@ import android.text.Layout;
 import android.text.Spanned;
 import android.text.style.LeadingMarginSpan;
 
+import io.square1.richtextlib.ui.RichTextView;
+import io.square1.richtextlib.util.UniqueId;
+
 public class BulletSpan implements LeadingMarginSpan, P2ParcelableSpan {
 
     public static final Creator<BulletSpan> CREATOR  = P2ParcelableCreator.get(BulletSpan.class);
 
-    public static final int TYPE = 15;
+    public static final int TYPE = UniqueId.getType();
 
     private  int mGapWidth;
     private  boolean mWantColor;
@@ -107,5 +110,20 @@ public class BulletSpan implements LeadingMarginSpan, P2ParcelableSpan {
 
             p.setStyle(style);
         }
+    }
+
+    @Override
+    public void onAttachedToView(RichTextView view) {
+
+    }
+
+    @Override
+    public void onDetachedFromView(RichTextView view) {
+
+    }
+
+    @Override
+    public void onSpannedSetToView(RichTextView view){
+
     }
 }

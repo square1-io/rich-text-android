@@ -4,9 +4,12 @@ import android.os.Parcel;
 import android.text.TextPaint;
 import android.text.style.MetricAffectingSpan;
 
+import io.square1.richtextlib.ui.RichTextView;
+import io.square1.richtextlib.util.UniqueId;
+
 public class AbsoluteSizeSpan extends MetricAffectingSpan implements P2ParcelableSpan {
 
-    public static final int TYPE = 1;
+    public static final  int TYPE = UniqueId.getType();
 
     @Override
     public int getType() {
@@ -74,5 +77,20 @@ public class AbsoluteSizeSpan extends MetricAffectingSpan implements P2Parcelabl
     public void readFromParcel(Parcel src) {
         mSize = src.readInt();
         mDip = src.readInt() != 0;
+    }
+
+    @Override
+    public void onAttachedToView(RichTextView view) {
+
+    }
+
+    @Override
+    public void onDetachedFromView(RichTextView view) {
+
+    }
+
+    @Override
+    public void onSpannedSetToView(RichTextView view){
+
     }
 }

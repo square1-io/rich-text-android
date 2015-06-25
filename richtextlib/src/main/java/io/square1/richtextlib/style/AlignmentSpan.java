@@ -5,13 +5,16 @@ import android.os.Parcelable;
 import android.text.Layout;
 import android.text.style.ParagraphStyle;
 
+import io.square1.richtextlib.ui.RichTextView;
+import io.square1.richtextlib.util.UniqueId;
+
 public interface AlignmentSpan extends ParagraphStyle, P2ParcelableSpan {
 
     public Layout.Alignment getAlignment();
 
     public static class Standard  implements AlignmentSpan {
 
-        public static final int TYPE = 2;
+        public static final int TYPE = UniqueId.getType();
 
         @Override
         public int getType() {
@@ -47,5 +50,22 @@ public interface AlignmentSpan extends ParagraphStyle, P2ParcelableSpan {
         public void readFromParcel(Parcel src) {
             mAlignment = Layout.Alignment.valueOf(src.readString());
         }
+
+        @Override
+        public void onAttachedToView(RichTextView view) {
+
+        }
+
+        @Override
+        public void onDetachedFromView(RichTextView view) {
+
+        }
+
+        @Override
+        public void onSpannedSetToView(RichTextView view){
+
+        }
     }
+
+
 }

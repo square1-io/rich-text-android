@@ -16,38 +16,42 @@ public final class P2ParcelUtils {
             final int type = in.readInt();
             in.setDataPosition(currentPosition);
 
-            switch (type){
-                case AbsoluteSizeSpan.TYPE:
+
+                if(type ==  AbsoluteSizeSpan.TYPE)
                     return AbsoluteSizeSpan.CREATOR.createFromParcel(in);
-                case AlignmentSpan.Standard.TYPE:
+                if(type ==  AlignmentSpan.Standard.TYPE)
                     return AlignmentSpan.Standard.CREATOR.createFromParcel(in);
-                case ForegroundColorSpan.TYPE:
+                if(type ==  ForegroundColorSpan.TYPE)
                     return ForegroundColorSpan.CREATOR.createFromParcel(in);
-                case QuoteSpan.TYPE:
+                 if(type ==  QuoteSpan.TYPE)
                     return QuoteSpan.CREATOR.createFromParcel(in);
-                case RelativeSizeSpan.TYPE:
+                 if(type ==  RelativeSizeSpan.TYPE)
                     return RelativeSizeSpan.CREATOR.createFromParcel(in);
-                case StrikethroughSpan.TYPE:
+                 if(type ==  StrikethroughSpan.TYPE)
                     return StrikethroughSpan.CREATOR.createFromParcel(in);
-                case StyleSpan.TYPE:
+                 if(type ==  StyleSpan.TYPE)
                     return StyleSpan.CREATOR.createFromParcel(in);
-                case SubscriptSpan.TYPE:
+                 if(type ==  SubscriptSpan.TYPE)
                     return SubscriptSpan.CREATOR.createFromParcel(in);
-                case SuperscriptSpan.TYPE:
+                 if(type ==  SuperscriptSpan.TYPE)
                     return SuperscriptSpan.CREATOR.createFromParcel(in);
-                case TextAppearanceSpan.TYPE:
+                 if(type ==  TextAppearanceSpan.TYPE)
                     return TextAppearanceSpan.CREATOR.createFromParcel(in);
-                case TypefaceSpan.TYPE:
+                 if(type ==  TypefaceSpan.TYPE)
                     return TypefaceSpan.CREATOR.createFromParcel(in);
-                case UnderlineSpan.TYPE:
+                 if(type ==  UnderlineSpan.TYPE)
                     return UnderlineSpan.CREATOR.createFromParcel(in);
-                case URLSpan.TYPE:
+                 if(type ==  URLSpan.TYPE)
                     return URLSpan.CREATOR.createFromParcel(in);
-                case BackgroundColorSpan.TYPE:
+                 if(type ==  BackgroundColorSpan.TYPE)
                     return BackgroundColorSpan.CREATOR.createFromParcel(in);
-                case BulletSpan.TYPE:
+                 if(type ==  BulletSpan.TYPE)
                     return BulletSpan.CREATOR.createFromParcel(in);
-            }
+                 if(type ==  BitmapSpan.TYPE)
+                    return BitmapSpan.CREATOR.createFromParcel(in);
+                 if(type == UrlBitmapSpan.TYPE)
+                     return UrlBitmapSpan.CREATOR.createFromParcel(in);
+
             return null;
         }
 

@@ -6,11 +6,14 @@ import android.text.TextPaint;
 import android.text.style.CharacterStyle;
 import android.text.style.UpdateAppearance;
 
+import io.square1.richtextlib.ui.RichTextView;
+import io.square1.richtextlib.util.UniqueId;
+
 public class UnderlineSpan extends CharacterStyle implements UpdateAppearance, P2ParcelableSpan {
 
  public static final Parcelable.Creator<UnderlineSpan> CREATOR  = P2ParcelableCreator.get(UnderlineSpan.class);
 
-   public static final int TYPE = 12;
+   public static final int TYPE = UniqueId.getType();
 
    @Override
    public int getType() {
@@ -30,7 +33,7 @@ public class UnderlineSpan extends CharacterStyle implements UpdateAppearance, P
     }
 
     public void writeToParcel(Parcel dest, int flags) {
-        P2ParcelUtils.writeType(dest,this);
+        P2ParcelUtils.writeType(dest, this);
     }
 
     @Override
@@ -40,6 +43,21 @@ public class UnderlineSpan extends CharacterStyle implements UpdateAppearance, P
 
     @Override
     public void readFromParcel(Parcel src) {
+
+    }
+
+    @Override
+    public void onAttachedToView(RichTextView view) {
+
+    }
+
+    @Override
+    public void onDetachedFromView(RichTextView view) {
+
+    }
+
+    @Override
+    public void onSpannedSetToView(RichTextView view){
 
     }
 }

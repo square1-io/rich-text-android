@@ -6,9 +6,12 @@ import android.text.TextPaint;
 import android.text.style.CharacterStyle;
 import android.text.style.UpdateAppearance;
 
+import io.square1.richtextlib.ui.RichTextView;
+import io.square1.richtextlib.util.UniqueId;
+
 public class BackgroundColorSpan extends CharacterStyle implements UpdateAppearance, P2ParcelableSpan {
 
-    public static final int TYPE = 14;
+    public static final int TYPE = UniqueId.getType();
 
     private int mColor;
 
@@ -51,5 +54,20 @@ public class BackgroundColorSpan extends CharacterStyle implements UpdateAppeara
     @Override
     public void readFromParcel(Parcel src) {
         mColor = src.readInt();
+    }
+
+    @Override
+    public void onAttachedToView(RichTextView view) {
+
+    }
+
+    @Override
+    public void onDetachedFromView(RichTextView view) {
+
+    }
+
+    @Override
+    public void onSpannedSetToView(RichTextView view){
+
     }
 }

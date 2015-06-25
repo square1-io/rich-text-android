@@ -8,6 +8,9 @@ import android.os.Parcelable;
 import android.text.TextPaint;
 import android.text.style.MetricAffectingSpan;
 
+import io.square1.richtextlib.ui.RichTextView;
+import io.square1.richtextlib.util.UniqueId;
+
 /**
  * Sets the text color, size, style, and typeface to match a TextAppearance
  * resource.
@@ -22,7 +25,7 @@ public class TextAppearanceSpan extends MetricAffectingSpan implements P2Parcela
 
     public static final Parcelable.Creator<TextAppearanceSpan> CREATOR  = P2ParcelableCreator.get(TextAppearanceSpan.class);
 
-    public static final int TYPE = 10;
+    public static final int TYPE = UniqueId.getType();
 
     @Override
     public int getType() {
@@ -125,7 +128,7 @@ public class TextAppearanceSpan extends MetricAffectingSpan implements P2Parcela
     }
 
     public void writeToParcel(Parcel dest, int flags) {
-        P2ParcelUtils.writeType(dest,this);
+        P2ParcelUtils.writeType(dest, this);
         dest.writeString(mTypeface);
         dest.writeInt(mStyle);
         dest.writeInt(mTextSize);
@@ -249,5 +252,20 @@ public class TextAppearanceSpan extends MetricAffectingSpan implements P2Parcela
         } else {
             mTextColorLink = null;
         }
+    }
+
+    @Override
+    public void onAttachedToView(RichTextView view) {
+
+    }
+
+    @Override
+    public void onDetachedFromView(RichTextView view) {
+
+    }
+
+    @Override
+    public void onSpannedSetToView(RichTextView view){
+
     }
 }

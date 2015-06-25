@@ -8,6 +8,9 @@ import android.os.Parcelable;
 import android.text.TextPaint;
 import android.text.style.MetricAffectingSpan;
 
+import io.square1.richtextlib.ui.RichTextView;
+import io.square1.richtextlib.util.UniqueId;
+
 /**
  * Changes the typeface family of the text to which the span is attached.
  */
@@ -15,7 +18,7 @@ public class TypefaceSpan extends MetricAffectingSpan implements P2ParcelableSpa
 
     public static final Parcelable.Creator<TypefaceSpan> CREATOR  = P2ParcelableCreator.get(TypefaceSpan.class);
 
-    public static final int TYPE = 11;
+    public static final int TYPE = UniqueId.getType();
 
     @Override
     public int getType() {
@@ -92,5 +95,20 @@ public class TypefaceSpan extends MetricAffectingSpan implements P2ParcelableSpa
     @Override
     public void readFromParcel(Parcel src) {
         mFamily = src.readString();
+    }
+
+    @Override
+    public void onAttachedToView(RichTextView view) {
+
+    }
+
+    @Override
+    public void onDetachedFromView(RichTextView view) {
+
+    }
+
+    @Override
+    public void onSpannedSetToView(RichTextView view){
+
     }
 }

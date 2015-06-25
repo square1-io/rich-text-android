@@ -6,11 +6,14 @@ import android.os.Parcelable;
 import android.text.TextPaint;
 import android.text.style.MetricAffectingSpan;
 
+import io.square1.richtextlib.ui.RichTextView;
+import io.square1.richtextlib.util.UniqueId;
+
 public class SuperscriptSpan extends MetricAffectingSpan implements P2ParcelableSpan {
 
     public static final Parcelable.Creator<SuperscriptSpan> CREATOR  = P2ParcelableCreator.get(SuperscriptSpan.class);
 
-    public static final int TYPE = 9;
+    public static final int TYPE = UniqueId.getType();
 
     @Override
     public int getType() {
@@ -45,6 +48,21 @@ public class SuperscriptSpan extends MetricAffectingSpan implements P2Parcelable
 
     @Override
     public void readFromParcel(Parcel src) {
+
+    }
+
+    @Override
+    public void onAttachedToView(RichTextView view) {
+
+    }
+
+    @Override
+    public void onDetachedFromView(RichTextView view) {
+
+    }
+
+    @Override
+    public void onSpannedSetToView(RichTextView view){
 
     }
 }

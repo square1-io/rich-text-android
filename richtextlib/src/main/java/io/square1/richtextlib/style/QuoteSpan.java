@@ -14,11 +14,14 @@ import android.text.style.LeadingMarginSpan;
 import android.text.style.LineBackgroundSpan;
 import android.text.style.MetricAffectingSpan;
 
+import io.square1.richtextlib.ui.RichTextView;
+import io.square1.richtextlib.util.UniqueId;
+
 
 public class QuoteSpan extends MetricAffectingSpan implements /*LineHeightSpan,*/ LineBackgroundSpan,P2ParcelableSpan,LeadingMarginSpan {
 
     public static final Parcelable.Creator<QuoteSpan> CREATOR  = P2ParcelableCreator.get(QuoteSpan.class);
-    public static final int TYPE = 4;
+    public static final int TYPE = UniqueId.getType();
 
 
 
@@ -90,7 +93,7 @@ public class QuoteSpan extends MetricAffectingSpan implements /*LineHeightSpan,*
     public void writeToParcel(Parcel dest, int flags) {
         P2ParcelUtils.writeType(dest,this);
         dest.writeInt(mColor);
-        dest.writeParcelable(mQuoteSign,0);
+        dest.writeParcelable(mQuoteSign, 0);
     }
 
     public void readFromParcel(Parcel src){
@@ -144,7 +147,7 @@ public class QuoteSpan extends MetricAffectingSpan implements /*LineHeightSpan,*
         }
 
         final int paintColor = p.getColor();
-        p.setColor(Color.parseColor("#e7e7e7"));//Color.LTGRAY);
+        p.setColor(mColor);//Color.LTGRAY);
         p.setStyle(Paint.Style.FILL);
         Rect rect = new Rect(left, top, right, bottom);
         c.drawRect(rect, p);
@@ -188,5 +191,20 @@ public class QuoteSpan extends MetricAffectingSpan implements /*LineHeightSpan,*
             if (need > 0)
                 fm.bottom += need;
         }
+    }
+
+    @Override
+    public void onAttachedToView(RichTextView view) {
+
+    }
+
+    @Override
+    public void onDetachedFromView(RichTextView view) {
+
+    }
+
+    @Override
+    public void onSpannedSetToView(RichTextView view){
+
     }
 }

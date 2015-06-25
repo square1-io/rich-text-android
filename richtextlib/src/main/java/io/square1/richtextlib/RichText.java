@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 
+import android.net.Uri;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -34,10 +35,10 @@ import java.util.HashMap;
 import java.util.ListIterator;
 import java.util.Stack;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import io.square1.richtextlib.parser.StringTokenizer;
 import io.square1.richtextlib.style.*;
-import io.square1.richtextlib.R;
 
 /**
  * This class processes HTML strings into displayable styled text.
@@ -46,8 +47,8 @@ import io.square1.richtextlib.R;
 public class RichText {
 
     public static final String EMBED_TYPE = "EMBED_TYPE";
-    public static final String IMAGE_WIDTH = "IMAGE_WIDTH";
-    public static final String  IMAGE_HEIGHT = "IMAGE_HEIGHT";
+    public static final String IMAGE_WIDTH = "width";
+    public static final String  IMAGE_HEIGHT = "height";
 
     public enum TNodeType {
         EText,
@@ -56,24 +57,47 @@ public class RichText {
     }
 
 
-    public static Style getDefault(Context context){
+    public static class DefaultStyle implements  Style {
 
-        final Bitmap quote = BitmapFactory.decodeResource(context.getResources(),
-                R.drawable.quote);
 
-        return new Style() {
+        private Context mApplicationContext;
+        private Bitmap mQuoteBitmap;
+        private int mMaxImageWidth;
 
-            @Override
-            public Bitmap quoteBitmap() {
-                return quote;
-            }
+        public DefaultStyle(Context context){
+            mApplicationContext = context.getApplicationContext();
+            Resources resources = context.getResources();
+            mQuoteBitmap = BitmapFactory.decodeResource(resources, R.drawable.quote);
+            mMaxImageWidth = resources.getDisplayMetrics().widthPixels;
+        }
 
-            @Override
-            public int headerColor() {
-                return Color.BLACK;
-            }
-        };
+        @Override
+        public Context getApplicationContext(){
+            return mApplicationContext;
+        }
+        @Override
+        public Bitmap quoteBitmap() {
+            return mQuoteBitmap;
+        }
+
+        @Override
+        public int headerColor() {
+            return Color.BLACK;
+        }
+
+        @Override
+        public int maxImageWidth() {
+            return mMaxImageWidth;
+        }
+
+        @Override
+        public int maxImageHeight() {
+            return Style.USE_DEFAULT;
+        }
     }
+
+
+
 
     private static class HtmlParser {
         private static final HTMLSchema schema = new HTMLSchema();
@@ -112,16 +136,20 @@ public class RichText {
 
 
     public static void fromHtml(Context context, String source, RichTextCallback callback) {
-        Style defaultStyle = getDefault(context);
+        Style defaultStyle = new DefaultStyle(context);
         fromHtml(context, source, defaultStyle, callback,false);
 
     }
 
     public static void fromHtml(Context context, String source, RichTextCallback callback, boolean parseWordPressTags) {
-        Style defaultStyle = getDefault(context);
+        Style defaultStyle = new DefaultStyle(context);
         fromHtml(context, source, defaultStyle, callback, parseWordPressTags);
 
     }
+
+    final static String SOUND_CLOUD = "\\[soundcloud (.*?)\\]";
+    final static Pattern pattern = Pattern.compile(SOUND_CLOUD);
+
 
     public static void fromHtml(Context context, String source, Style style, RichTextCallback callback, boolean parseWordPressTags)  {
 
@@ -134,6 +162,13 @@ public class RichText {
                 reader.setProperty(Parser.schemaProperty, HtmlParser.schema);
             }else {
                 reader = new StringTokenizer(new char[]{'<', '['}, new char[]{'>', ']'});
+            }
+
+            String string = source.replaceAll(SOUND_CLOUD,"<soundcloud $1 />");
+            Matcher m = pattern.matcher(source);
+
+            while (m.find() == true){
+                m.groupCount();
             }
 
             converter = new HtmlToSpannedConverter(source, reader, style, callback);
@@ -433,14 +468,32 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
     private  void startImg(Attributes attributes) {
 
-        buildNewSpannable();
+        //buildNewSpannable();
         String src = attributes.getValue("", "src");
-       // mSpannableStringBuilder.append("\uFFFC");
 
-        HashMap<String,Object> attrs = new HashMap<>();
-        attrs.put(RichText.IMAGE_WIDTH, attributes.getValue("width"));
-        attrs.put(RichText.IMAGE_HEIGHT, attributes.getValue("height"));
-        mCallback.onElementFound(RichText.TNodeType.EImage, src, attrs);
+
+//        BitmapSpan imageDrawable = new BitmapSpan( Uri.parse(src),
+//                mStyle,
+//                Integer.valueOf(attributes.getValue("width")),
+//                Integer.valueOf(attributes.getValue("height")));
+
+        UrlBitmapSpan imageDrawable = new UrlBitmapSpan(Uri.parse(src),
+                Integer.valueOf(attributes.getValue("width")),
+                Integer.valueOf(attributes.getValue("height")) ,
+                        mStyle.maxImageWidth() );
+
+        int len = mSpannableStringBuilder.length();
+        mSpannableStringBuilder.append("\uFFFC");
+
+        mSpannableStringBuilder.setSpan(imageDrawable,
+                len,
+                mSpannableStringBuilder.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        //HashMap<String,Object> attrs = new HashMap<>();
+       // attrs.put(RichText.IMAGE_WIDTH, attributes.getValue("width"));
+       // attrs.put(RichText.IMAGE_HEIGHT, attributes.getValue("height"));
+       // mCallback.onElementFound(RichText.TNodeType.EImage, src, attrs);
 
     }
 

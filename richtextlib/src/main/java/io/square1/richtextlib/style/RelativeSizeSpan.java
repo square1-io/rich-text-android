@@ -5,11 +5,14 @@ import android.os.Parcelable;
 import android.text.TextPaint;
 import android.text.style.MetricAffectingSpan;
 
+import io.square1.richtextlib.ui.RichTextView;
+import io.square1.richtextlib.util.UniqueId;
+
 public class RelativeSizeSpan extends MetricAffectingSpan implements P2ParcelableSpan {
 
     public static final Parcelable.Creator<RelativeSizeSpan> CREATOR  = P2ParcelableCreator.get(RelativeSizeSpan.class);
 
-    public static final int TYPE = 5;
+    public static final int TYPE = UniqueId.getType();
 
     @Override
     public int getType() {
@@ -58,5 +61,20 @@ public class RelativeSizeSpan extends MetricAffectingSpan implements P2Parcelabl
     @Override
     public void readFromParcel(Parcel src) {
         mProportion = src.readFloat();
+    }
+
+    @Override
+    public void onAttachedToView(RichTextView view) {
+
+    }
+
+    @Override
+    public void onDetachedFromView(RichTextView view) {
+
+    }
+
+    @Override
+    public void onSpannedSetToView(RichTextView view){
+
     }
 }

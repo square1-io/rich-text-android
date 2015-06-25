@@ -6,6 +6,9 @@ import android.os.Parcel;
 import android.text.TextPaint;
 import android.text.style.MetricAffectingSpan;
 
+import io.square1.richtextlib.ui.RichTextView;
+import io.square1.richtextlib.util.UniqueId;
+
 /**
  *
  * Describes a style in a span.
@@ -18,7 +21,7 @@ public class StyleSpan extends MetricAffectingSpan implements P2ParcelableSpan {
 
     public static final Creator<StyleSpan> CREATOR  = P2ParcelableCreator.get(StyleSpan.class);
 
-    public static final int TYPE = 7;
+    public static final int TYPE = UniqueId.getType();
 
     public StyleSpan(){}
 
@@ -106,5 +109,20 @@ public class StyleSpan extends MetricAffectingSpan implements P2ParcelableSpan {
     @Override
     public void readFromParcel(Parcel src) {
         mStyle = src.readInt();
+    }
+
+    @Override
+    public void onAttachedToView(RichTextView view) {
+
+    }
+
+    @Override
+    public void onDetachedFromView(RichTextView view) {
+
+    }
+
+    @Override
+    public void onSpannedSetToView(RichTextView view){
+
     }
 }

@@ -2,13 +2,22 @@ package io.square1.richtext;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.DataSetObserver;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -22,6 +31,7 @@ import java.util.Map;
 
 import io.square1.richtextlib.EmbedUtils;
 import io.square1.richtextlib.RichText;
+import io.square1.richtextlib.ui.RichTextView;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -75,16 +85,18 @@ public class MainActivity extends ActionBarActivity {
         return returnString.toString();
     }
 
+    BaseAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        final ArrayList<Object> mItems = new ArrayList<>();
 
-        // List<PostItem> items = parser.parse();
         final ArrayList<Object> obs = new ArrayList<>();
 
-        String html = ReadFromfile("complete_set.html");
+        String html = ReadFromfile("test2.html");
 
        final JSONArray output = new JSONArray();
 
@@ -96,18 +108,20 @@ public class MainActivity extends ActionBarActivity {
                 Log.e("html[" + type + "]", String.valueOf(content));
                 try {
 
+                    mItems.add(content);
+
                     JSONObject current = new JSONObject();
 
 
-                    if(type == RichText.TNodeType.EText){
-                       content = Html.toHtml((SpannableStringBuilder) content);
+                    if (type == RichText.TNodeType.EText) {
+                        content = Html.toHtml((SpannableStringBuilder) content);
                     }
 
-                     if(type == RichText.TNodeType.EEmbed){
+                    if (type == RichText.TNodeType.EEmbed) {
                         EmbedUtils.TEmbedType embedType = (EmbedUtils.TEmbedType) attributes.get(RichText.EMBED_TYPE);
                         current.put(JSON_TYPE, String.valueOf(embedType));
                         attributes.remove(RichText.EMBED_TYPE);
-                    }else {
+                    } else {
                         current.put(JSON_TYPE, String.valueOf(type));
                     }
 
@@ -116,7 +130,7 @@ public class MainActivity extends ActionBarActivity {
 
                     output.put(current);
 
-                }catch (Exception ex){
+                } catch (Exception ex) {
 
                 }
 
@@ -126,11 +140,99 @@ public class MainActivity extends ActionBarActivity {
             public void onError(Exception exc) {
 
             }
-        },true);
+        }, true);
 
-         Log.i("json", output.toString());
+
+         adapter = new BaseAdapter() {
+
+            @Override
+            public boolean areAllItemsEnabled() {
+                return false;
+            }
+
+            @Override
+            public boolean isEnabled(int position) {
+                return false;
+            }
+
+            @Override
+            public void registerDataSetObserver(DataSetObserver observer) {
+
+            }
+
+            @Override
+            public void unregisterDataSetObserver(DataSetObserver observer) {
+
+            }
+
+            @Override
+            public int getCount() {
+                return 1;// mItems.size();
+            }
+
+            @Override
+            public Object getItem(int position) {
+                return mItems.get(position);
+            }
+
+            @Override
+            public long getItemId(int position) {
+                return position;
+            }
+
+            @Override
+            public boolean hasStableIds() {
+                return false;
+            }
+
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+
+                Object item = getItem(position);
+                RichTextView view = (RichTextView)convertView;
+                if(convertView == null){
+                    view = new RichTextView(MainActivity.this);
+                    view.setDrawingCacheEnabled(false);
+                    view.setRichTextContentChanged(new RichTextView.RichTextContentChanged() {
+                        @Override
+                        public void onContentChanged(RichTextView view) {
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+                }
+
+                if(item instanceof Spanned){
+                    view.setText((Spanned)item);
+                }else{
+                   view.setText(String.valueOf(item));
+                }
+                return view;
+            }
+
+            @Override
+            public int getItemViewType(int position) {
+                return 0;
+            }
+
+            @Override
+            public int getViewTypeCount() {
+                return 1;
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+        };
+
+
+
+
+        ((ListView) findViewById(R.id.list)).setAdapter(adapter);
 
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
