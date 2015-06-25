@@ -156,8 +156,12 @@ public class UrlBitmapSpan extends ReplacementSpan implements UpdateAppearance, 
         return mMaxImageWidth;
     }
 
+
+
     @Override
     public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
+
+
 
         final Rect bitmapBounds = getBitmapSize();
 
@@ -187,20 +191,10 @@ public class UrlBitmapSpan extends ReplacementSpan implements UpdateAppearance, 
             mBitmap = resource;
             final RichTextView view = mRef.get();
 
-            if(view != null){
-                  Spannable span = view.getSpannable();
-                  view.setText("");
-                  //view.setText(span);
+            if(view != null && mAttachedToWindow){
+                view.invalidate();
+                //view.notifyContentChanged();
             }
-
-//            if(mAttachedToWindow && mRef.get() != null && mRef.get().getSpans().length > 0){
-//                Spannable current = (Spannable)mRef.get().getText();
-//                int start = current.getSpanStart(UrlBitmapSpan.this);
-//                int end = current.getSpanEnd(UrlBitmapSpan.this);
-//                BitmapSpan bitmapSpan = new BitmapSpan(resource);
-//                current.removeSpan(UrlBitmapSpan.this);
-//                current.setSpan(bitmapSpan, start, end, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-//            }
         }
     };
 

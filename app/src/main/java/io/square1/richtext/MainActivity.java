@@ -96,7 +96,7 @@ public class MainActivity extends ActionBarActivity {
 
         final ArrayList<Object> obs = new ArrayList<>();
 
-        String html = ReadFromfile("test2.html");
+        String html = ReadFromfile("complete_set.html");
 
        final JSONArray output = new JSONArray();
 
@@ -114,6 +114,7 @@ public class MainActivity extends ActionBarActivity {
 
 
                     if (type == RichText.TNodeType.EText) {
+                       // ((RichTextView) findViewById(R.id.textView)).setText((SpannableStringBuilder)content);
                         content = Html.toHtml((SpannableStringBuilder) content);
                     }
 
@@ -143,7 +144,10 @@ public class MainActivity extends ActionBarActivity {
         }, true);
 
 
-         adapter = new BaseAdapter() {
+
+
+
+        adapter = new BaseAdapter() {
 
             @Override
             public boolean areAllItemsEnabled() {

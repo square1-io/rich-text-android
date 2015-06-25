@@ -2,8 +2,11 @@ package io.square1.richtextlib.ui;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.os.Handler;
+import android.os.Message;
 import android.text.Spannable;
 import android.text.Spanned;
+import android.util.AttributeSet;
 import android.widget.TextView;
 
 import io.square1.richtextlib.style.P2ParcelableSpan;
@@ -20,12 +23,37 @@ public class RichTextView extends TextView {
     private P2ParcelableSpan[] mSpans;
     private Spannable mSpannable;
     private RichTextContentChanged mRichTextContentChanged;
+    private Handler mHandler;
+
+    public RichTextView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init();
+    }
+
+    public RichTextView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init();
+    }
+
+
 
     public RichTextView(Context context) {
         super(context);
+        init();
+    }
+
+    private void init(){
+
         mSpans = getAllSpans();
-        setWillNotCacheDrawing(true);
-        //setWillNotDraw(false);
+        mHandler = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                invalidate();
+               // setText("kkkkkkkkk");
+
+            }
+        };
     }
 
    @Override
@@ -52,7 +80,7 @@ public class RichTextView extends TextView {
 
     @Override
     public void setText(CharSequence text, BufferType type) {
-        super.setText(text,BufferType.NORMAL);
+        super.setText(text,BufferType.SPANNABLE);
 
         mSpans = getAllSpans();
 
@@ -70,6 +98,8 @@ public class RichTextView extends TextView {
     }
 
     public void notifyContentChanged(){
+
+        mHandler.sendEmptyMessage(0);
 
         if(mRichTextContentChanged != null){
             mRichTextContentChanged.onContentChanged(this);
@@ -94,8 +124,4 @@ public class RichTextView extends TextView {
         return new P2ParcelableSpan[0];
     }
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-    }
 }
