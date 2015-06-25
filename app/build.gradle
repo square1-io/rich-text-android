@@ -21,7 +21,8 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project(':richtextlib')
-    compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'org.ccil.cowan.tagsoup:tagsoup:1.2'
+    compile 'com.android.support:appcompat-v7:22.2.0'
+    compile 'com.github.bumptech.glide:glide:3.6.0'
+    compile project(':richtextlib')
 }

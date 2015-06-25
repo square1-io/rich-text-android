@@ -3,6 +3,8 @@ package io.square1.richtext;
 import android.content.Context;
 import android.content.Intent;
 import android.database.DataSetObserver;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.Html;
@@ -19,6 +21,10 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -31,10 +37,28 @@ import java.util.Map;
 
 import io.square1.richtextlib.EmbedUtils;
 import io.square1.richtextlib.RichText;
+import io.square1.richtextlib.style.UrlBitmapSpan;
 import io.square1.richtextlib.ui.RichTextView;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements UrlBitmapSpan.UrlBitmapDownloader {
+
+
+    private class SimpleTargetBitmap extends SimpleTarget<Bitmap> {
+
+        private UrlBitmapSpan mUrlBitmapSpan;
+
+        SimpleTargetBitmap(UrlBitmapSpan span){
+            super();
+            mUrlBitmapSpan = span;
+        }
+
+        @Override
+        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+            mUrlBitmapSpan.updateBitmap(resource);
+
+        }
+    };
 
     private final static String JSON_CONTENT = "content";
     private final static String JSON_TYPE = "type";
@@ -141,7 +165,7 @@ public class MainActivity extends ActionBarActivity {
             public void onError(Exception exc) {
 
             }
-        }, true);
+        }, this, true);
 
 
 
@@ -258,5 +282,10 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void downloadImage(UrlBitmapSpan urlBitmapSpan, Uri image) {
+        Glide.with(this).load(image).asBitmap().into(new SimpleTargetBitmap(urlBitmapSpan));
     }
 }

@@ -135,23 +135,27 @@ public class RichText {
      */
 
 
-    public static void fromHtml(Context context, String source, RichTextCallback callback) {
+    public static void fromHtml(Context context, String source, RichTextCallback callback, UrlBitmapSpan.UrlBitmapDownloader downloader) {
         Style defaultStyle = new DefaultStyle(context);
-        fromHtml(context, source, defaultStyle, callback,false);
+        fromHtml(context, source, defaultStyle, callback,downloader, false);
 
     }
 
-    public static void fromHtml(Context context, String source, RichTextCallback callback, boolean parseWordPressTags) {
+    public static void fromHtml(Context context, String source, RichTextCallback callback, UrlBitmapSpan.UrlBitmapDownloader downloader, boolean parseWordPressTags) {
         Style defaultStyle = new DefaultStyle(context);
-        fromHtml(context, source, defaultStyle, callback, parseWordPressTags);
+        fromHtml(context, source, defaultStyle, callback, downloader, parseWordPressTags);
 
     }
 
     final static String SOUND_CLOUD = "\\[soundcloud (.*?)\\]";
     final static Pattern pattern = Pattern.compile(SOUND_CLOUD);
 
-
-    public static void fromHtml(Context context, String source, Style style, RichTextCallback callback, boolean parseWordPressTags)  {
+    private static void fromHtml(Context context,
+                                 String source,
+                                 Style style,
+                                 RichTextCallback callback,
+                                 UrlBitmapSpan.UrlBitmapDownloader downloader,
+                                 boolean parseWordPressTags)  {
 
         HtmlToSpannedConverter converter = null;
         try {
@@ -171,7 +175,7 @@ public class RichText {
                 m.groupCount();
             }
 
-            converter = new HtmlToSpannedConverter(source, reader, style, callback);
+            converter = new HtmlToSpannedConverter(source, reader, style, callback, downloader);
             converter.convert();
 
         } catch (Exception e) {
@@ -196,15 +200,17 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     private StringBuilder mAccumulatedText;
     private SpannableStringBuilder mSpannableStringBuilder;
     private RichText.RichTextCallback mCallback;
-
+    private UrlBitmapSpan.UrlBitmapDownloader mDownloader;
     private Style mStyle;
 
     public HtmlToSpannedConverter(String source,
                                   XMLReader reader,
                                   Style style,
-                                  RichText.RichTextCallback callback) {
+                                  RichText.RichTextCallback callback,
+                                  UrlBitmapSpan.UrlBitmapDownloader dowloader) {
         mStyle = style;
         mCallback = callback;
+        mDownloader = dowloader;
         mSource = String.format("<root>%s</root>" , source);
         mReader = reader;
         mAccumulatedText = new StringBuilder();
@@ -478,6 +484,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 //                Integer.valueOf(attributes.getValue("height")));
 
         UrlBitmapSpan imageDrawable = new UrlBitmapSpan(Uri.parse(src),
+                mDownloader,
                 Integer.valueOf(attributes.getValue("width")),
                 Integer.valueOf(attributes.getValue("height")) ,
                         mStyle.maxImageWidth() );

@@ -1,23 +1,15 @@
 package io.square1.richtextlib.style;
 
-import android.animation.ArgbEvaluator;
-import android.animation.ObjectAnimator;
+
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Parcel;
-import android.text.Spannable;
-import android.text.Spanned;
-import android.text.style.ClickableSpan;
 import android.text.style.ReplacementSpan;
 import android.text.style.UpdateAppearance;
-import android.util.Property;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 
 import java.lang.ref.WeakReference;
 
@@ -29,6 +21,9 @@ import io.square1.richtextlib.util.UniqueId;
  */
 public class UrlBitmapSpan extends ReplacementSpan implements UpdateAppearance, P2ParcelableSpan {
 
+    public interface UrlBitmapDownloader {
+         void downloadImage(UrlBitmapSpan urlBitmapSpan , Uri image);
+    }
 
 
     public static final Creator<UrlBitmapSpan> CREATOR  = P2ParcelableCreator.get(UrlBitmapSpan.class);
@@ -56,16 +51,16 @@ public class UrlBitmapSpan extends ReplacementSpan implements UpdateAppearance, 
     private int mImageHeight;
 
     private Uri mImage;
-
+    private UrlBitmapDownloader mUrlBitmapDownloader;
     private Bitmap mBitmap;
 
-    public UrlBitmapSpan(Uri image, int imageWidth, int imageHeight, int maxImageWidth){
-        this(null,image,imageWidth,imageHeight,maxImageWidth,ALIGN_BOTTOM);
+    public UrlBitmapSpan(Uri image, UrlBitmapDownloader downloader, int imageWidth, int imageHeight, int maxImageWidth){
+        this(null,downloader,image, imageWidth,imageHeight,maxImageWidth,ALIGN_BOTTOM);
 
     }
-    public UrlBitmapSpan(Bitmap bitmap, Uri image, int imageWidth, int imageHeight, int maxImageWidth, int alignment){
+    public UrlBitmapSpan(Bitmap bitmap, UrlBitmapDownloader downloader, Uri image, int imageWidth, int imageHeight, int maxImageWidth, int alignment){
         super();
-
+        mUrlBitmapDownloader = downloader;
         mImage = image;
         mMaxImageWidth = maxImageWidth;
         mImageWidth = imageWidth;
@@ -162,7 +157,6 @@ public class UrlBitmapSpan extends ReplacementSpan implements UpdateAppearance, 
     public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
 
 
-
         final Rect bitmapBounds = getBitmapSize();
 
         int transY = bottom - bitmapBounds.bottom;
@@ -185,24 +179,20 @@ public class UrlBitmapSpan extends ReplacementSpan implements UpdateAppearance, 
     private boolean mLoading = false;
     private boolean mAttachedToWindow = false;
 
-    private SimpleTarget<Bitmap> mSimpleTarget = new SimpleTarget<Bitmap>() {
-        @Override
-        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-            mBitmap = resource;
-            final RichTextView view = mRef.get();
 
-            if(view != null && mAttachedToWindow){
-                view.invalidate();
-                //view.notifyContentChanged();
-            }
+    public void updateBitmap(Bitmap bitmap){
+        mBitmap = bitmap;
+        final RichTextView view = mRef.get();
+        if(view != null && mAttachedToWindow){
+            view.invalidate();
         }
-    };
+    }
 
 
     private void loadImage(){
         if(mAttachedToWindow == true && mLoading == false){
             mLoading = true;
-            Glide.with(mRef.get().getContext()).load(mImage).asBitmap().into(mSimpleTarget);
+            mUrlBitmapDownloader.downloadImage(this,mImage);
         }
     }
 
