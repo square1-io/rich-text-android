@@ -2,6 +2,7 @@ package io.square1.richtextlib.ui;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Spannable;
@@ -124,4 +125,10 @@ public class RichTextView extends TextView {
         return new P2ParcelableSpan[0];
     }
 
+    @Override
+    public void invalidateDrawable(Drawable drawable) {
+        super.invalidateDrawable(drawable);
+        /// this really needs to be checked for the impact it could have on performances
+        invalidate();
+    }
 }
