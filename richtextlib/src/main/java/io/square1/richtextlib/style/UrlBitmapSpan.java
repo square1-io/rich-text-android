@@ -1,10 +1,14 @@
 package io.square1.richtextlib.style;
 
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.AnimatedStateListDrawable;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Parcel;
 
@@ -55,7 +59,7 @@ public class UrlBitmapSpan extends ReplacementSpan implements ClickableSpan, Upd
 
     private Uri mImage;
     private UrlBitmapDownloader mUrlBitmapDownloader;
-    private Bitmap mBitmap;
+    private Drawable mBitmap;
 
     public UrlBitmapSpan(Uri image, UrlBitmapDownloader downloader, int imageWidth, int imageHeight, int maxImageWidth){
         this(null,downloader,image, imageWidth,imageHeight,maxImageWidth,ALIGN_BOTTOM);
@@ -70,7 +74,11 @@ public class UrlBitmapSpan extends ReplacementSpan implements ClickableSpan, Upd
         mImageHeight = imageHeight;
 
         mVerticalAlignment = alignment;
-        mBitmap = bitmap;
+
+        if(bitmap != null) {
+            mBitmap = new BitmapDrawable(bitmap);
+            mBitmap.setBounds(getBitmapSize());
+        }
 
         ensureNotNullPlaceHolder();
     }
@@ -80,21 +88,35 @@ public class UrlBitmapSpan extends ReplacementSpan implements ClickableSpan, Upd
 
             Rect size = getBitmapSize();
 
-            mBitmap = Bitmap.createBitmap(size.width(),
+            mBitmap = new BitmapDrawable( Bitmap.createBitmap(size.width(),
                     size.height(),
-                    Bitmap.Config.ALPHA_8);
+                    Bitmap.Config.ALPHA_8));
+            mBitmap.setBounds(getBitmapSize());
         }
     }
 
     public Rect getBitmapSize(){
 
-        if(mImageWidth > mMaxImageWidth) {
-            double rate = mMaxImageWidth / mImageWidth;
-            return new Rect(0, 0, mMaxImageWidth, (int)(mImageHeight * rate));
-        }
 
-        return new Rect(0, 0, mImageWidth, mImageHeight);
+        int measured = mMaxImageWidth;
+
+       // if(mImageWidth > measured) {
+            double rate = (double)measured / (double)mImageWidth;
+            return new Rect(0, 0, measured, (int)(mImageHeight * rate));
+       // }
+
+      //  return new Rect(0, 0, mImageWidth, mImageHeight);
     }
+
+//    public Rect getAvailableSize(){
+//
+//        if(mImageWidth > mMaxImageWidth) {
+//            double rate = mMaxImageWidth / mImageWidth;
+//            return new Rect(0, 0, mRef.get().getMeasuredWidth(), (int)(mImageHeight * rate));
+//        }
+//
+//        return new Rect(0, 0, mRef.get().getMeasuredWidth() , mImageHeight);
+//    }
 
     @Override
     public int getType() {
@@ -103,13 +125,13 @@ public class UrlBitmapSpan extends ReplacementSpan implements ClickableSpan, Upd
 
     @Override
     public void readFromParcel(Parcel src) {
-        mBitmap = src.readParcelable(Bitmap.class.getClassLoader());
+        mImage = src.readParcelable(Uri.class.getClassLoader());
     }
 
     WeakReference<RichTextView> mRef;
     @Override
     public void onSpannedSetToView(RichTextView view) {
-        mRef = new WeakReference<RichTextView>(view);
+        mRef = new WeakReference(view);
         loadImage();
     }
 
@@ -132,7 +154,7 @@ public class UrlBitmapSpan extends ReplacementSpan implements ClickableSpan, Upd
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         P2ParcelUtils.writeType(dest,this);
-        dest.writeParcelable(mBitmap,0);
+        dest.writeParcelable(mImage,0);
     }
 
 
@@ -167,12 +189,17 @@ public class UrlBitmapSpan extends ReplacementSpan implements ClickableSpan, Upd
             transY -= paint.getFontMetricsInt().descent;
         }
 
+
+
         canvas.save();
-        mRect = new Rect((int)x,top,y,bottom);
+        mRect = getBitmapSize();
         //center
-        x = (mRef.get().getMeasuredWidth() - mImageWidth) / 2;
+        x = (mRef.get().getMeasuredWidth() - mRect.width()) / 2;
         canvas.translate(x, transY);
-        canvas.drawBitmap(mBitmap,null,getBitmapSize(),null);
+        if(mBitmap != null) {
+            mBitmap.draw(canvas);
+        }
+        //canvas.drawBitmap(mBitmap,null,getBitmapSize(),null);
         canvas.restore();
 
     }
@@ -183,10 +210,13 @@ public class UrlBitmapSpan extends ReplacementSpan implements ClickableSpan, Upd
     private boolean mAttachedToWindow = false;
 
 
-    public void updateBitmap(Bitmap bitmap){
+    public void updateBitmap(Context context, Drawable bitmap){
         mBitmap = bitmap;
+        mBitmap.setBounds(getBitmapSize());
         final RichTextView view = mRef.get();
         if(view != null && mAttachedToWindow){
+            mBitmap.setCallback(view);
+            mBitmap.invalidateSelf();
             view.invalidate();
         }
     }

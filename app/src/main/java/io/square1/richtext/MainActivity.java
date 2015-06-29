@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.DataSetObserver;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -22,6 +23,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 
@@ -44,19 +47,23 @@ import io.square1.richtextlib.ui.RichTextView;
 public class MainActivity extends ActionBarActivity implements UrlBitmapSpan.UrlBitmapDownloader {
 
 
-    private class SimpleTargetBitmap extends SimpleTarget<Bitmap> {
+
+
+
+    private class SimpleTargetDrawable extends SimpleTarget<GlideDrawable> {
 
         private UrlBitmapSpan mUrlBitmapSpan;
 
-        SimpleTargetBitmap(UrlBitmapSpan span){
+        SimpleTargetDrawable(UrlBitmapSpan span){
             super();
             mUrlBitmapSpan = span;
         }
 
         @Override
-        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-            mUrlBitmapSpan.updateBitmap(resource);
+        public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
+            mUrlBitmapSpan.updateBitmap(MainActivity.this, resource);
 
+            resource.start();
         }
     };
 
@@ -120,7 +127,7 @@ public class MainActivity extends ActionBarActivity implements UrlBitmapSpan.Url
 
         final ArrayList<Object> obs = new ArrayList<>();
 
-        String html = ReadFromfile("complete_set.html");
+        String html = ReadFromfile("joe.html");
 
        final JSONArray output = new JSONArray();
 
@@ -138,7 +145,7 @@ public class MainActivity extends ActionBarActivity implements UrlBitmapSpan.Url
 
 
                     if (type == RichText.TNodeType.EText) {
-                       // ((RichTextView) findViewById(R.id.textView)).setText((SpannableStringBuilder)content);
+                        ((RichTextView) findViewById(R.id.textView)).setText((SpannableStringBuilder)content);
                         content = Html.toHtml((SpannableStringBuilder) content);
                     }
 
@@ -256,7 +263,7 @@ public class MainActivity extends ActionBarActivity implements UrlBitmapSpan.Url
 
 
 
-        ((ListView) findViewById(R.id.list)).setAdapter(adapter);
+        //((ListView) findViewById(R.id.list)).setAdapter(adapter);
 
     }
 
@@ -286,6 +293,6 @@ public class MainActivity extends ActionBarActivity implements UrlBitmapSpan.Url
 
     @Override
     public void downloadImage(UrlBitmapSpan urlBitmapSpan, Uri image) {
-        Glide.with(this).load(image).asBitmap().into(new SimpleTargetBitmap(urlBitmapSpan));
+        Glide.with(this).load(image).into(new SimpleTargetDrawable(urlBitmapSpan));
     }
 }
