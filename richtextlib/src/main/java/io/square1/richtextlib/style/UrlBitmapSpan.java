@@ -7,8 +7,10 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Parcel;
+
 import android.text.style.ReplacementSpan;
 import android.text.style.UpdateAppearance;
+import android.view.View;
 
 
 import java.lang.ref.WeakReference;
@@ -19,7 +21,8 @@ import io.square1.richtextlib.util.UniqueId;
 /**
  * Created by roberto on 23/06/15.
  */
-public class UrlBitmapSpan extends ReplacementSpan implements UpdateAppearance, P2ParcelableSpan {
+public class UrlBitmapSpan extends ReplacementSpan implements ClickableSpan, UpdateAppearance, P2ParcelableSpan {
+
 
     public interface UrlBitmapDownloader {
          void downloadImage(UrlBitmapSpan urlBitmapSpan , Uri image);

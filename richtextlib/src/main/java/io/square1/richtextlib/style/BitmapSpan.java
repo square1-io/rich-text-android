@@ -14,7 +14,7 @@ import io.square1.richtextlib.util.UniqueId;
 /**
  * Created by roberto on 23/06/15.
  */
-public class BitmapSpan extends ReplacementSpan implements P2ParcelableSpan {
+public class BitmapSpan extends ReplacementSpan implements P2ParcelableSpan , ClickableSpan {
 
 
 

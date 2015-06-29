@@ -9,12 +9,14 @@ import android.text.Spanned;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
+import io.square1.richtextlib.style.ClickableSpan;
 import io.square1.richtextlib.style.P2ParcelableSpan;
 
 /**
  * Created by roberto on 24/06/15.
  */
-public class RichTextView extends TextView {
+public class RichTextView extends TextView implements RichTextLinkMovementMethod.Observer {
+
 
     public interface RichTextContentChanged {
         void onContentChanged(RichTextView view);
@@ -42,15 +44,15 @@ public class RichTextView extends TextView {
         init();
     }
 
-    private void init(){
 
+    private void init(){
+        setMovementMethod( new RichTextLinkMovementMethod(this));
         mSpans = getAllSpans();
         mHandler = new Handler(){
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 invalidate();
-               // setText("kkkkkkkkk");
 
             }
         };
@@ -122,6 +124,11 @@ public class RichTextView extends TextView {
         }
 
         return new P2ParcelableSpan[0];
+    }
+
+    @Override
+    public void onSpansClicked(ClickableSpan[] spans) {
+
     }
 
 }
