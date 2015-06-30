@@ -830,28 +830,28 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
             return mSpannableStringBuilder;
         }
 
-//        Matcher m = Patterns.WEB_URL.matcher(mAccumulatedText);
-//
-//        while (m.find()) {
-//            //link found
-//            int matchStart = m.start();
-//            int matchEnd = m.end();
-//
-//            //any text in between ?
-//            StringBuffer buffer = new StringBuffer();
-//            m.appendReplacement(buffer, "");
-//            mSpannableStringBuilder.append(buffer);
-//
-//            CharSequence link = mAccumulatedText.subSequence( matchStart, matchEnd);
-//            if( EmbedUtils.parseLink(mAccumulatedText, String.valueOf(link), this) == false){
-//                mSpannableStringBuilder.append(link);
-//            }
-//
-//        }
-//        StringBuffer buffer = new StringBuffer();
-//        m.appendTail(buffer);
-//        mSpannableStringBuilder.append(buffer);
-//        mAccumulatedText.setLength(0);
+        Matcher m = Patterns.WEB_URL.matcher(mAccumulatedText);
+
+        while (m.find()) {
+            //link found
+            int matchStart = m.start();
+            int matchEnd = m.end();
+
+            //any text in between ?
+            StringBuffer buffer = new StringBuffer();
+            m.appendReplacement(buffer, "");
+            mSpannableStringBuilder.append(buffer);
+
+            CharSequence link = mAccumulatedText.subSequence( matchStart, matchEnd);
+           // if( EmbedUtils.parseLink(mAccumulatedText, String.valueOf(link), this) == false){
+                mSpannableStringBuilder.append(link);
+           // }
+
+        }
+        StringBuffer buffer = new StringBuffer();
+        m.appendTail(buffer);
+        mSpannableStringBuilder.append(buffer);
+        mAccumulatedText.setLength(0);
 
         return mSpannableStringBuilder;
     }
