@@ -1,8 +1,10 @@
 package io.square1.richtextlib.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Spannable;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 
 import io.square1.richtextlib.style.ClickableSpan;
 import io.square1.richtextlib.style.P2ParcelableSpan;
+import io.square1.richtextlib.style.YouTubeSpan;
 
 /**
  * Created by roberto on 24/06/15.
@@ -133,6 +136,17 @@ public class RichTextView extends TextView implements RichTextLinkMovementMethod
 
     @Override
     public void onSpansClicked(ClickableSpan[] spans) {
+
+        if(spans == null) return;
+
+        for(ClickableSpan span : spans){
+
+            if(span instanceof YouTubeSpan){
+                String id = ((YouTubeSpan)span).getYoutubeId();
+                this.getContext().
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" + id)));
+            }
+        }
 
     }
 

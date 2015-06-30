@@ -39,6 +39,7 @@ import java.util.regex.Pattern;
 
 import io.square1.richtextlib.parser.StringTokenizer;
 import io.square1.richtextlib.style.*;
+import io.square1.richtextlib.util.NumberUtils;
 
 /**
  * This class processes HTML strings into displayable styled text.
@@ -49,6 +50,8 @@ public class RichText {
     public static final String EMBED_TYPE = "EMBED_TYPE";
     public static final String IMAGE_WIDTH = "width";
     public static final String  IMAGE_HEIGHT = "height";
+
+    public final static String NO_SPACE_CHAR = "\uFFFC";
 
     public enum TNodeType {
         EText,
@@ -149,12 +152,18 @@ public class RichText {
                                 String source,
                                 RichTextCallback callback,
                                 UrlBitmapDownloader downloader) {
+
         final Style defaultStyle = new DefaultStyle(context);
         fromHtml( context, source, defaultStyle,callback,downloader);
 
     }
 
-    public static void fromHtml(Context context, String source,Style style, RichTextCallback callback, UrlBitmapDownloader downloader) {
+    public static void fromHtml(Context context,
+                                String source,
+                                Style style,
+                                RichTextCallback callback,
+                                UrlBitmapDownloader downloader) {
+
         fromHtml(context, source, style, callback,downloader, false);
 
     }
@@ -173,7 +182,7 @@ public class RichText {
     final static String SOUND_CLOUD = "\\[soundcloud (.*?)\\]";
     final static String SOUND_CLOUD_REPLACEMENT = "<soundcloud $1 />";
 
-    final static Pattern pattern = Pattern.compile(SOUND_CLOUD);
+
 
     private static void fromHtml(Context context,
                                  String source,
@@ -539,8 +548,8 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
         UrlBitmapSpan imageDrawable = new UrlBitmapSpan(Uri.parse(src),
                 mDownloader,
-                Integer.valueOf(attributes.getValue("width")),
-                Integer.valueOf(attributes.getValue("height")) ,
+                NumberUtils.parseImageDimension(attributes.getValue("width")),
+                NumberUtils.parseImageDimension(attributes.getValue("height")),
                         mStyle.maxImageWidth() );
 
         int len = mSpannableStringBuilder.length();
@@ -645,7 +654,10 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
     private void startYoutube(SpannableStringBuilder text,String youtubeId){
         int len = text.length();
-        text.setSpan(new YouTubeSpan(youtubeId, mDownloader), len, len, Spannable.SPAN_MARK_MARK);
+        text.append(NO_SPACE_CHAR);
+        text.setSpan(new YouTubeSpan(youtubeId,mStyle.maxImageWidth(), mDownloader),
+                len, text.length(),
+                Spannable.SPAN_MARK_MARK);
     }
 
     private void endYouTube(SpannableStringBuilder text){

@@ -18,6 +18,7 @@ import java.lang.ref.WeakReference;
 import io.square1.richtextlib.EmbedUtils;
 import io.square1.richtextlib.R;
 import io.square1.richtextlib.ui.RichTextView;
+import io.square1.richtextlib.util.NumberUtils;
 import io.square1.richtextlib.util.UniqueId;
 
 /**
@@ -33,12 +34,30 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
     private UrlBitmapDownloader mUrlBitmapDownloader;
     private Drawable mBitmap;
     private Drawable mYoutubeIcon;
+    private int mImageHeight;
+    private int mImageWidth;
+    private int mMaxImageWidth;
 
-    public YouTubeSpan(String youtubeId, UrlBitmapDownloader downloader){
+    private String mYoutubeId;
+
+    public String getYoutubeId(){
+        return mYoutubeId;
+    }
+
+    public YouTubeSpan(String youtubeId, int maxWidth, UrlBitmapDownloader downloader){
         super();
+        mYoutubeId = youtubeId;
+        mImageWidth = mImageHeight = NumberUtils.INVALID;
+        mMaxImageWidth = maxWidth;
         mUrlBitmapDownloader = downloader;
+
         mImage = Uri.parse(EmbedUtils.getYoutubeThumbnailUrl(youtubeId));
-        ensureNotNullPlaceHolder();
+
+    }
+
+
+    private boolean imageSizeKnown(){
+        return (mImageWidth != NumberUtils.INVALID );
     }
 
     private void ensureNotNullPlaceHolder(){
@@ -54,9 +73,14 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
     }
 
     public Rect getBitmapSize(){
-        int measured =  mRef.get().getMeasuredWidth();
-        double height = (double)measured * (double)9 / (double)16;
-        return new Rect(0, 0, measured, (int)height);
+
+
+        int measured = mMaxImageWidth;
+
+        double rate = (double)measured / (double)mImageWidth;
+        return new Rect(0, 0, measured, (int)(mImageHeight * rate));
+
+
     }
 
 
@@ -73,11 +97,12 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
     WeakReference<RichTextView> mRef;
     @Override
     public void onSpannedSetToView(RichTextView view) {
+        if(mYoutubeIcon == null){
+            mYoutubeIcon = view.getContext().getResources().getDrawable(R.drawable.youtube_play);
+            mYoutubeIcon.setBounds(0,0,mYoutubeIcon.getIntrinsicWidth(),mYoutubeIcon.getIntrinsicHeight());
+        }
         mAttachedToWindow = view.isAttachedToWindow();
         mRef = new WeakReference(view);
-        if(mYoutubeIcon == null){
-            mYoutubeIcon = view.getResources().getDrawable(R.drawable.youtube_play);
-        }
         loadImage();
     }
 
@@ -119,7 +144,7 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
             fm.bottom = 0;
         }
 
-        return rect.width();
+        return mMaxImageWidth;
     }
 
 
@@ -127,13 +152,15 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
     @Override
     public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
 
-        final Rect bitmapBounds = getBitmapSize();
 
-        int transY = bottom - bitmapBounds.bottom;
+        mRect = getBitmapSize();;
+
+        int transY = bottom - mRect.bottom;
         transY -= paint.getFontMetricsInt().descent;
 
+
         canvas.save();
-        mRect = getBitmapSize();
+
         //center
         x = (mRef.get().getMeasuredWidth() - mRect.width()) / 2;
         canvas.translate(x, transY);
@@ -142,10 +169,18 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
         }
         canvas.restore();
 
-        if(mYoutubeIcon != null){
-            mYoutubeIcon.draw(canvas);
-        }
+        drawIcon(canvas);
 
+    }
+
+    private void drawIcon(Canvas c){
+        c.save();
+
+        Rect rect = mYoutubeIcon.copyBounds();
+        int x = (mRef.get().getMeasuredWidth() - rect.width()) / 2;
+        c.translate(x, (mRef.get().getMeasuredHeight() - rect.height()) / 2);
+        mYoutubeIcon.draw(c);
+        c.restore();
     }
 
     private Rect mRect = null;
@@ -154,13 +189,25 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
     private boolean mAttachedToWindow = false;
 
 
+    @Override
     public void updateBitmap(Context context, Drawable bitmap){
         mBitmap = bitmap;
+        boolean needsLayout = false;
+        if(imageSizeKnown() == false) {
+            needsLayout = true;
+            mImageWidth = bitmap.getIntrinsicWidth();
+            mImageHeight = bitmap.getIntrinsicHeight();
+        }
         mBitmap.setBounds(getBitmapSize());
         final RichTextView view = mRef.get();
+
         if(view != null && mAttachedToWindow){
             mBitmap.setCallback(view);
             mBitmap.invalidateSelf();
+
+            if(needsLayout == true){
+                view.requestLayout();
+            }
             view.invalidate();
         }
     }
@@ -172,7 +219,6 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
             mUrlBitmapDownloader.downloadImage(this,mImage);
         }
     }
-
 
 
 }

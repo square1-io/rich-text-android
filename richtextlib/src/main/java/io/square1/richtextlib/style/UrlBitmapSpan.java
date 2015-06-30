@@ -20,6 +20,7 @@ import android.view.View;
 import java.lang.ref.WeakReference;
 
 import io.square1.richtextlib.ui.RichTextView;
+import io.square1.richtextlib.util.NumberUtils;
 import io.square1.richtextlib.util.UniqueId;
 
 /**
@@ -48,7 +49,6 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
     protected final int mVerticalAlignment;
 
     private int mMaxImageWidth;
-    private int mMaxImageHeight;
 
     private int mImageWidth;
     private int mImageHeight;
@@ -77,6 +77,10 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
         }
 
         ensureNotNullPlaceHolder();
+    }
+
+    private boolean imageSizeKnown(){
+        return (mImageWidth != NumberUtils.INVALID );
     }
 
     private void ensureNotNullPlaceHolder(){
@@ -210,11 +214,22 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
     @Override
     public void updateBitmap(Context context, Drawable bitmap){
         mBitmap = bitmap;
+        boolean needsLayout = false;
+        if(imageSizeKnown() == false) {
+            needsLayout = true;
+            mImageWidth = bitmap.getIntrinsicWidth();
+            mImageHeight = bitmap.getIntrinsicHeight();
+        }
         mBitmap.setBounds(getBitmapSize());
         final RichTextView view = mRef.get();
+
         if(view != null && mAttachedToWindow){
             mBitmap.setCallback(view);
             mBitmap.invalidateSelf();
+
+            if(needsLayout == true){
+                view.requestLayout();
+            }
             view.invalidate();
         }
     }
