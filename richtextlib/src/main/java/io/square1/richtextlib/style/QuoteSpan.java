@@ -45,7 +45,7 @@ public class QuoteSpan extends MetricAffectingSpan implements /*LineHeightSpan,*
                Bitmap.createBitmap(10,10, Bitmap.Config.RGB_565));
     }
 
-    public QuoteSpan( Bitmap quoteSign) {
+    public QuoteSpan(Bitmap quoteSign) {
         this(0xff0000ff, quoteSign);
     }
 

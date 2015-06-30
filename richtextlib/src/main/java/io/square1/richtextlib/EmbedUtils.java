@@ -148,5 +148,9 @@ public class EmbedUtils {
     }
 
 
+    public static String getYoutubeThumbnailUrl(String videoId){
+        return  String.format("http://img.youtube.com/vi/%s/hqdefault.jpg", videoId);
+    }
+
 
 }

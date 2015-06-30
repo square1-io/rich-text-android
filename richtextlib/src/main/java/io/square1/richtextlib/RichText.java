@@ -81,8 +81,18 @@ public class RichText {
         }
 
         @Override
+        public int getQuoteBackgroundColor() {
+            return Color.parseColor("#d3d3d3");
+        }
+
+        @Override
         public int headerColor() {
             return Color.BLACK;
+        }
+
+        @Override
+        public int backgroundColor() {
+            return Color.WHITE;
         }
 
         @Override
@@ -135,26 +145,41 @@ public class RichText {
      */
 
 
-    public static void fromHtml(Context context, String source, RichTextCallback callback, UrlBitmapSpan.UrlBitmapDownloader downloader) {
-        Style defaultStyle = new DefaultStyle(context);
-        fromHtml(context, source, defaultStyle, callback,downloader, false);
+    public static void fromHtml(Context context,
+                                String source,
+                                RichTextCallback callback,
+                                UrlBitmapDownloader downloader) {
+        final Style defaultStyle = new DefaultStyle(context);
+        fromHtml( context, source, defaultStyle,callback,downloader);
 
     }
 
-    public static void fromHtml(Context context, String source, RichTextCallback callback, UrlBitmapSpan.UrlBitmapDownloader downloader, boolean parseWordPressTags) {
-        Style defaultStyle = new DefaultStyle(context);
-        fromHtml(context, source, defaultStyle, callback, downloader, parseWordPressTags);
+    public static void fromHtml(Context context, String source,Style style, RichTextCallback callback, UrlBitmapDownloader downloader) {
+        fromHtml(context, source, style, callback,downloader, false);
+
+    }
+
+    public static void fromHtml(Context context,
+                                String source,
+                                RichTextCallback callback,
+                                Style style,
+                                UrlBitmapDownloader downloader,
+                                boolean parseWordPressTags) {
+
+        fromHtml(context, source, style, callback, downloader, parseWordPressTags);
 
     }
 
     final static String SOUND_CLOUD = "\\[soundcloud (.*?)\\]";
+    final static String SOUND_CLOUD_REPLACEMENT = "<soundcloud $1 />";
+
     final static Pattern pattern = Pattern.compile(SOUND_CLOUD);
 
     private static void fromHtml(Context context,
                                  String source,
                                  Style style,
                                  RichTextCallback callback,
-                                 UrlBitmapSpan.UrlBitmapDownloader downloader,
+                                 UrlBitmapDownloader downloader,
                                  boolean parseWordPressTags)  {
 
         HtmlToSpannedConverter converter = null;
@@ -168,11 +193,15 @@ public class RichText {
                 reader = new StringTokenizer(new char[]{'<', '['}, new char[]{'>', ']'});
             }
 
-            String string = source.replaceAll(SOUND_CLOUD,"<soundcloud $1 />");
-            Matcher m = pattern.matcher(source);
+            if(parseWordPressTags == true) {
 
-            while (m.find() == true){
-                m.groupCount();
+                source = source.replaceAll(SOUND_CLOUD,
+                        SOUND_CLOUD_REPLACEMENT);
+
+               // Matcher m = pattern.matcher(source);
+              //  while (m.find() == true) {
+              //      m.groupCount();
+              //  }
             }
 
             converter = new HtmlToSpannedConverter(source, reader, style, callback, downloader);
@@ -200,14 +229,14 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     private StringBuilder mAccumulatedText;
     private SpannableStringBuilder mSpannableStringBuilder;
     private RichText.RichTextCallback mCallback;
-    private UrlBitmapSpan.UrlBitmapDownloader mDownloader;
+    private UrlBitmapDownloader mDownloader;
     private Style mStyle;
 
     public HtmlToSpannedConverter(String source,
                                   XMLReader reader,
                                   Style style,
                                   RichText.RichTextCallback callback,
-                                  UrlBitmapSpan.UrlBitmapDownloader dowloader) {
+                                  UrlBitmapDownloader dowloader) {
         mStyle = style;
         mCallback = callback;
         mDownloader = dowloader;
@@ -286,7 +315,9 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
     private void applyStartTag(SpannableStringBuilder spannable, String tag, Attributes attributes) {
 
-        if (tag.equalsIgnoreCase("br")) {
+        if (tag.equalsIgnoreCase("root")) {
+            handleStartRoot(spannable);
+        } else if (tag.equalsIgnoreCase("br")) {
             // We don't need to handle this. TagSoup will ensure that there's a </br> for each <br>
             // so we can safely emite the linebreaks when we handle the close tag.
         } else if (tag.equalsIgnoreCase("p")) {
@@ -323,7 +354,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         } else if (tag.equalsIgnoreCase("sup")) {
             start(spannable, new Super());
         }else  if(tag.equalsIgnoreCase("iframe")){
-            startIFrame(spannable,attributes);
+            startIFrame(spannable, attributes);
         } else  if(tag.equalsIgnoreCase("soundcloud")){
           startSoundCloud(spannable, attributes);
         } else if (tag.equalsIgnoreCase("sub")) {
@@ -349,7 +380,10 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     }
     private void applyEndTag(SpannableStringBuilder spannable, String tag) {
 
-        if (tag.equalsIgnoreCase("br")) {
+        if (tag.equalsIgnoreCase("root")) {
+            handleEndRoot(spannable);
+        }
+        else if (tag.equalsIgnoreCase("br")) {
             handleBr(spannable);
         } else if (tag.equalsIgnoreCase("p")) {
             handleP(spannable);
@@ -400,7 +434,27 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 //        }
     }
 
+
+    private  void handleStartRoot(SpannableStringBuilder spannable){
+       // start(spannable, new Background(mStyle.backgroundColor()));
+    }
+
+    private  void handleEndRoot(SpannableStringBuilder text){
+
+//        int len = text.length();
+//        Background obj = (Background)getLast(text, Background.class);
+//        int where = text.getSpanStart(obj);
+//        text.removeSpan(obj);
+//
+//        BackgroundColorSpan repl = new BackgroundColorSpan(obj != null ? obj.mColor : 0);
+//
+//        if (where != len) {
+//            text.setSpan(repl, where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//        }
+    }
+
     private static void handleP(SpannableStringBuilder text) {
+
         int len = text.length();
 
         if (len >= 1 && text.charAt(len - 1) == '\n') {
@@ -466,7 +520,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
             StyleSpan styleSpan = new StyleSpan(Typeface.ITALIC);
             text.setSpan(styleSpan, where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-            QuoteSpan quoteSpan = new QuoteSpan(mStyle.quoteBitmap());
+            QuoteSpan quoteSpan = new QuoteSpan(mStyle.getQuoteBackgroundColor(),mStyle.quoteBitmap());
             text.setSpan(quoteSpan, where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
     }
@@ -584,8 +638,33 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         }
     }
 
-    private static void endIFrame(SpannableStringBuilder text) {
+    private  void endIFrame(SpannableStringBuilder text) {
+        endYouTube(text);
         endA(text);
+    }
+
+    private void startYoutube(SpannableStringBuilder text,String youtubeId){
+        int len = text.length();
+        text.setSpan(new YouTubeSpan(youtubeId, mDownloader), len, len, Spannable.SPAN_MARK_MARK);
+    }
+
+    private void endYouTube(SpannableStringBuilder text){
+        int len = text.length();
+        Object obj = getLast(text, YouTubeSpan.class);
+        int where = text.getSpanStart(obj);
+
+        text.removeSpan(obj);
+
+        if (where != len) {
+
+            if(obj == null){
+                return;
+            }
+
+            YouTubeSpan h = (YouTubeSpan) obj;
+            text.setSpan(h, where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        }
     }
 
     private  void startSoundCloud(SpannableStringBuilder text, Attributes attributes) {
@@ -739,28 +818,28 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
             return mSpannableStringBuilder;
         }
 
-        Matcher m = Patterns.WEB_URL.matcher(mAccumulatedText);
-
-        while (m.find()) {
-            //link found
-            int matchStart = m.start();
-            int matchEnd = m.end();
-
-            //any text in between ?
-            StringBuffer buffer = new StringBuffer();
-            m.appendReplacement(buffer, "");
-            mSpannableStringBuilder.append(buffer);
-
-            CharSequence link = mAccumulatedText.subSequence( matchStart, matchEnd);
-            if( EmbedUtils.parseLink(mAccumulatedText, String.valueOf(link), this) == false){
-                mSpannableStringBuilder.append(link);
-            }
-
-        }
-        StringBuffer buffer = new StringBuffer();
-        m.appendTail(buffer);
-        mSpannableStringBuilder.append(buffer);
-        mAccumulatedText.setLength(0);
+//        Matcher m = Patterns.WEB_URL.matcher(mAccumulatedText);
+//
+//        while (m.find()) {
+//            //link found
+//            int matchStart = m.start();
+//            int matchEnd = m.end();
+//
+//            //any text in between ?
+//            StringBuffer buffer = new StringBuffer();
+//            m.appendReplacement(buffer, "");
+//            mSpannableStringBuilder.append(buffer);
+//
+//            CharSequence link = mAccumulatedText.subSequence( matchStart, matchEnd);
+//            if( EmbedUtils.parseLink(mAccumulatedText, String.valueOf(link), this) == false){
+//                mSpannableStringBuilder.append(link);
+//            }
+//
+//        }
+//        StringBuffer buffer = new StringBuffer();
+//        m.appendTail(buffer);
+//        mSpannableStringBuilder.append(buffer);
+//        mAccumulatedText.setLength(0);
 
         return mSpannableStringBuilder;
     }
@@ -776,6 +855,11 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
     @Override
     public void onLinkParsed(Object callingObject, String result, EmbedUtils.TEmbedType type) {
+
+        if(type == EmbedUtils.TEmbedType.EYoutube){
+            startYoutube(mSpannableStringBuilder,result);
+            return;
+        }
         //we have to remove embeds from quotes tags
         buildNewSpannable();
         HashMap<String,Object> attrs = new HashMap<>();
@@ -794,6 +878,14 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     private static class Blockquote { }
     private static class Super { }
     private static class Sub { }
+
+    private static class Background {
+
+        public  int mColor;
+        public Background(int color){
+            mColor = color;
+        }
+    }
 
     private static class Font {
         public String mColor;

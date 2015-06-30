@@ -2,11 +2,9 @@ package io.square1.richtextlib.style;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 
-import io.square1.richtextlib.R;
+
+
 
 /**
  * Created by roberto on 17/06/15.
@@ -24,9 +22,21 @@ public interface Style {
      Bitmap quoteBitmap();
 
     /**
+     * get the background color for a quote tag
+     * @return
+     */
+    int getQuoteBackgroundColor();
+
+    /**
      * text color to be used for H1... headers
      */
      int headerColor();
+
+    /**
+     * The color to be used as the main background
+     * @return
+     */
+    int backgroundColor();
     int maxImageWidth();
     int maxImageHeight();
 }

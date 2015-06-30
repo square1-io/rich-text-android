@@ -27,6 +27,7 @@ public class RichTextView extends TextView implements RichTextLinkMovementMethod
     private Spannable mSpannable;
     private RichTextContentChanged mRichTextContentChanged;
     private Handler mHandler;
+    private boolean mAttachedToWindow;
 
     public RichTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -47,6 +48,7 @@ public class RichTextView extends TextView implements RichTextLinkMovementMethod
 
 
     private void init(){
+        mAttachedToWindow = false;
         setMovementMethod( new RichTextLinkMovementMethod(this));
         mSpans = getAllSpans();
         mHandler = new Handler(){
@@ -61,6 +63,7 @@ public class RichTextView extends TextView implements RichTextLinkMovementMethod
 
    @Override
     public void onAttachedToWindow(){
+       mAttachedToWindow = true;
        super.onAttachedToWindow();
 
        for(P2ParcelableSpan span : mSpans){
@@ -70,6 +73,7 @@ public class RichTextView extends TextView implements RichTextLinkMovementMethod
 
     @Override
     public void onDetachedFromWindow(){
+        mAttachedToWindow = false;
         super.onDetachedFromWindow();
 
         for(P2ParcelableSpan span : mSpans){
@@ -137,6 +141,10 @@ public class RichTextView extends TextView implements RichTextLinkMovementMethod
         super.invalidateDrawable(drawable);
         /// this really needs to be checked for the impact it could have on performances
         invalidate();
+    }
+
+    public final boolean isAttachedToWindow(){
+        return mAttachedToWindow;
     }
 
 }

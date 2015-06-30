@@ -6,76 +6,38 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.drawable.AnimatedStateListDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Parcel;
-
 import android.text.style.ReplacementSpan;
 import android.text.style.UpdateAppearance;
-import android.view.View;
-
 
 import java.lang.ref.WeakReference;
 
+import io.square1.richtextlib.EmbedUtils;
+import io.square1.richtextlib.R;
 import io.square1.richtextlib.ui.RichTextView;
 import io.square1.richtextlib.util.UniqueId;
 
 /**
  * Created by roberto on 23/06/15.
  */
-public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, ClickableSpan, UpdateAppearance, P2ParcelableSpan {
+public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, ClickableSpan, UpdateAppearance, P2ParcelableSpan {
 
-
-
-    public static final Creator<UrlBitmapSpan> CREATOR  = P2ParcelableCreator.get(UrlBitmapSpan.class);
+    public static final Creator<YouTubeSpan> CREATOR  = P2ParcelableCreator.get(YouTubeSpan.class);
     public static final int TYPE = UniqueId.getType();
 
-    /**
-     * A constant indicating that the bottom of this span should be aligned
-     * with the bottom of the surrounding text, i.e., at the same level as the
-     * lowest descender in the text.
-     */
-    public static final int ALIGN_BOTTOM = 0;
-
-    /**
-     * A constant indicating that the bottom of this span should be aligned
-     * with the baseline of the surrounding text.
-     */
-    public static final int ALIGN_BASELINE = 1;
-
-    protected final int mVerticalAlignment;
-
-    private int mMaxImageWidth;
-    private int mMaxImageHeight;
-
-    private int mImageWidth;
-    private int mImageHeight;
 
     private Uri mImage;
     private UrlBitmapDownloader mUrlBitmapDownloader;
     private Drawable mBitmap;
+    private Drawable mYoutubeIcon;
 
-    public UrlBitmapSpan(Uri image, UrlBitmapDownloader downloader, int imageWidth, int imageHeight, int maxImageWidth){
-        this(null,downloader,image, imageWidth,imageHeight,maxImageWidth,ALIGN_BOTTOM);
-
-    }
-    public UrlBitmapSpan(Bitmap bitmap, UrlBitmapDownloader downloader, Uri image, int imageWidth, int imageHeight, int maxImageWidth, int alignment){
+    public YouTubeSpan(String youtubeId, UrlBitmapDownloader downloader){
         super();
         mUrlBitmapDownloader = downloader;
-        mImage = image;
-        mMaxImageWidth = maxImageWidth;
-        mImageWidth = imageWidth;
-        mImageHeight = imageHeight;
-
-        mVerticalAlignment = alignment;
-
-        if(bitmap != null) {
-            mBitmap = new BitmapDrawable(bitmap);
-            mBitmap.setBounds(getBitmapSize());
-        }
-
+        mImage = Uri.parse(EmbedUtils.getYoutubeThumbnailUrl(youtubeId));
         ensureNotNullPlaceHolder();
     }
 
@@ -92,27 +54,11 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
     }
 
     public Rect getBitmapSize(){
-
-
-        int measured = mMaxImageWidth;
-
-       // if(mImageWidth > measured) {
-            double rate = (double)measured / (double)mImageWidth;
-            return new Rect(0, 0, measured, (int)(mImageHeight * rate));
-       // }
-
-      //  return new Rect(0, 0, mImageWidth, mImageHeight);
+        int measured =  mRef.get().getMeasuredWidth();
+        double height = (double)measured * (double)9 / (double)16;
+        return new Rect(0, 0, measured, (int)height);
     }
 
-//    public Rect getAvailableSize(){
-//
-//        if(mImageWidth > mMaxImageWidth) {
-//            double rate = mMaxImageWidth / mImageWidth;
-//            return new Rect(0, 0, mRef.get().getMeasuredWidth(), (int)(mImageHeight * rate));
-//        }
-//
-//        return new Rect(0, 0, mRef.get().getMeasuredWidth() , mImageHeight);
-//    }
 
     @Override
     public int getType() {
@@ -129,6 +75,9 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
     public void onSpannedSetToView(RichTextView view) {
         mAttachedToWindow = view.isAttachedToWindow();
         mRef = new WeakReference(view);
+        if(mYoutubeIcon == null){
+            mYoutubeIcon = view.getResources().getDrawable(R.drawable.youtube_play);
+        }
         loadImage();
     }
 
@@ -170,7 +119,7 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
             fm.bottom = 0;
         }
 
-        return mMaxImageWidth;
+        return rect.width();
     }
 
 
@@ -178,15 +127,10 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
     @Override
     public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
 
-
         final Rect bitmapBounds = getBitmapSize();
 
         int transY = bottom - bitmapBounds.bottom;
-        if (mVerticalAlignment == ALIGN_BASELINE) {
-            transY -= paint.getFontMetricsInt().descent;
-        }
-
-
+        transY -= paint.getFontMetricsInt().descent;
 
         canvas.save();
         mRect = getBitmapSize();
@@ -196,8 +140,11 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
         if(mBitmap != null) {
             mBitmap.draw(canvas);
         }
-        //canvas.drawBitmap(mBitmap,null,getBitmapSize(),null);
         canvas.restore();
+
+        if(mYoutubeIcon != null){
+            mYoutubeIcon.draw(canvas);
+        }
 
     }
 
@@ -207,7 +154,6 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
     private boolean mAttachedToWindow = false;
 
 
-    @Override
     public void updateBitmap(Context context, Drawable bitmap){
         mBitmap = bitmap;
         mBitmap.setBounds(getBitmapSize());
