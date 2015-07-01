@@ -25,11 +25,11 @@ import io.square1.richtextlib.util.ArrayUtils;
 /**
  * This is the class for text whose content and markup can both be changed.
  */
-public class SpannedStore implements CharSequence, GetChars, Spannable, Editable, Appendable , Parcelable {
+public class ParcelableSpannedBuilder implements CharSequence, GetChars, Spannable, Editable, Appendable , Parcelable {
     /**
      * Create a new SpannableStringBuilder with empty contents
      */
-    public SpannedStore() {
+    public ParcelableSpannedBuilder() {
         this("");
     }
 
@@ -37,7 +37,7 @@ public class SpannedStore implements CharSequence, GetChars, Spannable, Editable
      * Create a new SpannableStringBuilder containing a copy of the
      * specified text, including its spans if any.
      */
-    public SpannedStore(CharSequence text) {
+    public ParcelableSpannedBuilder(CharSequence text) {
         this(text, 0, text.length());
     }
 
@@ -45,7 +45,7 @@ public class SpannedStore implements CharSequence, GetChars, Spannable, Editable
      * Create a new SpannableStringBuilder containing a copy of the
      * specified slice of the specified text, including its spans if any.
      */
-    public SpannedStore(CharSequence text, int start, int end) {
+    public ParcelableSpannedBuilder(CharSequence text, int start, int end) {
         int srclen = end - start;
 
         int len = ArrayUtils.idealCharArraySize(srclen + 1);
@@ -200,18 +200,18 @@ public class SpannedStore implements CharSequence, GetChars, Spannable, Editable
     }
 
     // Documentation from interface
-    public SpannedStore insert(int where, CharSequence tb, int start, int end) {
+    public ParcelableSpannedBuilder insert(int where, CharSequence tb, int start, int end) {
         return replace(where, where, tb, start, end);
     }
 
     // Documentation from interface
-    public SpannedStore insert(int where, CharSequence tb) {
+    public ParcelableSpannedBuilder insert(int where, CharSequence tb) {
         return replace(where, where, tb, 0, tb.length());
     }
 
     // Documentation from interface
-    public SpannedStore delete(int start, int end) {
-        SpannedStore ret = replace(start, end, "", 0, 0);
+    public ParcelableSpannedBuilder delete(int start, int end) {
+        ParcelableSpannedBuilder ret = replace(start, end, "", 0, 0);
 
         if (mGapLength > 2 * length())
             resizeFor(length());
@@ -244,19 +244,19 @@ public class SpannedStore implements CharSequence, GetChars, Spannable, Editable
     }
 
     // Documentation from interface
-    public SpannedStore append(CharSequence text) {
+    public ParcelableSpannedBuilder append(CharSequence text) {
         int length = length();
         return replace(length, length, text, 0, text.length());
     }
 
     // Documentation from interface
-    public SpannedStore append(CharSequence text, int start, int end) {
+    public ParcelableSpannedBuilder append(CharSequence text, int start, int end) {
         int length = length();
         return replace(length, length, text, start, end);
     }
 
     // Documentation from interface
-    public SpannedStore append(char text) {
+    public ParcelableSpannedBuilder append(char text) {
         return append(String.valueOf(text));
     }
 
@@ -414,12 +414,12 @@ public class SpannedStore implements CharSequence, GetChars, Spannable, Editable
     }
 
     // Documentation from interface
-    public SpannedStore replace(int start, int end, CharSequence tb) {
+    public ParcelableSpannedBuilder replace(int start, int end, CharSequence tb) {
         return replace(start, end, tb, 0, tb.length());
     }
 
     // Documentation from interface
-    public SpannedStore replace(final int start, final int end,
+    public ParcelableSpannedBuilder replace(final int start, final int end,
                                           CharSequence tb, int tbstart, int tbend) {
         int filtercount = mFilters.length;
         for (int i = 0; i < filtercount; i++) {
@@ -978,18 +978,18 @@ public class SpannedStore implements CharSequence, GetChars, Spannable, Editable
     private static final int END_MASK = 0x0F;
     private static final int START_SHIFT = 4;
 
-    public static final Parcelable.Creator<SpannedStore> CREATOR  = new Parcelable.Creator<SpannedStore>() {
+    public static final Parcelable.Creator<ParcelableSpannedBuilder> CREATOR  = new Parcelable.Creator<ParcelableSpannedBuilder>() {
 
-        public SpannedStore createFromParcel(Parcel in) {
-            return new SpannedStore(in);
+        public ParcelableSpannedBuilder createFromParcel(Parcel in) {
+            return new ParcelableSpannedBuilder(in);
         }
 
-        public SpannedStore[] newArray(int size) {
-            return new SpannedStore[size];
+        public ParcelableSpannedBuilder[] newArray(int size) {
+            return new ParcelableSpannedBuilder[size];
         }
     };
 
-    private SpannedStore(Parcel in) {
+    private ParcelableSpannedBuilder(Parcel in) {
         readFromParcel(in);
     }
 

@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import io.square1.richtextlib.RichText;
-import io.square1.richtextlib.SpannedStore;
+import io.square1.richtextlib.ParcelableSpannedBuilder;
 import io.square1.richtextlib.style.RemoteBitmapSpan;
 import io.square1.richtextlib.style.UrlBitmapDownloader;
 import io.square1.richtextlib.ui.RichTextView;
@@ -40,8 +40,8 @@ public class MainActivity extends ActionBarActivity implements UrlBitmapDownload
     @Override
     public void onElementFound(RichText.TNodeType type, Object content, HashMap<String, Object> attributes) {
         if (type == RichText.TNodeType.EText){
-            ((RichTextView) findViewById(R.id.textView)).setText((SpannedStore) content);
-             MainActivity2Activity.show(this, (SpannedStore) content);
+            ((RichTextView) findViewById(R.id.textView)).setText((ParcelableSpannedBuilder) content);
+             MainActivity2Activity.show(this, (ParcelableSpannedBuilder) content);
     }
 }
 
