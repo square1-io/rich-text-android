@@ -236,7 +236,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     private String mSource;
     private XMLReader mReader;
     private StringBuilder mAccumulatedText;
-    private SpannableStringBuilder mSpannableStringBuilder;
+    private SpannedStoreV2 mSpannableStringBuilder;
     private RichText.RichTextCallback mCallback;
     private UrlBitmapDownloader mDownloader;
     private Style mStyle;
@@ -252,7 +252,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         mSource = String.format("<root>%s</root>" , source);
         mReader = reader;
         mAccumulatedText = new StringBuilder();
-        mSpannableStringBuilder = new SpannableStringBuilder();
+        mSpannableStringBuilder = new SpannedStoreV2();
     }
 
 
@@ -278,7 +278,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
     }
 
-    private static void fixFlags(SpannableStringBuilder builder){
+    private static void fixFlags(SpannedStoreV2 builder){
 
         // Fix flags and range for paragraph-type markup.
         Object[] obj = builder.getSpans(0, builder.length(), ParagraphStyle.class);
@@ -322,7 +322,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         return tag != null && tag.tag.equalsIgnoreCase("script") == false;
     }
 
-    private void applyStartTag(SpannableStringBuilder spannable, String tag, Attributes attributes) {
+    private void applyStartTag(SpannedStoreV2 spannable, String tag, Attributes attributes) {
 
         if (tag.equalsIgnoreCase("root")) {
             handleStartRoot(spannable);
@@ -381,13 +381,13 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 //        }
     }
 
-    private void handleEndTag(SpannableStringBuilder spannable, String tag) {
+    private void handleEndTag(SpannedStoreV2 spannable, String tag) {
 
         spannable = processAccumulatedTextContent();
         mStack.pop();
         applyEndTag(spannable, tag);
     }
-    private void applyEndTag(SpannableStringBuilder spannable, String tag) {
+    private void applyEndTag(SpannedStoreV2 spannable, String tag) {
 
         if (tag.equalsIgnoreCase("root")) {
             handleEndRoot(spannable);
@@ -444,11 +444,11 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     }
 
 
-    private  void handleStartRoot(SpannableStringBuilder spannable){
+    private  void handleStartRoot(SpannedStoreV2 spannable){
        // start(spannable, new Background(mStyle.backgroundColor()));
     }
 
-    private  void handleEndRoot(SpannableStringBuilder text){
+    private  void handleEndRoot(SpannedStoreV2 text){
 
 //        int len = text.length();
 //        Background obj = (Background)getLast(text, Background.class);
@@ -462,7 +462,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 //        }
     }
 
-    private static void handleP(SpannableStringBuilder text) {
+    private static void handleP(SpannedStoreV2 text) {
 
         int len = text.length();
 
@@ -480,7 +480,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         }
     }
 
-    private static void handleBr(SpannableStringBuilder text) {
+    private static void handleBr(SpannedStoreV2 text) {
         text.append("\n");
     }
 
@@ -498,12 +498,12 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         }
     }
 
-    private static void start(SpannableStringBuilder text, Object mark) {
+    private static void start(SpannedStoreV2 text, Object mark) {
         int len = text.length();
         text.setSpan(mark, len, len, Spannable.SPAN_MARK_MARK);
     }
 
-    private static void end(SpannableStringBuilder text, Class kind,
+    private static void end(SpannedStoreV2 text, Class kind,
                             Object repl) {
         int len = text.length();
         Object obj = getLast(text, kind);
@@ -516,7 +516,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         }
     }
 
-    private  void endQuote(SpannableStringBuilder text) {
+    private  void endQuote(SpannedStoreV2 text) {
         // , new QuoteSpan(BitmapFactory.decodeResource(mCallback.getContext().getResources(), R.drawable.quote))
         int len = text.length();
         Object obj = getLast(text, Blockquote.class);
@@ -569,7 +569,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
     private void buildNewSpannable(){
 
-        SpannableStringBuilder newSpannable = new SpannableStringBuilder("");
+        SpannedStoreV2 newSpannable = new SpannedStoreV2("");
         //skip the current image tag
         ListIterator<RichText.InternalTag> tags = mStack.listIterator(mStack.size() - 1);
 
@@ -592,7 +592,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
     }
 
-    private static void startFont(SpannableStringBuilder text,
+    private static void startFont(SpannedStoreV2 text,
                                   Attributes attributes) {
         String color = attributes.getValue("", "color");
         String face = attributes.getValue("", "face");
@@ -601,7 +601,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         text.setSpan(new Font(color, face), len, len, Spannable.SPAN_MARK_MARK);
     }
 
-    private static void endFont(SpannableStringBuilder text) {
+    private static void endFont(SpannedStoreV2 text) {
         int len = text.length();
         Object obj = getLast(text, Font.class);
         int where = text.getSpanStart(obj);
@@ -639,7 +639,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         }
     }
 
-    private  void startIFrame(SpannableStringBuilder text, Attributes attributes) {
+    private  void startIFrame(SpannedStoreV2 text, Attributes attributes) {
         String href = attributes.getValue("", "src");
         if( EmbedUtils.parseLink(mStack.peek(), href, this) == false) {
             int len = text.length();
@@ -647,12 +647,12 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         }
     }
 
-    private  void endIFrame(SpannableStringBuilder text) {
+    private  void endIFrame(SpannedStoreV2 text) {
         endYouTube(text);
         endA(text);
     }
 
-    private void startYoutube(SpannableStringBuilder text,String youtubeId){
+    private void startYoutube(SpannedStoreV2 text,String youtubeId){
         int len = text.length();
         text.append(NO_SPACE_CHAR);
         text.setSpan(new YouTubeSpan(youtubeId,mStyle.maxImageWidth(), mDownloader),
@@ -660,7 +660,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
                 Spannable.SPAN_MARK_MARK);
     }
 
-    private void endYouTube(SpannableStringBuilder text){
+    private void endYouTube(SpannedStoreV2 text){
         int len = text.length();
         Object obj = getLast(text, YouTubeSpan.class);
         int where = text.getSpanStart(obj);
@@ -679,7 +679,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         }
     }
 
-    private  void startSoundCloud(SpannableStringBuilder text, Attributes attributes) {
+    private  void startSoundCloud(SpannedStoreV2 text, Attributes attributes) {
 
         buildNewSpannable();
         String src = attributes.getValue("", "src");
@@ -690,11 +690,11 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
     }
 
-    private static void endSoundCloud(SpannableStringBuilder text) {
+    private static void endSoundCloud(SpannedStoreV2 text) {
         endA(text);
     }
 
-    private  void startA(SpannableStringBuilder text, Attributes attributes) {
+    private  void startA(SpannedStoreV2 text, Attributes attributes) {
         String href = attributes.getValue("", "href");
         //if( LinksUtils.parseLink( mStack.peek(), href,this) == false) {
             int len = text.length();
@@ -702,7 +702,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
        // }
     }
 
-    private static void endA(SpannableStringBuilder text) {
+    private static void endA(SpannedStoreV2 text) {
         int len = text.length();
         Object obj = getLast(text, Href.class);
         int where = text.getSpanStart(obj);
@@ -724,7 +724,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         }
     }
 
-    private  void endHeader(SpannableStringBuilder text) {
+    private  void endHeader(SpannedStoreV2 text) {
         int len = text.length();
         Object obj = getLast(text, Header.class);
 
@@ -822,7 +822,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
     }
 
-    public SpannableStringBuilder processAccumulatedTextContent()  {
+    public SpannedStoreV2 processAccumulatedTextContent()  {
 
         if(storeContent(getCurrent()) == false ||
                 mAccumulatedText.length() == 0){

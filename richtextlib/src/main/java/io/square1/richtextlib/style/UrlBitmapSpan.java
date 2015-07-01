@@ -49,7 +49,6 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
     protected final int mVerticalAlignment;
 
     private int mMaxImageWidth;
-
     private int mImageWidth;
     private int mImageHeight;
 
@@ -130,6 +129,9 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
     @Override
     public void readFromParcel(Parcel src) {
         mImage = src.readParcelable(Uri.class.getClassLoader());
+        mMaxImageWidth = src.readInt();
+        mImageWidth = src.readInt();
+        mImageHeight = src.readInt();
     }
 
     WeakReference<RichTextView> mRef;
@@ -158,8 +160,12 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        P2ParcelUtils.writeType(dest,this);
+        P2ParcelUtils.writeType(dest, this);
         dest.writeParcelable(mImage,0);
+        dest.writeInt(mMaxImageWidth);
+        dest.writeInt(mImageWidth);
+        dest.writeInt(mImageHeight);
+
     }
 
 

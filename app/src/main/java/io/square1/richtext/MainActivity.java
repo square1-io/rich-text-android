@@ -40,6 +40,8 @@ import java.util.Map;
 
 import io.square1.richtextlib.EmbedUtils;
 import io.square1.richtextlib.RichText;
+import io.square1.richtextlib.SpannedStore;
+import io.square1.richtextlib.SpannedStoreV2;
 import io.square1.richtextlib.style.RemoteBitmapSpan;
 import io.square1.richtextlib.style.UrlBitmapDownloader;
 import io.square1.richtextlib.style.UrlBitmapSpan;
@@ -51,17 +53,18 @@ public class MainActivity extends ActionBarActivity implements UrlBitmapDownload
 
     @Override
     public void onElementFound(RichText.TNodeType type, Object content, HashMap<String, Object> attributes) {
-        if(type == RichText.TNodeType.EText) {
-            ((RichTextView) findViewById(R.id.textView)).setText((SpannableStringBuilder) content);
-        }
+        if (type == RichText.TNodeType.EText){
+            ((RichTextView) findViewById(R.id.textView)).setText((SpannedStoreV2) content);
+             MainActivity2Activity.show(this, (SpannedStoreV2) content);
     }
+}
 
     @Override
     public void onError(Exception exc) {
 
     }
 
-    private class SimpleTargetDrawable extends SimpleTarget<GlideDrawable> {
+    public  class SimpleTargetDrawable extends SimpleTarget<GlideDrawable> {
 
         private RemoteBitmapSpan mUrlBitmapSpan;
 

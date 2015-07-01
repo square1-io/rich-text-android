@@ -111,7 +111,12 @@ public class SpannedStore implements Parcelable , Spanned {
         dest.writeIntArray(mSpanEnd);
         dest.writeIntArray(mSpanFlags);
         dest.writeTypedArray(mSpans, 0);
+    }
 
+
+
+    public SpannableStringBuilder get(){
+        return mText;
     }
 
     @Override

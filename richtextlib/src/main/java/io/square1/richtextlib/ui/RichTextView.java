@@ -28,6 +28,10 @@ import io.square1.richtextlib.style.YouTubeSpan;
 public class RichTextView extends TextView implements RichTextLinkMovementMethod.Observer {
 
 
+    public interface OnSpanClickedObserver {
+        public boolean onSpanClicked(ClickableSpan span);
+    }
+
     public interface RichTextContentChanged {
         void onContentChanged(RichTextView view);
     }
@@ -35,6 +39,7 @@ public class RichTextView extends TextView implements RichTextLinkMovementMethod
     private P2ParcelableSpan[] mSpans;
     private Spannable mSpannable;
     private RichTextContentChanged mRichTextContentChanged;
+    private OnSpanClickedObserver mOnSpanClickedObserver;
     private Handler mHandler;
     private boolean mAttachedToWindow;
     private UrlBitmapDownloader mDownloader;
@@ -164,6 +169,11 @@ public class RichTextView extends TextView implements RichTextLinkMovementMethod
         if(spans == null) return;
 
         for(ClickableSpan span : spans){
+
+            //if handled externally lets just continue
+            if(mOnSpanClickedObserver != null &&
+                    mOnSpanClickedObserver.onSpanClicked(span) == true)
+                continue;
 
             if(span instanceof YouTubeSpan){
                 String id = ((YouTubeSpan)span).getYoutubeId();
