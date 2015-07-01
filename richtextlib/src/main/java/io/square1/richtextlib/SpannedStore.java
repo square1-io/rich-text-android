@@ -20,6 +20,7 @@ public class SpannedStore implements Parcelable , Spanned {
     private  SpannableStringBuilder mText;
     private int[] mSpanStart;
     private int[] mSpanEnd;
+    private int[] mSpanFlags;
     private P2ParcelableSpan[] mSpans;
 
     public SpannedStore(){
@@ -42,13 +43,14 @@ public class SpannedStore implements Parcelable , Spanned {
 
         mSpanStart = new int[mSpans.length];
         mSpanEnd = new int[mSpans.length];
-
+        mSpanFlags = new int[mSpans.length];
 
         for(int index = 0; index < spans.length; index ++){
 
             P2ParcelableSpan span = spans[index];
             mSpanStart[index] = spanned.getSpanStart(span);
             mSpanEnd[index] = spanned.getSpanEnd(span);
+            mSpanFlags[index] = spanned.getSpanFlags(span);
             mSpans[index] = span;
 
         }
@@ -63,7 +65,7 @@ public class SpannedStore implements Parcelable , Spanned {
             builder.setSpan(mSpans[index],
                     mSpanStart[index],
                     mSpanEnd[index],
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    mSpanFlags[index]);
         }
 
         return builder;
@@ -95,6 +97,7 @@ public class SpannedStore implements Parcelable , Spanned {
         String text = in.readString();
         mSpanStart = in.createIntArray();
         mSpanEnd = in.createIntArray();
+        mSpanFlags = in.createIntArray();
         mSpans = in.createTypedArray(P2ParcelUtils.CREATOR);
         mText = build(text);
     }
@@ -106,6 +109,7 @@ public class SpannedStore implements Parcelable , Spanned {
         dest.writeString(mText.toString());
         dest.writeIntArray(mSpanStart);
         dest.writeIntArray(mSpanEnd);
+        dest.writeIntArray(mSpanFlags);
         dest.writeTypedArray(mSpans, 0);
 
     }

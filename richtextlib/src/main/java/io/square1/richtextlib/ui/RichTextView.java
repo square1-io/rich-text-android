@@ -1,19 +1,25 @@
 package io.square1.richtextlib.ui;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Spannable;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
+import io.square1.richtextlib.R;
 import io.square1.richtextlib.style.ClickableSpan;
 import io.square1.richtextlib.style.P2ParcelableSpan;
+import io.square1.richtextlib.style.UrlBitmapDownloader;
 import io.square1.richtextlib.style.YouTubeSpan;
 
 /**
@@ -31,17 +37,26 @@ public class RichTextView extends TextView implements RichTextLinkMovementMethod
     private RichTextContentChanged mRichTextContentChanged;
     private Handler mHandler;
     private boolean mAttachedToWindow;
+    private UrlBitmapDownloader mDownloader;
 
     public RichTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
+        parseCustomAttributes(context, attrs);
     }
 
     public RichTextView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
+        parseCustomAttributes(context, attrs);
     }
 
+
+    @TargetApi(21)
+    public RichTextView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+        parseCustomAttributes(context, attrs);
+    }
 
 
     public RichTextView(Context context) {
@@ -62,6 +77,15 @@ public class RichTextView extends TextView implements RichTextLinkMovementMethod
 
             }
         };
+
+    }
+
+    public UrlBitmapDownloader getDownloader(){
+        return mDownloader;
+    }
+
+    public void setUrlBitmapDownloader(UrlBitmapDownloader downloader){
+        mDownloader = downloader;
     }
 
    @Override
@@ -161,4 +185,31 @@ public class RichTextView extends TextView implements RichTextLinkMovementMethod
         return mAttachedToWindow;
     }
 
+
+    private void parseCustomAttributes(Context ctx, AttributeSet attrs) {
+        TypedArray a = ctx.obtainStyledAttributes(attrs, R.styleable.io_square1_richtextlib_ui_RichTextView);
+        String customFont = a.getString(R.styleable.io_square1_richtextlib_ui_RichTextView_fontName);
+        setCustomFont(ctx, customFont);
+        a.recycle();
+    }
+
+    public boolean setCustomFont(Context ctx, String asset) {
+
+        if(TextUtils.isEmpty(asset)){
+            return false;
+        }
+
+        try {
+
+            Typeface tf  = Typeface.createFromAsset(ctx.getAssets(), asset);
+            setTypeface(tf);
+
+        } catch (Exception e) {
+
+            return false;
+
+        }
+
+        return true;
+    }
 }

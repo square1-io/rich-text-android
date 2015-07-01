@@ -40,9 +40,12 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
 
     private String mYoutubeId;
 
+
     public String getYoutubeId(){
         return mYoutubeId;
     }
+
+    public YouTubeSpan(){}
 
     public YouTubeSpan(String youtubeId, int maxWidth, UrlBitmapDownloader downloader){
         super();

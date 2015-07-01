@@ -57,6 +57,10 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
     private UrlBitmapDownloader mUrlBitmapDownloader;
     private Drawable mBitmap;
 
+    public UrlBitmapSpan(){
+        mVerticalAlignment = ALIGN_BASELINE;
+    }
+
     public UrlBitmapSpan(Uri image, UrlBitmapDownloader downloader, int imageWidth, int imageHeight, int maxImageWidth){
         this(null,downloader,image, imageWidth,imageHeight,maxImageWidth,ALIGN_BOTTOM);
 
@@ -238,6 +242,10 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
     private void loadImage(){
         if(mAttachedToWindow == true && mLoading == false){
             mLoading = true;
+            if(mUrlBitmapDownloader == null){
+                //acquire one from the view
+               mUrlBitmapDownloader =  mRef.get().getDownloader();
+            }
             mUrlBitmapDownloader.downloadImage(this,mImage);
         }
     }

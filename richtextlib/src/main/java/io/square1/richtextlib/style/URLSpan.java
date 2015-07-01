@@ -12,7 +12,7 @@ import android.view.View;
 import io.square1.richtextlib.ui.RichTextView;
 import io.square1.richtextlib.util.UniqueId;
 
-public class URLSpan extends ClickableSpan implements P2ParcelableSpan {
+public class URLSpan extends ClickableSpan implements io.square1.richtextlib.style.ClickableSpan, P2ParcelableSpan {
 
     public static final Parcelable.Creator<URLSpan> CREATOR  = P2ParcelableCreator.get(URLSpan.class);
 
@@ -26,6 +26,8 @@ public class URLSpan extends ClickableSpan implements P2ParcelableSpan {
     }
 
     private  String mURL;
+
+    public URLSpan(){}
 
     public URLSpan(String url) {
         mURL = url;
