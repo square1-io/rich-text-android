@@ -169,6 +169,15 @@ public class RichText {
     public static void fromHtml(Context context,
                                 String source,
                                 RichTextCallback callback,
+                                UrlBitmapDownloader downloader,
+                                boolean parseWordPressTags) {
+
+        final Style defaultStyle = new DefaultStyle(context);
+        fromHtml(context, source, defaultStyle, callback,downloader, parseWordPressTags);
+    }
+    public static void fromHtml(Context context,
+                                String source,
+                                RichTextCallback callback,
                                 Style style,
                                 UrlBitmapDownloader downloader,
                                 boolean parseWordPressTags) {
@@ -177,7 +186,7 @@ public class RichText {
 
     }
 
-    final static String SOUND_CLOUD = "\\[soundcloud (.*?)\\]";
+    final static String SOUND_CLOUD = "\\[soundcloud (.*?)/?\\]";
     final static String SOUND_CLOUD_REPLACEMENT = "<soundcloud $1 />";
 
 
@@ -193,15 +202,13 @@ public class RichText {
         try {
 
             XMLReader reader = null;
-            if(parseWordPressTags == false) {
-                reader = new Parser();
-                reader.setProperty(Parser.schemaProperty, HtmlParser.schema);
-            }else {
-                reader = new StringTokenizer(new char[]{'<', '['}, new char[]{'>', ']'});
-            }
+            reader = new Parser();
+            reader.setProperty(Parser.schemaProperty, HtmlParser.schema);
 
             if(parseWordPressTags == true) {
 
+                //soundcloud
+                source = source.replaceAll("\\[/soundcloud\\]","");
                 source = source.replaceAll(SOUND_CLOUD,
                         SOUND_CLOUD_REPLACEMENT);
 
@@ -680,7 +687,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     private  void startSoundCloud(ParcelableSpannedBuilder text, Attributes attributes) {
 
         buildNewSpannable();
-        String src = attributes.getValue("", "src");
+        String src = attributes.getValue("", "url");
         // mSpannableStringBuilder.append("\uFFFC");
         HashMap<String,Object> attrs = new HashMap<>();
         attrs.put(RichText.EMBED_TYPE, EmbedUtils.TEmbedType.ESoundCloud);

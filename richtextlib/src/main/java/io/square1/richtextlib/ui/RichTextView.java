@@ -136,6 +136,10 @@ public class RichTextView extends TextView implements RichTextLinkMovementMethod
         mRichTextContentChanged = listener;
     }
 
+    public void setOnSpanClickedObserver(OnSpanClickedObserver listener){
+        mOnSpanClickedObserver = listener;
+    }
+
     public void notifyContentChanged(){
 
         mHandler.sendEmptyMessage(0);

@@ -219,6 +219,9 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
     private void loadImage(){
         if(mAttachedToWindow == true && mLoading == false){
             mLoading = true;
+            if(mUrlBitmapDownloader == null){
+                mUrlBitmapDownloader = mRef.get().getDownloader();
+            }
             mUrlBitmapDownloader.downloadImage(this,mImage);
         }
     }
