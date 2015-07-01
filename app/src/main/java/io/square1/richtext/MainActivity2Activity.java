@@ -15,7 +15,6 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 
 import io.square1.richtextlib.SpannedStore;
-import io.square1.richtextlib.SpannedStoreV2;
 import io.square1.richtextlib.style.RemoteBitmapSpan;
 import io.square1.richtextlib.style.UrlBitmapDownloader;
 import io.square1.richtextlib.ui.RichTextView;
@@ -23,7 +22,7 @@ import io.square1.richtextlib.ui.RichTextView;
 
 public class MainActivity2Activity extends ActionBarActivity implements UrlBitmapDownloader {
 
-    public static void show(Context c, SpannedStoreV2 store){
+    public static void show(Context c, SpannedStore store){
         Intent start = new Intent();
         start.setClass(c,MainActivity2Activity.class);
         start.putExtra("d", (Parcelable) store);
@@ -34,7 +33,7 @@ public class MainActivity2Activity extends ActionBarActivity implements UrlBitma
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_activity2);
-        SpannedStoreV2 store = getIntent().getParcelableExtra("d");
+        SpannedStore store = getIntent().getParcelableExtra("d");
         RichTextView.class.cast(findViewById(R.id.textView)).setUrlBitmapDownloader(this);
         RichTextView.class.cast(findViewById(R.id.textView)).setText(store);
     }

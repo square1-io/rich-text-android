@@ -1,30 +1,19 @@
 package io.square1.richtext;
 
 import android.content.Context;
-import android.content.Intent;
 import android.database.DataSetObserver;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.text.Html;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
 import android.text.Spanned;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 
@@ -38,13 +27,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.square1.richtextlib.EmbedUtils;
 import io.square1.richtextlib.RichText;
 import io.square1.richtextlib.SpannedStore;
-import io.square1.richtextlib.SpannedStoreV2;
 import io.square1.richtextlib.style.RemoteBitmapSpan;
 import io.square1.richtextlib.style.UrlBitmapDownloader;
-import io.square1.richtextlib.style.UrlBitmapSpan;
 import io.square1.richtextlib.ui.RichTextView;
 
 
@@ -54,8 +40,8 @@ public class MainActivity extends ActionBarActivity implements UrlBitmapDownload
     @Override
     public void onElementFound(RichText.TNodeType type, Object content, HashMap<String, Object> attributes) {
         if (type == RichText.TNodeType.EText){
-            ((RichTextView) findViewById(R.id.textView)).setText((SpannedStoreV2) content);
-             MainActivity2Activity.show(this, (SpannedStoreV2) content);
+            ((RichTextView) findViewById(R.id.textView)).setText((SpannedStore) content);
+             MainActivity2Activity.show(this, (SpannedStore) content);
     }
 }
 
