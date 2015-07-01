@@ -660,7 +660,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     private void startYoutube(ParcelableSpannedBuilder text,String youtubeId){
         int len = text.length();
         text.append(NO_SPACE_CHAR);
-        text.setSpan(new YouTubeSpan(youtubeId,mStyle.maxImageWidth(), mDownloader),
+        text.setSpan(new YouTubeSpan(youtubeId, mStyle.maxImageWidth(), mDownloader),
                 len, text.length(),
                 Spannable.SPAN_MARK_MARK);
     }
@@ -688,11 +688,13 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
         buildNewSpannable();
         String src = attributes.getValue("", "url");
+        src = EmbedUtils.getSoundCloudStream(src,"1f6456941b1176c22d44fb16ec2015a2");
         // mSpannableStringBuilder.append("\uFFFC");
-        HashMap<String,Object> attrs = new HashMap<>();
-        attrs.put(RichText.EMBED_TYPE, EmbedUtils.TEmbedType.ESoundCloud);
-        mCallback.onElementFound(RichText.TNodeType.EEmbed, src, attrs);
-
+        if(TextUtils.isEmpty(src) == false) {
+            HashMap<String, Object> attrs = new HashMap<>();
+            attrs.put(RichText.EMBED_TYPE, EmbedUtils.TEmbedType.ESoundCloud);
+            mCallback.onElementFound(RichText.TNodeType.EEmbed, src, attrs);
+        }
     }
 
     private static void endSoundCloud(ParcelableSpannedBuilder text) {

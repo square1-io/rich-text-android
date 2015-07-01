@@ -115,7 +115,7 @@ public class EmbedUtils {
         final Uri uri = Uri.parse(baseUrl);
         final List<String> segments = uri.getPathSegments();
         String id = null;
-        for(int index = segments.size() - 1; index == 0; index --){
+        for(int index = segments.size() - 1; index >= 0; index --){
 
             if(TextUtils.isDigitsOnly(segments.get(index))){
                 id = segments.get(index);
