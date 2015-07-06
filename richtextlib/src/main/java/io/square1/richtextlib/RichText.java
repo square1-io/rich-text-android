@@ -851,7 +851,11 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
             CharSequence link = mAccumulatedText.subSequence( matchStart, matchEnd);
            // if( EmbedUtils.parseLink(mAccumulatedText, String.valueOf(link), this) == false){
+            if(TextUtils.isEmpty(link) == false) {
+                int where = mSpannableStringBuilder.length();
                 mSpannableStringBuilder.append(link);
+                mSpannableStringBuilder.setSpan(new URLSpan(link.toString()), where, where + link.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
            // }
 
         }
