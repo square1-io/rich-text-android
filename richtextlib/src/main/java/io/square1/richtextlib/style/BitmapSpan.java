@@ -122,6 +122,31 @@ public class BitmapSpan extends ReplacementSpan implements P2ParcelableSpan , Cl
         canvas.drawBitmap(mBitmap,null,getBitmapSize(),paint);
         canvas.restore();
 
+        drawBitmap(canvas, mBitmap, bitmapBounds, start, end, x, top, y, bottom,mVerticalAlignment, paint);
+    }
+
+    private static void drawBitmap(Canvas canvas,
+                                   Bitmap bitmap,
+                                   Rect bounds,
+                                   int start,
+                                   int end,
+                                   float x,
+                                   int top,
+                                   int y,
+                                   int bottom,
+                                   int verticalAlignment,
+                                   Paint paint){
+
+
+        int transY = bottom - bounds.bottom;
+        if (verticalAlignment == ALIGN_BASELINE) {
+            transY -= paint.getFontMetricsInt().descent;
+        }
+
+        canvas.save();
+        canvas.translate(x, transY);
+        canvas.drawBitmap(bitmap, null, bounds, paint);
+        canvas.restore();
     }
 
 

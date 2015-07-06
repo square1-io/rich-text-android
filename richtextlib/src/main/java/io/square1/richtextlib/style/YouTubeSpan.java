@@ -3,6 +3,7 @@ package io.square1.richtextlib.style;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -12,6 +13,7 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.text.style.ReplacementSpan;
 import android.text.style.UpdateAppearance;
+import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
 
@@ -33,7 +35,7 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
     private Uri mImage;
     private UrlBitmapDownloader mUrlBitmapDownloader;
     private Drawable mBitmap;
-    private Drawable mYoutubeIcon;
+    private Bitmap mYoutubeIcon;
     private int mImageHeight;
     private int mImageWidth;
     private int mMaxImageWidth;
@@ -77,13 +79,25 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
 
     public Rect getBitmapSize(){
 
+       // mRef.get().getPaddingLeft()
+//        if(mBitmap != null){
+//         int measured = mMaxImageWidth;
+//         double rate = (double)measured / (double)mBitmap.getIntrinsicWidth();
+//         return new Rect(0, 0, measured, (int)(mBitmap.getIntrinsicHeight() * rate));
+//        }
 
-        int measured = mMaxImageWidth;
+        if(mRef.get() != null && mRef.get().getMeasuredWidth() != 0){
 
-        double rate = (double)measured / (double)mImageWidth;
-        return new Rect(0, 0, measured, (int)(mImageHeight * rate));
+            final TextView view = mRef.get();
+            double availableWidth =  (double)(view.getMeasuredWidth());
 
+            double availableHeight = availableWidth / 16 * 9;
+            return new Rect(0,0,(int)availableWidth, (int)availableHeight);
+        }
 
+        double measure =  mMaxImageWidth;
+        double height = measure / 16 * 9;
+        return new Rect(0,0,(int)measure,(int)height);
     }
 
 
@@ -95,15 +109,21 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
     @Override
     public void readFromParcel(Parcel src) {
         mImage = src.readParcelable(Uri.class.getClassLoader());
+        mYoutubeId = src.readString();
+        mImageWidth = src.readInt();
+        mImageHeight = src.readInt();
+        mMaxImageWidth = src.readInt();
     }
 
     WeakReference<RichTextView> mRef;
     @Override
     public void onSpannedSetToView(RichTextView view) {
+
         if(mYoutubeIcon == null){
-            mYoutubeIcon = view.getContext().getResources().getDrawable(R.drawable.youtube_play);
-            mYoutubeIcon.setBounds(0,0,mYoutubeIcon.getIntrinsicWidth(),mYoutubeIcon.getIntrinsicHeight());
+            mYoutubeIcon = BitmapFactory.decodeResource(view.getContext().getResources(),
+                    R.drawable.youtube_play);; //view.getContext().getResources().getDrawable(R.drawable.youtube_play);
         }
+
         mAttachedToWindow = view.isAttachedToWindow();
         mRef = new WeakReference(view);
         loadImage();
@@ -129,6 +149,10 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
     public void writeToParcel(Parcel dest, int flags) {
         P2ParcelUtils.writeType(dest,this);
         dest.writeParcelable(mImage,0);
+        dest.writeString(mYoutubeId);
+        dest.writeInt(mImageWidth);
+        dest.writeInt(mImageHeight);
+        dest.writeInt(mMaxImageWidth);
     }
 
 
@@ -147,7 +171,7 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
             fm.bottom = 0;
         }
 
-        return mMaxImageWidth;
+        return rect.right;
     }
 
 
@@ -155,42 +179,72 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
     @Override
     public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
 
-
-        mRect = getBitmapSize();;
-
-        int transY = bottom - mRect.bottom;
-        transY -= paint.getFontMetricsInt().descent;
+        mRect = getBitmapSize();
 
 
-        canvas.save();
 
-        //center
-        x = (mRef.get().getMeasuredWidth() - mRect.width()) / 2;
-        canvas.translate(x, transY);
-        if(mBitmap != null) {
-            mBitmap.draw(canvas);
+
+        //drawIcon(x,canvas);
+
+        if(mBitmap != null){
+
+            if(mBitmap instanceof BitmapDrawable){
+                Bitmap bmp = ((BitmapDrawable)mBitmap).getBitmap();
+                drawBitmap(canvas,bmp,mRect,start,end,x,top,y,bottom,paint);
+            }else{
+                int transY = bottom - mRect.bottom;
+                transY -= paint.getFontMetricsInt().descent;
+                canvas.save();
+                canvas.translate(x, transY);
+                mBitmap.setBounds(mRect);
+                mBitmap.draw(canvas);
+                canvas.restore();
+            }
+
         }
-        canvas.restore();
 
-        drawIcon(canvas);
-
+        drawBitmap(canvas,mYoutubeIcon,mRect,start,end,x,top,y,bottom,paint);
     }
 
-    private void drawIcon(Canvas c){
-        c.save();
-
-        Rect rect = mYoutubeIcon.copyBounds();
-        int x = (mRef.get().getMeasuredWidth() - rect.width()) / 2;
-        c.translate(x, (mRef.get().getMeasuredHeight() - rect.height()) / 2);
-        mYoutubeIcon.draw(c);
-        c.restore();
-    }
+//    private void drawIcon(float offset , Canvas c){
+//        c.save();
+//
+//        Rect rect = mYoutubeIcon.copyBounds();
+//        float x = (mRef.get().getMeasuredWidth() - rect.width()) / 2 + offset;
+//        c.translate(x, (mRef.get().getMeasuredHeight() - rect.height()) / 2);
+//        mYoutubeIcon.draw(c);
+//        c.restore();
+//    }
 
     private Rect mRect = null;
 
     private boolean mLoading = false;
     private boolean mAttachedToWindow = false;
 
+    private static void drawBitmap(Canvas canvas,
+                                   Bitmap bitmap,
+                                   Rect bounds,
+                                   int start,
+                                   int end,
+                                   float x,
+                                   int top,
+                                   int y,
+                                   int bottom,
+                                   Paint paint){
+
+
+        int transY = bottom - bounds.bottom;
+        transY -= paint.getFontMetricsInt().descent;
+
+        canvas.save();
+        canvas.translate(x, transY);
+        bitmap.getWidth();
+
+        int offsetX = (bounds.width() - bitmap.getWidth()) / 2 ;
+        int offsetY = (bounds.height() - bitmap.getHeight()) / 2 ;
+        canvas.drawBitmap(bitmap,offsetX,offsetY, paint);
+        canvas.restore();
+    }
 
     @Override
     public void updateBitmap(Context context, Drawable bitmap){
@@ -225,6 +279,7 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
             mUrlBitmapDownloader.downloadImage(this,mImage);
         }
     }
+
 
 
 }
