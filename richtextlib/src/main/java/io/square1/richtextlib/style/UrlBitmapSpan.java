@@ -79,7 +79,7 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
             mBitmap.setBounds(getBitmapSize());
         }
 
-        ensureNotNullPlaceHolder();
+       // ensureNotNullPlaceHolder();
     }
 
     private boolean imageSizeKnown(){
