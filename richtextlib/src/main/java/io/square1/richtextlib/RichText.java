@@ -12,6 +12,7 @@ import android.graphics.Typeface;
 
 import android.net.Uri;
 import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ParagraphStyle;
@@ -647,9 +648,21 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     private  void startIFrame(ParcelableSpannedBuilder text, Attributes attributes) {
         String href = attributes.getValue("", "src");
         if( EmbedUtils.parseLink(mStack.peek(), href, this) == false) {
-            int len = text.length();
-            text.setSpan(new Href(href), len, len, Spannable.SPAN_MARK_MARK);
+           makeLink(href,null,text);
         }
+    }
+
+    private void makeLink(String link,String text,ParcelableSpannedBuilder builder){
+        //clean the link:
+        if(link.indexOf("//") == 0){
+            link = "http:" + link;
+        }
+        if(TextUtils.isEmpty(text) == true){
+            text = link;
+        }
+        int len = builder.length();
+        builder.append(text);
+        builder.setSpan(new Href(link), len, len + text.length(), Spannable.SPAN_MARK_MARK);
     }
 
     private  void endIFrame(ParcelableSpannedBuilder text) {

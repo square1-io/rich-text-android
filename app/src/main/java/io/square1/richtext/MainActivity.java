@@ -125,7 +125,7 @@ public class MainActivity extends ActionBarActivity implements UrlBitmapDownload
 
         final ArrayList<Object> mItems = new ArrayList<>();
         final ArrayList<Object> obs = new ArrayList<>();
-        String html = ReadFromfile("joe.html");
+        String html = ReadFromfile("test.html");
         final JSONArray output = new JSONArray();
 
 //        RichText.fromHtml(this, html, new RichText.RichTextCallback() {
