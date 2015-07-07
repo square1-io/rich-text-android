@@ -244,6 +244,11 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
         }
     }
 
+    @Override
+    public Rect getPossibleSize() {
+        return getBitmapSize();
+    }
+
 
     private void loadImage(){
         if(mAttachedToWindow == true && mLoading == false){

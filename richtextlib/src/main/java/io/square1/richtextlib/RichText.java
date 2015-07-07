@@ -16,6 +16,7 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ParagraphStyle;
+import android.util.Log;
 import android.util.Patterns;
 
 
@@ -338,7 +339,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         } else if (tag.equalsIgnoreCase("p")) {
             handleP(spannable);
         } else if (tag.equalsIgnoreCase("div")) {
-            handleP(spannable);
+            startDiv(spannable, attributes);
         } else if (tag.equalsIgnoreCase("strong")) {
             start(spannable, new Bold());
         } else if (tag.equalsIgnoreCase("b")) {
@@ -403,7 +404,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         } else if (tag.equalsIgnoreCase("p")) {
             handleP(spannable);
         } else if (tag.equalsIgnoreCase("div")) {
-            handleP(spannable);
+           // handleP(spannable);
         } else if (tag.equalsIgnoreCase("strong")) {
             end(spannable, Bold.class, new StyleSpan(Typeface.BOLD));
         } else if (tag.equalsIgnoreCase("b")) {
@@ -541,6 +542,9 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     }
 
 
+    private  void startDiv(ParcelableSpannedBuilder text, Attributes attributes) {
+
+    }
     private  void startImg(Attributes attributes) {
 
         //buildNewSpannable();
@@ -581,8 +585,13 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
         while (tags.hasPrevious() == true){
             RichText.InternalTag tag = tags.previous();
-            applyEndTag(mSpannableStringBuilder, tag.tag);
-            applyStartTag(newSpannable, tag.tag, tag.attributes);
+            //dont duplicate p tags spacing around embeds
+            if(tag.tag.equalsIgnoreCase("p") == false) {
+                applyEndTag(mSpannableStringBuilder, tag.tag);
+                applyStartTag(newSpannable, tag.tag, tag.attributes);
+            }else{
+                Log.d("parser"," skipping tag");
+            }
         }
 
         if(mSpannableStringBuilder.length() > 0 ) {
@@ -662,7 +671,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         }
         int len = builder.length();
         builder.append(text);
-        builder.setSpan(new Href(link), len, len + text.length(), Spannable.SPAN_MARK_MARK);
+        builder.setSpan(new URLSpan(link), len, len + text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
     private  void endIFrame(ParcelableSpannedBuilder text) {
@@ -865,9 +874,10 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
             CharSequence link = mAccumulatedText.subSequence( matchStart, matchEnd);
            // if( EmbedUtils.parseLink(mAccumulatedText, String.valueOf(link), this) == false){
             if(TextUtils.isEmpty(link) == false) {
-                int where = mSpannableStringBuilder.length();
-                mSpannableStringBuilder.append(link);
-                mSpannableStringBuilder.setSpan(new URLSpan(link.toString()), where, where + link.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                makeLink(link.toString(),null,mSpannableStringBuilder);
+                //int where = mSpannableStringBuilder.length();
+               // mSpannableStringBuilder.append(link);
+               // mSpannableStringBuilder.setSpan(new URLSpan(link.toString()), where, where + link.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
            // }
 

@@ -86,7 +86,7 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
 //         return new Rect(0, 0, measured, (int)(mBitmap.getIntrinsicHeight() * rate));
 //        }
 
-        if(mRef.get() != null && mRef.get().getMeasuredWidth() != 0){
+        if( mRef.get() != null && mRef.get().getMeasuredWidth() != 0){
 
             final TextView view = mRef.get();
             double availableWidth =  (double)(view.getMeasuredWidth());
@@ -267,6 +267,11 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
             }
             view.invalidate();
         }
+    }
+
+    @Override
+    public Rect getPossibleSize() {
+        return getBitmapSize();
     }
 
 

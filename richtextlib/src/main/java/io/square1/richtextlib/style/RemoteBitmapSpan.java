@@ -1,6 +1,7 @@
 package io.square1.richtextlib.style;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 
 /**
@@ -8,4 +9,5 @@ import android.graphics.drawable.Drawable;
  */
 public interface RemoteBitmapSpan {
      void updateBitmap(Context context, Drawable bitmap);
+     Rect getPossibleSize();
 }
