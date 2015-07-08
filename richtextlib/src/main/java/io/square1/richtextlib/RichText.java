@@ -191,6 +191,8 @@ public class RichText {
     final static String SOUND_CLOUD = "\\[soundcloud (.*?)/?\\]";
     final static String SOUND_CLOUD_REPLACEMENT = "<soundcloud $1 />";
 
+    final static String INTERACTION = "\\[interaction (.*?)/?\\]";
+    final static String INTERACTION_REPLACEMENT = "";
 
 
     private static void fromHtml(Context context,
@@ -210,9 +212,13 @@ public class RichText {
             if(parseWordPressTags == true) {
 
                 //soundcloud
-                source = source.replaceAll("\\[/soundcloud\\]","");
+                //source = source.replaceAll("\\[/soundcloud\\]","");
+
                 source = source.replaceAll(SOUND_CLOUD,
                         SOUND_CLOUD_REPLACEMENT);
+
+                source = source.replaceAll(INTERACTION,
+                        INTERACTION_REPLACEMENT);
 
                // Matcher m = pattern.matcher(source);
               //  while (m.find() == true) {
