@@ -879,13 +879,26 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
             CharSequence link = mAccumulatedText.subSequence( matchStart, matchEnd);
            // if( EmbedUtils.parseLink(mAccumulatedText, String.valueOf(link), this) == false){
-            if(TextUtils.isEmpty(link) == false) {
-                makeLink(link.toString(),null,mSpannableStringBuilder);
-                //int where = mSpannableStringBuilder.length();
-               // mSpannableStringBuilder.append(link);
-               // mSpannableStringBuilder.setSpan(new URLSpan(link.toString()), where, where + link.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-           // }
+           if( EmbedUtils.parseLink(mAccumulatedText, String.valueOf(link), new EmbedUtils.ParseLinkCallback() {
+                @Override
+                public void onLinkParsed(Object callingObject, String result, EmbedUtils.TEmbedType type) {
+                    if(type == EmbedUtils.TEmbedType.EYoutube){
+                        startYoutube(mSpannableStringBuilder,result);
+                        endYouTube(mSpannableStringBuilder);
+                    }
+                }
+            }) == false){
+
+               if(TextUtils.isEmpty(link) == false) {
+                   makeLink(link.toString(),null,mSpannableStringBuilder);
+                   //int where = mSpannableStringBuilder.length();
+                   // mSpannableStringBuilder.append(link);
+                   // mSpannableStringBuilder.setSpan(new URLSpan(link.toString()), where, where + link.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+               }
+               // }
+
+           }
+
 
         }
         StringBuffer buffer = new StringBuffer();
