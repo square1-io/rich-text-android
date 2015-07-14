@@ -130,6 +130,11 @@ public class RichText {
              this.tag = tag;
              this.attributes = new AttributesImpl(attributes);
          }
+
+         @Override
+         public String toString() {
+             return "InternalTag{"+this.tag+"}";
+         }
     }
 
 
@@ -245,6 +250,8 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
     private Stack<RichText.InternalTag> mStack = new Stack<>();
 
+    private RichText.InternalTag mLastOpened;
+    private RichText.InternalTag mLastClosed;
 
     private String mSource;
     private XMLReader mReader;
@@ -319,7 +326,9 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     private void handleStartTag( String tag, Attributes attributes) {
 
         mSpannableStringBuilder = processAccumulatedTextContent();
-        mStack.push(new RichText.InternalTag(tag, attributes));
+        mLastOpened = new RichText.InternalTag(tag, attributes);
+        mStack.push(mLastOpened);
+
         applyStartTag(mSpannableStringBuilder,tag,attributes);
     }
 
@@ -397,8 +406,9 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     private void handleEndTag(ParcelableSpannedBuilder spannable, String tag) {
 
         spannable = processAccumulatedTextContent();
-        mStack.pop();
+        InternalTag current = mStack.pop();
         applyEndTag(spannable, tag);
+        mLastClosed = current;
     }
     private void applyEndTag(ParcelableSpannedBuilder spannable, String tag) {
 
@@ -475,7 +485,17 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 //        }
     }
 
-    private static void handleP(ParcelableSpannedBuilder text) {
+    private static void ensureAtLeastOneNewLine(ParcelableSpannedBuilder text){
+
+        int len = text.length();
+
+        if (len >= 1 && text.charAt(len - 1) != '\n'){
+            text.append("\n");
+        }
+
+    }
+
+    private  void handleP(ParcelableSpannedBuilder text) {
 
         int len = text.length();
 
@@ -488,7 +508,10 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
             return;
         }
 
-        if (len != 0) {
+        if (len != 0 &&
+                mLastClosed != null &&
+                "iframe".equalsIgnoreCase(mLastClosed.tag) == false) {
+
             text.append("\n\n");
         }
     }
@@ -554,6 +577,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     private  void startImg(Attributes attributes) {
 
         //buildNewSpannable();
+        ensureAtLeastOneNewLine(mSpannableStringBuilder);
         String src = attributes.getValue("", "src");
 
 
@@ -562,10 +586,11 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 //                Integer.valueOf(attributes.getValue("width")),
 //                Integer.valueOf(attributes.getValue("height")));
 
+        int maxSize = mStyle.maxImageWidth();
         UrlBitmapSpan imageDrawable = new UrlBitmapSpan(Uri.parse(src),
                 mDownloader,
-                NumberUtils.parseImageDimension(attributes.getValue("width")),
-                NumberUtils.parseImageDimension(attributes.getValue("height")),
+                NumberUtils.parseImageDimension(attributes.getValue("width"),maxSize),
+                NumberUtils.parseImageDimension(attributes.getValue("height"),0),
                         mStyle.maxImageWidth() );
 
         int len = mSpannableStringBuilder.length();
@@ -680,37 +705,22 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         builder.setSpan(new URLSpan(link), len, len + text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
+    private void makeYoutube(String youtubeId,ParcelableSpannedBuilder builder){
+
+        ensureAtLeastOneNewLine(builder);
+        int len = builder.length();
+        builder.append(NO_SPACE_CHAR);
+        builder.setSpan(new YouTubeSpan(youtubeId, mStyle.maxImageWidth(), mDownloader),
+                len, builder.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+    }
+
+
     private  void endIFrame(ParcelableSpannedBuilder text) {
-        endYouTube(text);
         endA(text);
     }
 
-    private void startYoutube(ParcelableSpannedBuilder text,String youtubeId){
-        int len = text.length();
-        text.append(NO_SPACE_CHAR);
-        text.setSpan(new YouTubeSpan(youtubeId, mStyle.maxImageWidth(), mDownloader),
-                len, text.length(),
-                Spannable.SPAN_MARK_MARK);
-    }
-
-    private void endYouTube(ParcelableSpannedBuilder text){
-        int len = text.length();
-        Object obj = getLast(text, YouTubeSpan.class);
-        int where = text.getSpanStart(obj);
-
-        text.removeSpan(obj);
-
-        if (where != len) {
-
-            if(obj == null){
-                return;
-            }
-
-            YouTubeSpan h = (YouTubeSpan) obj;
-            text.setSpan(h, where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        }
-    }
 
     private  void startSoundCloud(ParcelableSpannedBuilder text, Attributes attributes) {
 
@@ -883,8 +893,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
                 @Override
                 public void onLinkParsed(Object callingObject, String result, EmbedUtils.TEmbedType type) {
                     if(type == EmbedUtils.TEmbedType.EYoutube){
-                        startYoutube(mSpannableStringBuilder,result);
-                        endYouTube(mSpannableStringBuilder);
+                        makeYoutube(result, mSpannableStringBuilder);
                     }
                 }
             }) == false){
@@ -922,7 +931,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     public void onLinkParsed(Object callingObject, String result, EmbedUtils.TEmbedType type) {
 
         if(type == EmbedUtils.TEmbedType.EYoutube){
-            startYoutube(mSpannableStringBuilder,result);
+            makeYoutube(result, mSpannableStringBuilder);
             return;
         }
         //we have to remove embeds from quotes tags
