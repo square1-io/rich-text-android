@@ -487,11 +487,38 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
     private static void ensureAtLeastOneNewLine(ParcelableSpannedBuilder text){
 
+        ensureAtLeastThoseNewLines(text,1);
+
+//        int len = text.length();
+//
+//        if (len >= 1 && text.charAt(len - 1) != '\n'){
+//            text.append("\n");
+//        }
+
+    }
+
+    private static void ensureAtLeastThoseNewLines(ParcelableSpannedBuilder text, int newLines){
+
         int len = text.length();
 
-        if (len >= 1 && text.charAt(len - 1) != '\n'){
-            text.append("\n");
+        int currentNewLines = 0;
+
+        while(len > 0){
+            if( text.charAt(len - 1) == '\n'){
+                currentNewLines ++;
+            }else{
+                break;
+            }
+            len --;
         }
+
+        newLines = newLines - currentNewLines;
+
+
+        for(int index = 0; index < newLines; index ++){
+            text.append('\n');
+        }
+
 
     }
 
@@ -577,7 +604,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     private  void startImg(Attributes attributes) {
 
         //buildNewSpannable();
-        ensureAtLeastOneNewLine(mSpannableStringBuilder);
+        ensureAtLeastThoseNewLines(mSpannableStringBuilder,1);
         String src = attributes.getValue("", "src");
 
 
