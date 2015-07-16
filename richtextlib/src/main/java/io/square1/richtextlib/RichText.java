@@ -123,11 +123,15 @@ public class RichText {
     }
 
      static class InternalTag {
-        String tag;
-        Attributes attributes;
+         String tag;
+         boolean closeOnEnd;
+         boolean duplicateOnStart;
+         Attributes attributes;
 
          InternalTag(String tag, Attributes attributes){
              this.tag = tag;
+             this.closeOnEnd = true;
+             this.duplicateOnStart = true;
              this.attributes = new AttributesImpl(attributes);
          }
 
@@ -251,7 +255,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     };
 
     private Stack<RichText.InternalTag> mStack = new Stack<>();
-
+    private boolean mInsideTweet = false;
     private RichText.InternalTag mLastOpened;
     private RichText.InternalTag mLastClosed;
 
@@ -334,7 +338,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         mLastOpened = new RichText.InternalTag(tag, attributes);
         mStack.push(mLastOpened);
 
-        applyStartTag(mSpannableStringBuilder,tag,attributes);
+        applyStartTag(mSpannableStringBuilder,mLastOpened,attributes);
     }
 
     private RichText.InternalTag getCurrent(){
@@ -349,15 +353,21 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         return tag != null && tag.tag.equalsIgnoreCase("script") == false;
     }
 
-    private void applyStartTag(ParcelableSpannedBuilder spannable, String tag, Attributes attributes) {
+    private void applyStartTag(ParcelableSpannedBuilder spannable, RichText.InternalTag internalTag, Attributes attributes) {
+
+        final String tag = internalTag.tag;
 
         if (tag.equalsIgnoreCase("root")) {
             handleStartRoot(spannable);
         } else if (tag.equalsIgnoreCase("br")) {
             // We don't need to handle this. TagSoup will ensure that there's a </br> for each <br>
             // so we can safely emite the linebreaks when we handle the close tag.
-        } else if (tag.equalsIgnoreCase("p")) {
+        } else if (tag.equalsIgnoreCase("p") && mInsideTweet == false) {
+
+            internalTag.closeOnEnd = false;
+            internalTag.duplicateOnStart = false;
             handleP(spannable);
+
         } else if (tag.equalsIgnoreCase("div")) {
             startDiv(spannable, attributes);
         } else if (tag.equalsIgnoreCase("strong")) {
@@ -380,9 +390,12 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
             startFont(spannable, attributes);
         } else if (tag.equalsIgnoreCase("blockquote")) {
 
-            String elementClass = attributes.getValue(null,"class");
+            String elementClass = attributes.getValue("class");
             if(Blockquote.CLASS_TWEET.equalsIgnoreCase(elementClass)){
-                start(spannable, new Blockquote(Blockquote.CLASS_TWEET));
+                mInsideTweet = true;
+                internalTag.closeOnEnd = false;
+                internalTag.duplicateOnStart = false;
+             //   start(spannable, new Blockquote(Blockquote.CLASS_TWEET));
             }else {
                 handleP(spannable);
                 start(spannable, new Blockquote(elementClass));
@@ -391,7 +404,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         } else if (tag.equalsIgnoreCase("tt")) {
             start(spannable, new Monospace());
         } else if (tag.equalsIgnoreCase("a")) {
-            startA(spannable, attributes);
+            startA(spannable,mInsideTweet, attributes);
         } else if (tag.equalsIgnoreCase("u")) {
             start(spannable, new Underline());
         } else if (tag.equalsIgnoreCase("sup")) {
@@ -429,7 +442,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         }
         else if (tag.equalsIgnoreCase("br")) {
             handleBr(spannable);
-        } else if (tag.equalsIgnoreCase("p")) {
+        } else if (tag.equalsIgnoreCase("p") && mInsideTweet == false) {
             handleP(spannable);
         } else if (tag.equalsIgnoreCase("div")) {
            // handleP(spannable);
@@ -452,6 +465,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         } else if (tag.equalsIgnoreCase("font")) {
             endFont(spannable);
         } else if (tag.equalsIgnoreCase("blockquote")) {
+            mInsideTweet = false;
             endQuote(spannable);
         } else if (tag.equalsIgnoreCase("tt")) {
             end(spannable, Monospace.class,
@@ -662,14 +676,15 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         ListIterator<RichText.InternalTag> tags = mStack.listIterator(mStack.size() - 1);
 
         while (tags.hasPrevious() == true){
+
             RichText.InternalTag tag = tags.previous();
-            //dont duplicate p tags spacing around embeds
-            if(tag.tag.equalsIgnoreCase("p") == false) {
+
+            if(tag.closeOnEnd == true)
                 applyEndTag(mSpannableStringBuilder, tag.tag);
-                applyStartTag(newSpannable, tag.tag, tag.attributes);
-            }else{
-                Log.d("parser"," skipping tag");
-            }
+
+            if (tag.duplicateOnStart == true)
+                applyStartTag(newSpannable, tag, tag.attributes);
+
         }
 
         if(mSpannableStringBuilder.length() > 0 ) {
@@ -799,19 +814,19 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         endA(mStack, text);
     }
 
-    private  void startA(ParcelableSpannedBuilder text, Attributes attributes) {
+    private  void startA(ParcelableSpannedBuilder text, boolean insideTweet, Attributes attributes) {
         String href = attributes.getValue("", "href");
         //if( LinksUtils.parseLink( mStack.peek(), href,this) == false) {
             int len = text.length();
         Href h = new Href(href);
-        InternalTag tag = isWithinTag(mStack,"blockquote");
-        if( h.type == EmbedUtils.TEmbedType.ETwitter &&
-                tag != null &&
-                Blockquote.CLASS_TWEET
-                        .equalsIgnoreCase(tag.attributes.getValue(null,"class"))) {
+
+        mLastOpened.closeOnEnd = !insideTweet;
+        mLastOpened.duplicateOnStart = !insideTweet;
+
+        if( h.type == EmbedUtils.TEmbedType.ETwitter && insideTweet) {
             // now here we are inside a tweet
             onLinkParsed(this,h.mHref,h.type);
-        }else {
+        }else if (insideTweet == false) {
             text.setSpan(h, len, len, Spannable.SPAN_MARK_MARK);
         }
        // }
