@@ -19,6 +19,7 @@ import android.widget.TextView;
 import io.square1.richtextlib.R;
 import io.square1.richtextlib.style.ClickableSpan;
 import io.square1.richtextlib.style.P2ParcelableSpan;
+import io.square1.richtextlib.style.URLSpan;
 import io.square1.richtextlib.style.UrlBitmapDownloader;
 import io.square1.richtextlib.style.YouTubeSpan;
 
@@ -29,7 +30,7 @@ public class RichTextView extends TextView implements RichTextLinkMovementMethod
 
 
     public interface OnSpanClickedObserver {
-        public boolean onSpanClicked(ClickableSpan span);
+         boolean onSpanClicked(ClickableSpan span);
     }
 
     public interface RichTextContentChanged {
@@ -180,9 +181,18 @@ public class RichTextView extends TextView implements RichTextLinkMovementMethod
                 continue;
 
             if(span instanceof YouTubeSpan){
+
                 String id = ((YouTubeSpan)span).getYoutubeId();
+
                 this.getContext().
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" + id)));
+                startActivity(new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("http://www.youtube.com/watch?v=" + id)));
+            }
+            else if(span instanceof URLSpan){
+
+                String url = ((URLSpan)span).getURL();
+                this.getContext().
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
             }
         }
 
