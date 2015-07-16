@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">RichTextLib</string>
+    <string name="loading">Please wait...</string>
 </resources>

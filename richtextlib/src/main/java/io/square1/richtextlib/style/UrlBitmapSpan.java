@@ -4,8 +4,10 @@ package io.square1.richtextlib.style;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -25,9 +27,6 @@ import io.square1.richtextlib.util.UniqueId;
  * Created by roberto on 23/06/15.
  */
 public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, ClickableSpan, UpdateAppearance, P2ParcelableSpan {
-
-
-
 
     public static final Creator<UrlBitmapSpan> CREATOR  = P2ParcelableCreator.get(UrlBitmapSpan.class);
     public static final int TYPE = UniqueId.getType();
@@ -201,7 +200,8 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
         if(mBitmap == null) {
             return estimateSize();
         }else{
-           return evaluateBitmapBounds(mBitmap.getIntrinsicWidth(),mBitmap.getIntrinsicHeight());
+           return evaluateBitmapBounds(mBitmap.getIntrinsicWidth(),
+                   mBitmap.getIntrinsicHeight());
         }
     }
 
@@ -239,12 +239,22 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
             transY -= paint.getFontMetricsInt().descent;
         }
 
+        Paint.Style currentStyle = paint.getStyle();
+        int color = paint.getColor();
+
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(Color.parseColor("#3c3c3c"));
+        RectF rect = new RectF(x,top,y,bottom);
+        canvas.drawRect(rect,paint);
 
         canvas.save();
 
         //center
-        x = (mRef.get().getMeasuredWidth() - bitmapBounds.width()) / 2;
+        x = x + (mRef.get().getMeasuredWidth() - bitmapBounds.width()) / 2;
         canvas.translate(x, transY);
+
+
+
         if(mBitmap != null) {
             mBitmap.draw(canvas);
         }
@@ -274,14 +284,17 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
         boolean needsLayout = (newRect.equals(mRect) == false);
 
         if(view != null && mAttachedToWindow){
+
             mBitmap.setCallback(view);
             mBitmap.invalidateSelf();
 
             if(needsLayout == true){
                 view.requestLayout();
             }
+
             view.invalidate();
         }
+
     }
 
     @Override

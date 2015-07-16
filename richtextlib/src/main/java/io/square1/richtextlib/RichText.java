@@ -446,7 +446,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
             end(spannable, Monospace.class,
                     new TypefaceSpan("monospace"));
         } else if (tag.equalsIgnoreCase("a")) {
-            endA(spannable);
+            endA(mStack,spannable);
         } else if (tag.equalsIgnoreCase("u")) {
             end(spannable, Underline.class, new UnderlineSpan());
         } else if (tag.equalsIgnoreCase("sup")) {
@@ -715,8 +715,21 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     private  void startIFrame(ParcelableSpannedBuilder text, Attributes attributes) {
         String href = attributes.getValue("", "src");
         if( EmbedUtils.parseLink(mStack.peek(), href, this) == false) {
-           makeLink(href,null,text);
+            makeUnsupported(href,null,text);
         }
+    }
+
+    private void makeUnsupported(String link,String text,ParcelableSpannedBuilder builder){
+        //clean the link:
+        if(link.indexOf("//") == 0){
+            link = "http:" + link;
+        }
+        if(TextUtils.isEmpty(text) == true){
+            text = link;
+        }
+        int len = builder.length();
+        builder.append(text);
+        builder.setSpan(new UnsupportedContentSpan(link), len, len + text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
     private void makeLink(String link,String text,ParcelableSpannedBuilder builder){
@@ -745,7 +758,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
 
     private  void endIFrame(ParcelableSpannedBuilder text) {
-        endA(text);
+        endA(mStack, text);
     }
 
 
@@ -762,8 +775,8 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         }
     }
 
-    private static void endSoundCloud(ParcelableSpannedBuilder text) {
-        endA(text);
+    private  void endSoundCloud(ParcelableSpannedBuilder text) {
+        endA(mStack, text);
     }
 
     private  void startA(ParcelableSpannedBuilder text, Attributes attributes) {
@@ -774,7 +787,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
        // }
     }
 
-    private static void endA(ParcelableSpannedBuilder text) {
+    private static void endA(Stack<InternalTag> stack, ParcelableSpannedBuilder text) {
         int len = text.length();
         Object obj = getLast(text, Href.class);
         int where = text.getSpanStart(obj);
@@ -790,10 +803,27 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
             Href h = (Href) obj;
 
             if (h.mHref != null) {
-                text.setSpan(new URLSpan(h.mHref), where, len,
-                             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                //is inside a noscript ?
+                if(isWithinTag( stack, "noscript")){
+                    text.setSpan(new UnsupportedContentSpan(h.mHref), where, len,
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }else {
+                    text.setSpan(new URLSpan(h.mHref), where, len,
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
             }
         }
+    }
+
+    private static boolean isWithinTag(Stack<InternalTag> stack, String tag){
+
+         for(InternalTag t : stack){
+             if(t.tag.equalsIgnoreCase(tag) == true)
+                 return true;
+         }
+
+        return false;
     }
 
     private  void endHeader(ParcelableSpannedBuilder text) {

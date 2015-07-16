@@ -4,7 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
-import android.graphics.Canvas;
+
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -16,10 +16,11 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
-import io.square1.richtextlib.R;
+
 import io.square1.richtextlib.style.ClickableSpan;
 import io.square1.richtextlib.style.P2ParcelableSpan;
 import io.square1.richtextlib.style.URLSpan;
+import io.square1.richtextlib.style.UnsupportedContentSpan;
 import io.square1.richtextlib.style.UrlBitmapDownloader;
 import io.square1.richtextlib.style.YouTubeSpan;
 
@@ -193,6 +194,13 @@ public class RichTextView extends TextView implements RichTextLinkMovementMethod
                 String url = ((URLSpan)span).getURL();
                 this.getContext().
                         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+
+            }else if (span instanceof UnsupportedContentSpan){
+                String url = ((UnsupportedContentSpan)span).getURL();
+                WebDialog dialog = new WebDialog(getContext(),url);
+                dialog.setCancelable(true);
+                dialog.show();
+
             }
         }
 
