@@ -159,7 +159,7 @@ public class RichText {
                                 UrlBitmapDownloader downloader) {
 
         final Style defaultStyle = new DefaultStyle(context);
-        fromHtml( context, source, defaultStyle,callback,downloader);
+        fromHtml( context, source, defaultStyle,callback,downloader,true,false);
 
     }
 
@@ -167,9 +167,10 @@ public class RichText {
                                 String source,
                                 Style style,
                                 RichTextCallback callback,
-                                UrlBitmapDownloader downloader) {
+                                UrlBitmapDownloader downloader,
+                                boolean ignoreWhiteSpaces) {
 
-        fromHtml(context, source, style, callback,downloader, false);
+        fromHtml(context, source, style, callback,downloader, false , ignoreWhiteSpaces);
 
     }
 
@@ -205,7 +206,8 @@ public class RichText {
                                  Style style,
                                  RichTextCallback callback,
                                  UrlBitmapDownloader downloader,
-                                 boolean parseWordPressTags)  {
+                                 boolean parseWordPressTags,
+                                 boolean ignoreWhiteSpaces)  {
 
         HtmlToSpannedConverter converter = null;
         try {
@@ -231,7 +233,7 @@ public class RichText {
               //  }
             }
 
-            converter = new HtmlToSpannedConverter(source, reader, style, callback, downloader);
+            converter = new HtmlToSpannedConverter(source, reader, style, callback, ignoreWhiteSpaces, downloader);
             converter.convert();
 
         } catch (Exception e) {
@@ -260,11 +262,13 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     private RichText.RichTextCallback mCallback;
     private UrlBitmapDownloader mDownloader;
     private Style mStyle;
+    private boolean mIgnoreWhiteSpaces;
 
     public HtmlToSpannedConverter(String source,
                                   XMLReader reader,
                                   Style style,
                                   RichText.RichTextCallback callback,
+                                  boolean ignoreWhiteSpaces,
                                   UrlBitmapDownloader dowloader) {
         mStyle = style;
         mCallback = callback;
@@ -273,6 +277,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         mReader = reader;
         mAccumulatedText = new StringBuilder();
         mSpannableStringBuilder = new ParcelableSpannedBuilder();
+        mIgnoreWhiteSpaces = ignoreWhiteSpaces;
     }
 
 
@@ -374,8 +379,15 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         } else if (tag.equalsIgnoreCase("font")) {
             startFont(spannable, attributes);
         } else if (tag.equalsIgnoreCase("blockquote")) {
-            handleP(spannable);
-            start(spannable, new Blockquote());
+
+            String elementClass = attributes.getValue(null,"class");
+            if(Blockquote.CLASS_TWEET.equalsIgnoreCase(elementClass)){
+                start(spannable, new Blockquote(Blockquote.CLASS_TWEET));
+            }else {
+                handleP(spannable);
+                start(spannable, new Blockquote(elementClass));
+            }
+
         } else if (tag.equalsIgnoreCase("tt")) {
             start(spannable, new Monospace());
         } else if (tag.equalsIgnoreCase("a")) {
@@ -440,7 +452,6 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         } else if (tag.equalsIgnoreCase("font")) {
             endFont(spannable);
         } else if (tag.equalsIgnoreCase("blockquote")) {
-            handleP(spannable);
             endQuote(spannable);
         } else if (tag.equalsIgnoreCase("tt")) {
             end(spannable, Monospace.class,
@@ -580,20 +591,29 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     }
 
     private  void endQuote(ParcelableSpannedBuilder text) {
-        // , new QuoteSpan(BitmapFactory.decodeResource(mCallback.getContext().getResources(), R.drawable.quote))
-        int len = text.length();
-        Object obj = getLast(text, Blockquote.class);
-        int where = text.getSpanStart(obj);
 
+
+        int len = text.length();
+        Blockquote obj = (Blockquote)getLast(text, Blockquote.class);
+
+        if(obj == null) return;
+
+        int where = text.getSpanStart(obj);
         text.removeSpan(obj);
 
-        if (where != len) {
+        if(Blockquote.CLASS_TWEET.equalsIgnoreCase(obj.getElementClass()) == false) {
 
-            StyleSpan styleSpan = new StyleSpan(Typeface.ITALIC);
-            text.setSpan(styleSpan, where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            if (where != len) {
 
-            QuoteSpan quoteSpan = new QuoteSpan(mStyle.getQuoteBackgroundColor(),mStyle.quoteBitmap());
-            text.setSpan(quoteSpan, where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                StyleSpan styleSpan = new StyleSpan(Typeface.ITALIC);
+                text.setSpan(styleSpan, where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                QuoteSpan quoteSpan = new QuoteSpan(mStyle.getQuoteBackgroundColor(), mStyle.quoteBitmap());
+                text.setSpan(quoteSpan, where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+        }else {/// ooops we are inside one of those tweets type of cells !
+            //look for the twitter status
+
         }
     }
 
@@ -783,7 +803,17 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         String href = attributes.getValue("", "href");
         //if( LinksUtils.parseLink( mStack.peek(), href,this) == false) {
             int len = text.length();
-            text.setSpan(new Href(href), len, len, Spannable.SPAN_MARK_MARK);
+        Href h = new Href(href);
+        InternalTag tag = isWithinTag(mStack,"blockquote");
+        if( h.type == EmbedUtils.TEmbedType.ETwitter &&
+                tag != null &&
+                Blockquote.CLASS_TWEET
+                        .equalsIgnoreCase(tag.attributes.getValue(null,"class"))) {
+            // now here we are inside a tweet
+            onLinkParsed(this,h.mHref,h.type);
+        }else {
+            text.setSpan(h, len, len, Spannable.SPAN_MARK_MARK);
+        }
        // }
     }
 
@@ -804,8 +834,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
             if (h.mHref != null) {
 
-                //is inside a noscript ?
-                if(isWithinTag( stack, "noscript")){
+               if(isWithinTag( stack, "noscript") != null){
                     text.setSpan(new UnsupportedContentSpan(h.mHref), where, len,
                             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }else {
@@ -816,14 +845,14 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         }
     }
 
-    private static boolean isWithinTag(Stack<InternalTag> stack, String tag){
+    private static InternalTag isWithinTag(Stack<InternalTag> stack, String tag){
 
          for(InternalTag t : stack){
              if(t.tag.equalsIgnoreCase(tag) == true)
-                 return true;
+                 return t;
          }
 
-        return false;
+        return null;
     }
 
     private  void endHeader(ParcelableSpannedBuilder text) {
@@ -892,34 +921,38 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
          * newlines count as spaces.
          */
 
-//        for (int i = 0; i < length; i++) {
-//            char c = ch[i + start];
-//
-//            if (c == ' ' || c == '\n') {
-//                char pred;
-//                int len = sb.length();
-//
-//                if (len == 0) {
-//                    len = mSpannableStringBuilder.length();
-//
-//                    if (len == 0) {
-//                        pred = '\n';
-//                    } else {
-//                        pred = mSpannableStringBuilder.charAt(len - 1);
-//                    }
-//                } else {
-//                    pred = sb.charAt(len - 1);
-//                }
-//
-//                if (pred != ' ' && pred != '\n') {
-//                    sb.append(' ');
-//                }
-//            } else {
-//                sb.append(c);
-//            }
-//        }
+        if(mIgnoreWhiteSpaces == true) {
 
-        mAccumulatedText.append(ch,start,length);
+
+            for (int i = 0; i < length; i++) {
+                char c = ch[i + start];
+
+                if (c == ' ' || c == '\n') {
+                    char pred;
+                    int len = mAccumulatedText.length();
+
+                    if (len == 0) {
+                        len = mAccumulatedText.length();
+
+                        if (len == 0) {
+                            pred = '\n';
+                        } else {
+                            pred = mAccumulatedText.charAt(len - 1);
+                        }
+                    } else {
+                        pred = mAccumulatedText.charAt(len - 1);
+                    }
+
+                    if (pred != ' ' && pred != '\n') {
+                        mAccumulatedText.append(' ');
+                    }
+                } else {
+                    mAccumulatedText.append(c);
+                }
+            }
+        }else {
+            mAccumulatedText.append(ch, start, length);
+        }
 
 
     }
@@ -1006,7 +1039,20 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     private static class Big { }
     private static class Small { }
     private static class Monospace { }
-    private static class Blockquote { }
+    private static class Blockquote {
+
+        public static final String CLASS_TWEET = "twitter-tweet";
+
+        private String mClass;
+
+        Blockquote(String elementClass){
+            mClass = elementClass;
+        }
+
+        public String getElementClass(){
+            return mClass;
+        }
+    }
     private static class Super { }
     private static class Sub { }
 
@@ -1029,10 +1075,22 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     }
 
     private static class Href {
+
         public String mHref;
+        public EmbedUtils.TEmbedType type;
 
         public Href(String href) {
             mHref = href;
+           if( EmbedUtils.parseLink(this, href, new EmbedUtils.ParseLinkCallback() {
+                @Override
+                public void onLinkParsed(Object callingObject, String result, EmbedUtils.TEmbedType type) {
+                    Href.this.type = type;
+                    Href.this.mHref = result;
+
+                }
+            }) == false){
+               type = EmbedUtils.TEmbedType.EUnsupported;
+           }
         }
     }
 

@@ -115,6 +115,7 @@ public class WebDialog extends Dialog {
     public void dismiss() {
         if (webView != null) {
             webView.stopLoading();
+            webView.destroy();
         }
         if (!isDetached) {
             if (spinner != null && spinner.isShowing()) {

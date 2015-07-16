@@ -23,7 +23,7 @@ import io.square1.richtextlib.style.URLSpan;
 import io.square1.richtextlib.style.UnsupportedContentSpan;
 import io.square1.richtextlib.style.UrlBitmapDownloader;
 import io.square1.richtextlib.style.YouTubeSpan;
-
+import io.square1.richtextlib.R;
 /**
  * Created by roberto on 24/06/15.
  */
