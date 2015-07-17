@@ -174,7 +174,7 @@ public class RichText {
                                 UrlBitmapDownloader downloader,
                                 boolean ignoreWhiteSpaces) {
 
-        fromHtml(context, source, style, callback,downloader, false , ignoreWhiteSpaces);
+        fromHtml(context, source, style, callback, downloader, false , ignoreWhiteSpaces);
 
     }
 
@@ -255,7 +255,10 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     };
 
     private Stack<RichText.InternalTag> mStack = new Stack<>();
-    private boolean mInsideTweet = false;
+
+    private boolean mInsideTweet  = false;
+    private boolean mInsideFacebookVideo = false;
+
     private RichText.InternalTag mLastOpened;
     private RichText.InternalTag mLastClosed;
 
@@ -350,7 +353,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     }
 
     boolean storeContent(RichText.InternalTag tag){
-        return tag != null && tag.tag.equalsIgnoreCase("script") == false;
+        return  mInsideFacebookVideo == false && (tag != null && tag.tag.equalsIgnoreCase("script") == false);
     }
 
     private void applyStartTag(ParcelableSpannedBuilder spannable, RichText.InternalTag internalTag, Attributes attributes) {
@@ -389,6 +392,8 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         } else if (tag.equalsIgnoreCase("font")) {
             startFont(spannable, attributes);
         } else if (tag.equalsIgnoreCase("blockquote")) {
+
+            if(mInsideFacebookVideo == true) return;
 
             String elementClass = attributes.getValue("class");
             if(Blockquote.CLASS_TWEET.equalsIgnoreCase(elementClass)){
@@ -445,6 +450,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         } else if (tag.equalsIgnoreCase("p") && mInsideTweet == false) {
             handleP(spannable);
         } else if (tag.equalsIgnoreCase("div")) {
+            mInsideFacebookVideo = false;
            // handleP(spannable);
         } else if (tag.equalsIgnoreCase("strong")) {
             end(spannable, Bold.class, new StyleSpan(Typeface.BOLD));
@@ -466,7 +472,9 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
             endFont(spannable);
         } else if (tag.equalsIgnoreCase("blockquote")) {
             mInsideTweet = false;
-            endQuote(spannable);
+            if(mInsideFacebookVideo == false) {
+                endQuote(spannable);
+            }
         } else if (tag.equalsIgnoreCase("tt")) {
             end(spannable, Monospace.class,
                     new TypefaceSpan("monospace"));
@@ -633,7 +641,20 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
 
     private  void startDiv(ParcelableSpannedBuilder text, Attributes attributes) {
+        String elementClass = attributes.getValue("","class");
+        if("fb-video".equalsIgnoreCase(elementClass)){
+            String url = attributes.getValue("","data-href");
+            if(TextUtils.isEmpty(url) == false){
 
+                mInsideFacebookVideo = true;
+
+                int where = text.length();
+                String message = " See video here " ;
+                text.append(message);
+                UnsupportedContentSpan span = new UnsupportedContentSpan(url);
+                text.setSpan(span, where,where + message.length() , Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+        }
     }
     private  void startImg(Attributes attributes) {
 
