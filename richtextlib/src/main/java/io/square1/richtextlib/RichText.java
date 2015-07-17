@@ -107,6 +107,17 @@ public class RichText {
         public int maxImageHeight() {
             return Style.USE_DEFAULT;
         }
+
+        @Override
+        public boolean parseWordPressTags(){
+            return true;
+        }
+
+        @Override
+        public boolean treatAsHtml(){
+            return true;
+        }
+
     }
 
 
@@ -163,38 +174,17 @@ public class RichText {
                                 UrlBitmapDownloader downloader) {
 
         final Style defaultStyle = new DefaultStyle(context);
-        fromHtml( context, source, defaultStyle,callback,downloader,true,false);
+        fromHtmlImpl(context, source, defaultStyle, callback, downloader);
 
     }
 
-    public static void fromHtml(Context context,
-                                String source,
-                                Style style,
-                                RichTextCallback callback,
-                                UrlBitmapDownloader downloader,
-                                boolean ignoreWhiteSpaces) {
-
-        fromHtml(context, source, style, callback,downloader, false , ignoreWhiteSpaces);
-
-    }
-
-    public static void fromHtml(Context context,
-                                String source,
-                                RichTextCallback callback,
-                                UrlBitmapDownloader downloader,
-                                boolean parseWordPressTags) {
-
-        final Style defaultStyle = new DefaultStyle(context);
-        fromHtml(context, source, defaultStyle, callback,downloader, parseWordPressTags);
-    }
     public static void fromHtml(Context context,
                                 String source,
                                 RichTextCallback callback,
                                 Style style,
-                                UrlBitmapDownloader downloader,
-                                boolean parseWordPressTags) {
+                                UrlBitmapDownloader downloader) {
 
-        fromHtml(context, source, style, callback, downloader, parseWordPressTags);
+        fromHtmlImpl(context, source, style, callback, downloader);
 
     }
 
@@ -205,22 +195,19 @@ public class RichText {
     final static String INTERACTION_REPLACEMENT = "";
 
 
-    private static void fromHtml(Context context,
+    private static void fromHtmlImpl(Context context,
                                  String source,
                                  Style style,
                                  RichTextCallback callback,
-                                 UrlBitmapDownloader downloader,
-                                 boolean parseWordPressTags,
-                                 boolean ignoreWhiteSpaces)  {
+                                 UrlBitmapDownloader downloader)  {
 
         HtmlToSpannedConverter converter = null;
         try {
 
-            XMLReader reader = null;
-            reader = new Parser();
+            XMLReader reader = new Parser();
             reader.setProperty(Parser.schemaProperty, HtmlParser.schema);
 
-            if(parseWordPressTags == true) {
+            if(style.parseWordPressTags() == true) {
 
                 //soundcloud
                 //source = source.replaceAll("\\[/soundcloud\\]","");
@@ -237,7 +224,7 @@ public class RichText {
               //  }
             }
 
-            converter = new HtmlToSpannedConverter(source, reader, style, callback, ignoreWhiteSpaces, downloader);
+            converter = new HtmlToSpannedConverter(source, reader, style, callback, downloader);
             converter.convert();
 
         } catch (Exception e) {
@@ -266,13 +253,11 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     private RichText.RichTextCallback mCallback;
     private UrlBitmapDownloader mDownloader;
     private Style mStyle;
-    private boolean mIgnoreWhiteSpaces;
 
     public HtmlToSpannedConverter(String source,
                                   XMLReader reader,
                                   Style style,
                                   RichText.RichTextCallback callback,
-                                  boolean ignoreWhiteSpaces,
                                   UrlBitmapDownloader dowloader) {
         mStyle = style;
         mCallback = callback;
@@ -281,7 +266,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         mReader = reader;
         mAccumulatedText = new StringBuilder();
         mSpannableStringBuilder = new ParcelableSpannedBuilder();
-        mIgnoreWhiteSpaces = ignoreWhiteSpaces;
+
     }
 
 
@@ -302,6 +287,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         }
 
         if(mSpannableStringBuilder.length() > 0){
+            fixFlags(mSpannableStringBuilder);
             mCallback.onElementFound(RichText.TNodeType.EText, mSpannableStringBuilder, null);
         }
 
@@ -350,7 +336,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     }
 
     boolean storeContent(RichText.InternalTag tag){
-        return tag != null && tag.tag.equalsIgnoreCase("script") == false;
+        return !mInsideTweet  && ( tag != null && tag.tag.equalsIgnoreCase("script") == false);
     }
 
     private void applyStartTag(ParcelableSpannedBuilder spannable, RichText.InternalTag internalTag, Attributes attributes) {
@@ -548,6 +534,8 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     }
 
     private  void handleP(ParcelableSpannedBuilder text) {
+
+        if(mInsideTweet == true) return;
 
         int len = text.length();
 
@@ -930,29 +918,31 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
             return;
         }
 
-
         /*
          * Ignore whitespace that immediately follows other whitespace;
          * newlines count as spaces.
          */
 
-        if(mIgnoreWhiteSpaces == true) {
+        if(mStyle.treatAsHtml() == true) {
 
 
             for (int i = 0; i < length; i++) {
                 char c = ch[i + start];
 
                 if (c == ' ' || c == '\n') {
+
                     char pred;
                     int len = mAccumulatedText.length();
 
+                    //no text yet in the accumulated buffer
                     if (len == 0) {
-                        len = mAccumulatedText.length();
+
+                        len = mSpannableStringBuilder.length();
 
                         if (len == 0) {
                             pred = '\n';
                         } else {
-                            pred = mAccumulatedText.charAt(len - 1);
+                            pred = mSpannableStringBuilder.charAt(len - 1);
                         }
                     } else {
                         pred = mAccumulatedText.charAt(len - 1);

@@ -39,4 +39,15 @@ public interface Style {
     int backgroundColor();
     int maxImageWidth();
     int maxImageHeight();
+
+    /**
+     * will make an attempt to resolve Wordpress tags such as [soundcloud /]
+     */
+    boolean parseWordPressTags();
+
+    /**
+     * when parsing pure HTML white spaces and new lines have to be considered differently
+     * @return
+     */
+    boolean treatAsHtml();
 }
