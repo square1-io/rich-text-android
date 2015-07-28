@@ -239,13 +239,13 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
             transY -= paint.getFontMetricsInt().descent;
         }
 
-        Paint.Style currentStyle = paint.getStyle();
-        int color = paint.getColor();
-
-        paint.setStyle(Paint.Style.FILL);
-        paint.setColor(Color.parseColor("#3c3c3c"));
-        RectF rect = new RectF(x,top,y,bottom);
-        canvas.drawRect(rect,paint);
+//        Paint.Style currentStyle = paint.getStyle();
+//        int color = paint.getColor();
+//
+//        paint.setStyle(Paint.Style.FILL);
+//        paint.setColor(Color.parseColor("#3c3c3c"));
+//        RectF rect = new RectF(x,top,y,bottom);
+//        canvas.drawRect(rect,paint);
 
         canvas.save();
 

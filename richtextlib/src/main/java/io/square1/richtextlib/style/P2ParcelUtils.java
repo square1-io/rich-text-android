@@ -19,8 +19,8 @@ public final class P2ParcelUtils {
 
             if(type ==  AbsoluteSizeSpan.TYPE)
                 return AbsoluteSizeSpan.CREATOR.createFromParcel(in);
-            if(type ==  AlignmentSpan.Standard.TYPE)
-                return AlignmentSpan.Standard.CREATOR.createFromParcel(in);
+            if(type ==  RichAlignmentSpan.Standard.TYPE)
+                return RichAlignmentSpan.Standard.CREATOR.createFromParcel(in);
             if(type ==  ForegroundColorSpan.TYPE)
                 return ForegroundColorSpan.CREATOR.createFromParcel(in);
             if(type ==  QuoteSpan.TYPE)

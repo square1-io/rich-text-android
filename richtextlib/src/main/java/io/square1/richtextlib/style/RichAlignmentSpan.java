@@ -3,16 +3,16 @@ package io.square1.richtextlib.style;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.Layout;
-import android.text.style.ParagraphStyle;
+
 
 import io.square1.richtextlib.ui.RichTextView;
 import io.square1.richtextlib.util.UniqueId;
 
-public interface AlignmentSpan extends ParagraphStyle, P2ParcelableSpan {
+public interface RichAlignmentSpan extends android.text.style.AlignmentSpan, P2ParcelableSpan {
 
     public Layout.Alignment getAlignment();
 
-    public static class Standard  implements AlignmentSpan {
+    public static class Standard  implements RichAlignmentSpan {
 
         public static final int TYPE = UniqueId.getType();
 

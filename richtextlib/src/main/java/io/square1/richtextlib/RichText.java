@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 
 import android.net.Uri;
+import android.text.Layout;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -633,8 +634,31 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
 
     private  void startDiv(ParcelableSpannedBuilder text, Attributes attributes) {
+
         String elementClass = attributes.getValue("","class");
-        if("fb-video".equalsIgnoreCase(elementClass)){
+
+        if("pb_feed".equalsIgnoreCase(elementClass)){
+            String dataGame  = attributes.getValue("", "data-game");
+
+            if(TextUtils.isEmpty(dataGame) == true) return;
+
+            int where = text.length();
+            String message = " TAKE  THE  QUIZ HERE!" ;
+
+            text.append(message);
+            String url = Uri.parse("http://www.playbuzz.com")
+                    .buildUpon()
+                    .encodedPath(dataGame)
+                    .build()
+                    .toString();
+
+
+            text.setSpan( new StyleSpan(Typeface.BOLD), where, where + message.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            UnsupportedContentSpan span = new UnsupportedContentSpan(url);
+            text.setSpan(span, where,where + message.length() , Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        }
+        else if("fb-video".equalsIgnoreCase(elementClass)){
             String url = attributes.getValue("","data-href");
             if(TextUtils.isEmpty(url) == false){
 
