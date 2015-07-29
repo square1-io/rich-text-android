@@ -362,6 +362,8 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
             internalTag.duplicateOnStart = false;
             handleP(spannable);
 
+        } else if (tag.equalsIgnoreCase("ul")) {
+            handleP(spannable);
         } else if (tag.equalsIgnoreCase("div")) {
             startDiv(spannable, attributes);
         } else if (tag.equalsIgnoreCase("strong")) {
@@ -400,7 +402,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         } else if (tag.equalsIgnoreCase("tt")) {
             start(spannable, new Monospace());
         } else if (tag.equalsIgnoreCase("a")) {
-            startA(spannable,mInsideTweet, attributes);
+            startA(spannable, mInsideTweet, attributes);
         } else if (tag.equalsIgnoreCase("u")) {
             start(spannable, new Underline());
         } else if (tag.equalsIgnoreCase("sup")) {
@@ -436,7 +438,13 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         if (tag.equalsIgnoreCase("root")) {
             handleEndRoot(spannable);
         }
-        else if (tag.equalsIgnoreCase("br")) {
+        else if (tag.equalsIgnoreCase("ul")) {
+         handleP(spannable);
+        }
+        else  if(tag.equalsIgnoreCase("li")){
+            startBullet();
+        }
+    else if (tag.equalsIgnoreCase("br")) {
             handleBr(spannable);
         } else if (tag.equalsIgnoreCase("p") && mInsideTweet == false) {
             handleP(spannable);
@@ -635,7 +643,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
     private  void startDiv(ParcelableSpannedBuilder text, Attributes attributes) {
 
-        String elementClass = attributes.getValue("","class");
+        String elementClass = attributes.getValue("", "class");
 
         if("pb_feed".equalsIgnoreCase(elementClass)){
             String dataGame  = attributes.getValue("", "data-game");
@@ -703,6 +711,22 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
        // attrs.put(RichText.IMAGE_WIDTH, attributes.getValue("width"));
        // attrs.put(RichText.IMAGE_HEIGHT, attributes.getValue("height"));
        // mCallback.onElementFound(RichText.TNodeType.EImage, src, attrs);
+
+    }
+
+    private  void startBullet() {
+
+        ensureAtLeastThoseNewLines(mSpannableStringBuilder,1);
+        BulletSpan bulletSpan = new BulletSpan();
+
+        int len = mSpannableStringBuilder.length();
+        mSpannableStringBuilder.append("\uFFFC");
+
+        mSpannableStringBuilder.setSpan(bulletSpan,
+                len,
+                mSpannableStringBuilder.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
 
     }
 
