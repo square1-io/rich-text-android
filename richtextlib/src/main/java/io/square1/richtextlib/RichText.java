@@ -364,6 +364,8 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
         } else if (tag.equalsIgnoreCase("ul")) {
             handleP(spannable);
+        }else  if(tag.equalsIgnoreCase("li")){
+                startBullet();
         } else if (tag.equalsIgnoreCase("div")) {
             startDiv(spannable, attributes);
         } else if (tag.equalsIgnoreCase("strong")) {
@@ -442,7 +444,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
          handleP(spannable);
         }
         else  if(tag.equalsIgnoreCase("li")){
-            startBullet();
+            endBullet();
         }
     else if (tag.equalsIgnoreCase("br")) {
             handleBr(spannable);
@@ -714,19 +716,36 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
     }
 
+    //Bullet
+
     private  void startBullet() {
 
-        ensureAtLeastThoseNewLines(mSpannableStringBuilder,1);
-        BulletSpan bulletSpan = new BulletSpan();
+        ensureAtLeastThoseNewLines(mSpannableStringBuilder, 1);
+        mSpannableStringBuilder.append("\t•  ");
+       // int len = mSpannableStringBuilder.length();
+       // mSpannableStringBuilder.setSpan(new Bullet(), len, len, Spannable.SPAN_MARK_MARK);
 
-        int len = mSpannableStringBuilder.length();
-        mSpannableStringBuilder.append("\uFFFC");
 
-        mSpannableStringBuilder.setSpan(bulletSpan,
-                len,
-                mSpannableStringBuilder.length(),
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
+    }
+
+    private  void endBullet() {
+
+//        int len = mSpannableStringBuilder.length();
+//        Object obj = getLast(mSpannableStringBuilder, Bullet.class);
+//        int where = mSpannableStringBuilder.getSpanStart(obj);
+//
+//        mSpannableStringBuilder.removeSpan(obj);
+//
+//        if (where != len) {
+//
+//            BulletSpan bulletSpan = new BulletSpan();
+//            mSpannableStringBuilder.setSpan(bulletSpan,
+//                    where,
+//                    len,
+//                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//
+//        }
 
     }
 
@@ -1117,6 +1136,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     private static class Big { }
     private static class Small { }
     private static class Monospace { }
+    private static class Bullet { }
     private static class Blockquote {
 
         public static final String CLASS_TWEET = "twitter-tweet";
