@@ -618,15 +618,20 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     private  void endQuote(ParcelableSpannedBuilder text) {
 
 
-        int len = text.length();
+
         Blockquote obj = (Blockquote)getLast(text, Blockquote.class);
 
         if(obj == null) return;
+        boolean isTweet = Blockquote.CLASS_TWEET.equalsIgnoreCase(obj.getElementClass());
 
+        if(isTweet == false){
+            handleP(text);
+        }
+        int len = text.length();
         int where = text.getSpanStart(obj);
         text.removeSpan(obj);
 
-        if(Blockquote.CLASS_TWEET.equalsIgnoreCase(obj.getElementClass()) == false) {
+        if( isTweet == false) {
 
             if (where != len) {
 
