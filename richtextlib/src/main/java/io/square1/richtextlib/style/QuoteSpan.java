@@ -71,7 +71,10 @@ public class QuoteSpan extends MetricAffectingSpan implements /*LineHeightSpan,*
 
     @Override
     public void updateMeasureState(TextPaint p) {
-        p.setTextSize(mInitialTextSize * 1.1f);
+        if(mInitialTextSize < 0){
+            mInitialTextSize = p.getTextSize();
+        }
+        p.setTextSize(mInitialTextSize * 1.0f);
     }
 
 

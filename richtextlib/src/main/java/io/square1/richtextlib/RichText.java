@@ -397,8 +397,8 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
                 internalTag.duplicateOnStart = false;
              //   start(spannable, new Blockquote(Blockquote.CLASS_TWEET));
             }else {
-                handleP(spannable);
                 start(spannable, new Blockquote(elementClass));
+                handleP(spannable);
             }
 
         } else if (tag.equalsIgnoreCase("tt")) {
