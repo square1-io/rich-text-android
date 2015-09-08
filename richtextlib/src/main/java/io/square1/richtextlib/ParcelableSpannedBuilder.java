@@ -1044,4 +1044,18 @@ public class ParcelableSpannedBuilder implements CharSequence, GetChars, Spannab
         dest.writeInt(mSpanCount);
     }
 
+    public  <T>  T getLastSpan(Class<T> kind) {
+        /*
+         * This knows that the last returned object from getSpans()
+         * will be the most recently added.
+         */
+        T[] objs = this.getSpans(0, this.length(), kind);
+
+        if (objs.length == 0) {
+            return null;
+        } else {
+            return objs[objs.length - 1];
+        }
+    }
+
 }

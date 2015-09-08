@@ -74,7 +74,7 @@ public class QuoteSpan extends MetricAffectingSpan implements /*LineHeightSpan,*
         if(mInitialTextSize < 0){
             mInitialTextSize = p.getTextSize();
         }
-        p.setTextSize(mInitialTextSize * 1.0f);
+        p.setTextSize(mInitialTextSize * 1.1f);
     }
 
 

@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
  */
 public interface Style {
 
+
     int USE_DEFAULT = Integer.MIN_VALUE;
 
     Context getApplicationContext();
@@ -39,6 +40,10 @@ public interface Style {
     int backgroundColor();
     int maxImageWidth();
     int maxImageHeight();
+
+    float headerIncrease(int headerLevel);
+
+    float  smallTextReduce();
 
     /**
      * will make an attempt to resolve Wordpress tags such as [soundcloud /]

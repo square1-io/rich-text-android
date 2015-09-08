@@ -32,6 +32,7 @@ import io.square1.richtextlib.ParcelableSpannedBuilder;
 import io.square1.richtextlib.style.RemoteBitmapSpan;
 import io.square1.richtextlib.style.UrlBitmapDownloader;
 import io.square1.richtextlib.ui.RichTextView;
+import io.square1.richtextlib.v2.RichTextV2;
 
 
 public class MainActivity extends ActionBarActivity implements UrlBitmapDownloader, RichText.RichTextCallback {
@@ -173,7 +174,10 @@ public class MainActivity extends ActionBarActivity implements UrlBitmapDownload
 //
 
 
-        RichText.fromHtml(this,html,this,this);
+        ParcelableSpannedBuilder content =  RichTextV2.fromHtml(this, html);
+
+        ((RichTextView) findViewById(R.id.textView)).setText(content);
+        MainActivity2Activity.show(this, content);
 
         adapter = new BaseAdapter() {
 

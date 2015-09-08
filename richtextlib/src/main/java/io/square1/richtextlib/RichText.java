@@ -11,13 +11,10 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 
 import android.net.Uri;
-import android.text.Layout;
 import android.text.Spannable;
-import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ParagraphStyle;
-import android.util.Log;
 import android.util.Patterns;
 
 
@@ -29,7 +26,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.AttributesImpl;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -38,9 +34,12 @@ import java.util.ListIterator;
 import java.util.Stack;
 import java.util.regex.Matcher;
 
-import io.square1.richtextlib.parser.StringTokenizer;
+
+import io.square1.richtextlib.v2.parser.MarkupContext;
+import io.square1.richtextlib.v2.parser.MarkupTag;
 import io.square1.richtextlib.style.*;
 import io.square1.richtextlib.util.NumberUtils;
+import io.square1.richtextlib.v2.parser.TagHandler;
 
 /**
  * This class processes HTML strings into displayable styled text.
@@ -63,6 +62,9 @@ public class RichText {
 
     public static class DefaultStyle implements  Style {
 
+        private static final float[] HEADER_SIZES = {
+                1.5f, 1.4f, 1.3f, 1.2f, 1.1f, 1f,
+        };
 
         private Context mApplicationContext;
         private Bitmap mQuoteBitmap;
@@ -110,6 +112,17 @@ public class RichText {
         }
 
         @Override
+        public float headerIncrease(int headerLevel) {
+            return HEADER_SIZES[headerLevel];
+        }
+
+
+        @Override
+        public float smallTextReduce(){
+            return 0.8f;
+        }
+
+        @Override
         public boolean parseWordPressTags(){
             return true;
         }
@@ -134,24 +147,7 @@ public class RichText {
         void onError(Exception exc);
     }
 
-     static class InternalTag {
-         String tag;
-         boolean closeOnEnd;
-         boolean duplicateOnStart;
-         Attributes attributes;
 
-         InternalTag(String tag, Attributes attributes){
-             this.tag = tag;
-             this.closeOnEnd = true;
-             this.duplicateOnStart = true;
-             this.attributes = new AttributesImpl(attributes);
-         }
-
-         @Override
-         public String toString() {
-             return "InternalTag{"+this.tag+"}";
-         }
-    }
 
 
 
@@ -238,17 +234,15 @@ public class RichText {
 
 static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseLinkCallback{
 
-    private static final float[] HEADER_SIZES = {
-        1.5f, 1.4f, 1.3f, 1.2f, 1.1f, 1f,
-    };
 
-    private Stack<RichText.InternalTag> mStack = new Stack<>();
+
+    private Stack<MarkupTag> mStack = new Stack<>();
 
     private boolean mInsideTweet  = false;
     private boolean mInsideFacebookVideo = false;
 
-    private RichText.InternalTag mLastOpened;
-    private RichText.InternalTag mLastClosed;
+    private MarkupTag mLastOpened;
+    private MarkupTag mLastClosed;
 
     private String mSource;
     private XMLReader mReader;
@@ -325,13 +319,13 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     private void handleStartTag( String tag, Attributes attributes) {
 
         mSpannableStringBuilder = processAccumulatedTextContent();
-        mLastOpened = new RichText.InternalTag(tag, attributes);
+        mLastOpened = new MarkupTag(tag, attributes);
         mStack.push(mLastOpened);
 
         applyStartTag(mSpannableStringBuilder,mLastOpened,attributes);
     }
 
-    private RichText.InternalTag getCurrent(){
+    private MarkupTag getCurrent(){
         try {
             return mStack.peek();
         }catch (Exception e){}
@@ -339,7 +333,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         return null;
     }
 
-    boolean storeContent(RichText.InternalTag tag){
+    boolean storeContent(MarkupTag tag){
 
         return mInsideTweet == false &&
                 mInsideFacebookVideo == false &&
@@ -347,9 +341,12 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
     }
 
-    private void applyStartTag(ParcelableSpannedBuilder spannable, RichText.InternalTag internalTag, Attributes attributes) {
+    private void applyStartTag(ParcelableSpannedBuilder spannable, MarkupTag internalTag, Attributes attributes) {
 
         final String tag = internalTag.tag;
+
+
+
 
         if (tag.equalsIgnoreCase("root")) {
             handleStartRoot(spannable);
@@ -431,7 +428,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     private void handleEndTag(ParcelableSpannedBuilder spannable, String tag) {
 
         spannable = processAccumulatedTextContent();
-        InternalTag current = mStack.pop();
+        MarkupTag current = mStack.pop();
         applyEndTag(spannable, tag);
         mLastClosed = current;
     }
@@ -758,11 +755,11 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
         ParcelableSpannedBuilder newSpannable = new ParcelableSpannedBuilder("");
         //skip the current image tag
-        ListIterator<RichText.InternalTag> tags = mStack.listIterator(mStack.size() - 1);
+        ListIterator<MarkupTag> tags = mStack.listIterator(mStack.size() - 1);
 
         while (tags.hasPrevious() == true){
 
-            RichText.InternalTag tag = tags.previous();
+            MarkupTag tag = tags.previous();
 
             if(tag.closeOnEnd == true)
                 applyEndTag(mSpannableStringBuilder, tag.tag);
@@ -917,7 +914,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
        // }
     }
 
-    private static void endA(Stack<InternalTag> stack, ParcelableSpannedBuilder text) {
+    private static void endA(Stack<MarkupTag> stack, ParcelableSpannedBuilder text) {
         int len = text.length();
         Object obj = getLast(text, Href.class);
         int where = text.getSpanStart(obj);
@@ -945,9 +942,9 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         }
     }
 
-    private static InternalTag isWithinTag(Stack<InternalTag> stack, String tag){
+    private static MarkupTag isWithinTag(Stack<MarkupTag> stack, String tag){
 
-         for(InternalTag t : stack){
+         for(MarkupTag t : stack){
              if(t.tag.equalsIgnoreCase(tag) == true)
                  return t;
          }
@@ -978,7 +975,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
                     len,
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-            text.setSpan(new RelativeSizeSpan(HEADER_SIZES[h.mLevel]),
+            text.setSpan(new RelativeSizeSpan(mStyle.headerIncrease(h.mLevel)),
                          where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             text.setSpan(new StyleSpan(Typeface.BOLD),
                          where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
