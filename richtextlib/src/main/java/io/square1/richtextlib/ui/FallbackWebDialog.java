@@ -6,11 +6,9 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -25,11 +23,9 @@ import android.widget.LinearLayout;
 import io.square1.richtextlib.R;
 
 
-public class WebDialog extends Dialog {
+public class FallbackWebDialog extends Dialog {
 
-    private static final String LOG_TAG =  "WebDialog";
-    private static final String DISPLAY_TOUCH = "touch";
-    private static final int API_EC_DIALOG_CANCEL = 4201;
+
 
     static final boolean DISABLE_SSL_CHECK_FOR_TESTING = false;
 
@@ -72,7 +68,7 @@ public class WebDialog extends Dialog {
      * @param url     the URL of the Web Dialog to display; no validation is done on this URL, but it should
      *                be a valid URL pointing to a Facebook Web Dialog
      */
-    public WebDialog(Context context, String url) {
+    public FallbackWebDialog(Context context, String url) {
         this(context, url, DEFAULT_THEME);
     }
 
@@ -84,7 +80,7 @@ public class WebDialog extends Dialog {
      *                be a valid URL pointing to a Facebook Web Dialog
      * @param theme   identifier of a theme to pass to the Dialog class
      */
-    public WebDialog(Context context, String url, int theme) {
+    public FallbackWebDialog(Context context, String url, int theme) {
         super(context, theme == 0 ? DEFAULT_THEME : theme);
         this.url = url;
     }

@@ -22,6 +22,7 @@ import java.lang.ref.WeakReference;
 import io.square1.richtextlib.ui.RichTextView;
 import io.square1.richtextlib.util.NumberUtils;
 import io.square1.richtextlib.util.UniqueId;
+import io.square1.richtextlib.v2.utils.SpanUtils;
 
 /**
  * Created by roberto on 23/06/15.
@@ -51,19 +52,17 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
     private int mImageHeight;
 
     private Uri mImage;
-    private UrlBitmapDownloader mUrlBitmapDownloader;
     private Drawable mBitmap;
 
     public UrlBitmapSpan(){
         mVerticalAlignment = ALIGN_BASELINE;
     }
 
-    public UrlBitmapSpan(Uri image, UrlBitmapDownloader downloader, int imageWidth, int imageHeight, int maxImageWidth){
-        this(null,downloader,image, imageWidth,imageHeight,maxImageWidth,ALIGN_BOTTOM);
+    public UrlBitmapSpan(Uri image,  int imageWidth, int imageHeight, int maxImageWidth){
+        this(null,image, imageWidth,imageHeight,maxImageWidth,ALIGN_BOTTOM);
 
     }
     public UrlBitmapSpan(Bitmap bitmap,
-                         UrlBitmapDownloader downloader,
                          Uri image,
                          int  imageWidth,
                          int imageHeight,
@@ -71,7 +70,6 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
                          int alignment){
         super();
 
-        mUrlBitmapDownloader = downloader;
         mImage = image;
         mMaxImageWidth = maxImageWidth;
         mImageWidth = imageWidth;
@@ -111,15 +109,16 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
     }
 
     WeakReference<RichTextView> mRef;
+
     @Override
     public void onSpannedSetToView(RichTextView view) {
         mAttachedToWindow = view.isAttachedToWindow();
-        mRef = new WeakReference(view);
         loadImage();
     }
 
     @Override
     public void onAttachedToView(RichTextView view) {
+        mRef = new WeakReference(view);
         mAttachedToWindow = true;
         loadImage();
     }
@@ -293,6 +292,7 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
             }
 
             view.invalidate();
+            view.onPreDraw();
         }
 
     }
@@ -305,12 +305,11 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
 
     private void loadImage(){
         if(mAttachedToWindow == true && mLoading == false){
-            mLoading = true;
-            if(mUrlBitmapDownloader == null){
-                //acquire one from the view
-               mUrlBitmapDownloader =  mRef.get().getDownloader();
+
+            UrlBitmapDownloader downloader = SpanUtils.getDownloader(mRef.get());
+            if(downloader != null) {
+                downloader.downloadImage(this, mImage);
             }
-            mUrlBitmapDownloader.downloadImage(this,mImage);
         }
     }
 

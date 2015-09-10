@@ -55,7 +55,7 @@ public class InternalContentHandler  implements ContentHandler, EmbedUtils.Parse
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
-        mHandler.endElement(uri, localName,mAccumulatedText);
+        mHandler.endElement(uri, localName, mAccumulatedText);
         mAccumulatedText.setLength(0);
     }
 

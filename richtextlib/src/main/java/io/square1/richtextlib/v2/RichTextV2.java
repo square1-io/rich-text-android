@@ -29,6 +29,7 @@ import org.xml.sax.XMLReader;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.ListIterator;
 import java.util.Stack;
@@ -44,6 +45,7 @@ import io.square1.richtextlib.v2.parser.MarkupTag;
 import io.square1.richtextlib.style.*;
 import io.square1.richtextlib.util.NumberUtils;
 import io.square1.richtextlib.v2.parser.TagHandler;
+import io.square1.richtextlib.v2.utils.SpannedBuilderUtils;
 
 /**
  * This class processes HTML strings into displayable styled text.
@@ -123,6 +125,11 @@ public class RichTextV2 {
         }
 
         @Override
+        public float smallTextReduce() {
+            return 0.8f;
+        }
+
+        @Override
         public boolean parseWordPressTags(){
             return true;
         }
@@ -180,14 +187,14 @@ public class RichTextV2 {
      */
 
 
-    public static ParcelableSpannedBuilder fromHtml(Context context, String source) {
+    public static ArrayList<ContentItem> fromHtml(Context context, String source) {
 
         final Style defaultStyle = new DefaultStyle(context);
        return fromHtmlImpl(context, source, defaultStyle);
 
     }
 
-    public static ParcelableSpannedBuilder fromHtml(Context context, String source, Style style) {
+    public static  ArrayList<ContentItem>  fromHtml(Context context, String source, Style style) {
        return fromHtmlImpl(context, source, style);
 
     }
@@ -199,10 +206,12 @@ public class RichTextV2 {
     final static String INTERACTION_REPLACEMENT = "";
 
 
-    private static ParcelableSpannedBuilder fromHtmlImpl(Context context,
+    private static ArrayList<ContentItem> fromHtmlImpl(Context context,
                                                          String source,
                                                          Style style)  {
 
+
+        ArrayList<ContentItem> result = new ArrayList<>();
 
         try {
 
@@ -226,19 +235,27 @@ public class RichTextV2 {
               //  }
             }
 
+
             RichTextV2 richText = new RichTextV2(context);
             reader.setContentHandler(new InternalContentHandler(richText));
             reader.parse(new InputSource(new StringReader(source)));
 
-            return richText.mOutput;
+            result.add(richText.mOutput);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return null;
+        return result;
     }
 
+    public void onEmbedItemFound(OEmbedContentHandler item, String textBefore){
+
+        processAccumulatedTextContent(textBefore);
+
+
+
+    }
 
     public void startElement(String uri, String localName, Attributes atts, StringBuilder textContent) {
         MarkupTag tag = new MarkupTag(localName,atts);
@@ -259,6 +276,54 @@ public class RichTextV2 {
         }
     }
 
+
+    public ParcelableSpannedBuilder processAccumulatedTextContent(String accumulatedText)  {
+
+        if(TextUtils.isEmpty(accumulatedText)){
+            return null;
+        }
+
+        Matcher m = Patterns.WEB_URL.matcher(accumulatedText);
+
+        while (m.find()) {
+            //link found
+            int matchStart = m.start();
+            int matchEnd = m.end();
+
+            //any text in between ?
+            StringBuffer buffer = new StringBuffer();
+            m.appendReplacement(buffer, "");
+            mOutput.append(buffer);
+
+            CharSequence link = accumulatedText.subSequence( matchStart, matchEnd);
+            // if( EmbedUtils.parseLink(mAccumulatedText, String.valueOf(link), this) == false){
+            if( EmbedUtils.parseLink(accumulatedText, String.valueOf(link), new EmbedUtils.ParseLinkCallback() {
+                @Override
+                public void onLinkParsed(Object callingObject, String result, EmbedUtils.TEmbedType type) {
+                    if(type == EmbedUtils.TEmbedType.EYoutube){
+                       // makeYoutube(result, mSpannableStringBuilder);
+                    }
+                }
+            }) == false){
+
+                if(TextUtils.isEmpty(link) == false) {
+                    SpannedBuilderUtils.makeLink(link.toString(), null, mOutput);
+                    //int where = mSpannableStringBuilder.length();
+                    // mSpannableStringBuilder.append(link);
+                    // mSpannableStringBuilder.setSpan(new URLSpan(link.toString()), where, where + link.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
+                // }
+
+            }
+
+
+        }
+        StringBuffer buffer = new StringBuffer();
+        m.appendTail(buffer);
+        mOutput.append(buffer);
+
+        return mOutput;
+    }
 
 
 }

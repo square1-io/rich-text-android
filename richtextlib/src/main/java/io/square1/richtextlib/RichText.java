@@ -698,7 +698,6 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
         int maxSize = mStyle.maxImageWidth();
         UrlBitmapSpan imageDrawable = new UrlBitmapSpan(Uri.parse(src),
-                mDownloader,
                 NumberUtils.parseImageDimension(attributes.getValue("width"),maxSize),
                 NumberUtils.parseImageDimension(attributes.getValue("height"),0),
                         mStyle.maxImageWidth() );
@@ -867,7 +866,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         ensureAtLeastOneNewLine(builder);
         int len = builder.length();
         builder.append(NO_SPACE_CHAR);
-        builder.setSpan(new YouTubeSpan(youtubeId, mStyle.maxImageWidth(), mDownloader),
+        builder.setSpan(new YouTubeSpan(youtubeId, mStyle.maxImageWidth()),
                 len, builder.length(),
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 

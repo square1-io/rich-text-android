@@ -22,6 +22,7 @@ import io.square1.richtextlib.R;
 import io.square1.richtextlib.ui.RichTextView;
 import io.square1.richtextlib.util.NumberUtils;
 import io.square1.richtextlib.util.UniqueId;
+import io.square1.richtextlib.v2.utils.SpanUtils;
 
 /**
  * Created by roberto on 23/06/15.
@@ -33,7 +34,6 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
 
 
     private Uri mImage;
-    private UrlBitmapDownloader mUrlBitmapDownloader;
     private Drawable mBitmap;
     private Bitmap mYoutubeIcon;
     private int mImageHeight;
@@ -49,12 +49,11 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
 
     public YouTubeSpan(){}
 
-    public YouTubeSpan(String youtubeId, int maxWidth, UrlBitmapDownloader downloader){
+    public YouTubeSpan(String youtubeId, int maxWidth){
         super();
         mYoutubeId = youtubeId;
         mImageWidth = mImageHeight = NumberUtils.INVALID;
         mMaxImageWidth = maxWidth;
-        mUrlBitmapDownloader = downloader;
 
         mImage = Uri.parse(EmbedUtils.getYoutubeThumbnailUrl(youtubeId));
 
@@ -277,13 +276,18 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
     }
 
 
+
     private void loadImage(){
         if(mAttachedToWindow == true && mLoading == false){
             mLoading = true;
-            if(mUrlBitmapDownloader == null){
-                mUrlBitmapDownloader = mRef.get().getDownloader();
+            if(mRef.get() == null){
+                return;
             }
-            mUrlBitmapDownloader.downloadImage(this,mImage);
+
+            UrlBitmapDownloader downloader = SpanUtils.getDownloader(mRef.get());
+            if(downloader != null) {
+                downloader.downloadImage(this, mImage);
+            }
         }
     }
 

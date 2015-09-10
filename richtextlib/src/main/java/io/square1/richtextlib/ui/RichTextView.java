@@ -197,7 +197,7 @@ public class RichTextView extends TextView implements RichTextLinkMovementMethod
 
             }else if (span instanceof UnsupportedContentSpan){
                 String url = ((UnsupportedContentSpan)span).getURL();
-                WebDialog dialog = new WebDialog(getContext(),url);
+                FallbackWebDialog dialog = new FallbackWebDialog(getContext(),url);
                 dialog.setCancelable(true);
                 dialog.show();
 

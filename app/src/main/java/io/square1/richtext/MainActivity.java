@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ListView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -32,6 +33,7 @@ import io.square1.richtextlib.ParcelableSpannedBuilder;
 import io.square1.richtextlib.style.RemoteBitmapSpan;
 import io.square1.richtextlib.style.UrlBitmapDownloader;
 import io.square1.richtextlib.ui.RichTextView;
+import io.square1.richtextlib.v2.ContentItem;
 import io.square1.richtextlib.v2.RichTextV2;
 
 
@@ -124,60 +126,15 @@ public class MainActivity extends ActionBarActivity implements UrlBitmapDownload
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final ArrayList<Object> mItems = new ArrayList<>();
+
         final ArrayList<Object> obs = new ArrayList<>();
-        String html = ReadFromfile("exception.html");
+        String html = ReadFromfile("complete_set.html");
         final JSONArray output = new JSONArray();
 
-//        RichText.fromHtml(this, html, new RichText.RichTextCallback() {
-//
-//            @Override
-//            public void onElementFound(RichText.TNodeType type, Object content, HashMap<String, Object> attributes) {
-//                Log.e("html[" + type + "]", String.valueOf(content));
-//                try {
-//
-//                    mItems.add(content);
-//
-//                    JSONObject current = new JSONObject();
-//
-//
-//                    if (type == RichText.TNodeType.EText) {
-//                        ((RichTextView) findViewById(R.id.textView)).setText((SpannableStringBuilder)content);
-//                        content = Html.toHtml((SpannableStringBuilder) content);
-//                    }
-//
-//                    if (type == RichText.TNodeType.EEmbed) {
-//                        EmbedUtils.TEmbedType embedType = (EmbedUtils.TEmbedType) attributes.get(RichText.EMBED_TYPE);
-//                        current.put(JSON_TYPE, String.valueOf(embedType));
-//                        attributes.remove(RichText.EMBED_TYPE);
-//                    } else {
-//                        current.put(JSON_TYPE, String.valueOf(type));
-//                    }
-//
-//                    current.put(JSON_CONTENT, String.valueOf(content));
-//                    current.put(JSON_ATTRS, fromMap(attributes));
-//
-//                    output.put(current);
-//
-//                } catch (Exception ex) {
-//
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onError(Exception exc) {
-//
-//            }
-//        }, this, true);
-//
-//
+       final ArrayList<ContentItem> mItems =  RichTextV2.fromHtml(this, html);
 
-
-        ParcelableSpannedBuilder content =  RichTextV2.fromHtml(this, html);
-
-        ((RichTextView) findViewById(R.id.textView)).setText(content);
-        MainActivity2Activity.show(this, content);
+        //((RichTextView) findViewById(R.id.textView)).setText(content);
+        ///MainActivity2Activity.show(this, content);
 
         adapter = new BaseAdapter() {
 
@@ -228,6 +185,7 @@ public class MainActivity extends ActionBarActivity implements UrlBitmapDownload
                 RichTextView view = (RichTextView)convertView;
                 if(convertView == null){
                     view = new RichTextView(MainActivity.this);
+                    view.setUrlBitmapDownloader(MainActivity.this);
                     view.setDrawingCacheEnabled(false);
                     view.setRichTextContentChanged(new RichTextView.RichTextContentChanged() {
                         @Override
@@ -264,7 +222,7 @@ public class MainActivity extends ActionBarActivity implements UrlBitmapDownload
 
 
 
-        //((ListView) findViewById(R.id.list)).setAdapter(adapter);
+        ((ListView) findViewById(R.id.list)).setAdapter(adapter);
 
     }
 

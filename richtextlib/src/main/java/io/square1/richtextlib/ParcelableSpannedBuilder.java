@@ -21,11 +21,12 @@ import java.lang.reflect.Array;
 import io.square1.richtextlib.style.P2ParcelUtils;
 import io.square1.richtextlib.style.P2ParcelableSpan;
 import io.square1.richtextlib.util.ArrayUtils;
+import io.square1.richtextlib.v2.ContentItem;
 
 /**
  * This is the class for text whose content and markup can both be changed.
  */
-public class ParcelableSpannedBuilder implements CharSequence, GetChars, Spannable, Editable, Appendable , Parcelable {
+public class ParcelableSpannedBuilder extends ContentItem implements CharSequence, GetChars, Spannable, Editable, Appendable {
     /**
      * Create a new SpannableStringBuilder with empty contents
      */

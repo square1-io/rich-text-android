@@ -1,8 +1,10 @@
 package io.square1.richtextlib.v2.utils;
 
 import android.text.Spannable;
+import android.text.TextUtils;
 
 import io.square1.richtextlib.ParcelableSpannedBuilder;
+import io.square1.richtextlib.style.URLSpan;
 
 /**
  * Created by roberto on 04/09/15.
@@ -38,7 +40,19 @@ public class SpannedBuilderUtils {
             text.append('\n');
         }
 
+    }
 
+    public static void makeLink(String link, String text, ParcelableSpannedBuilder builder){
+        //clean the link:
+        if(link.indexOf("//") == 0){
+            link = "http:" + link;
+        }
+        if(TextUtils.isEmpty(text) == true){
+            text = link;
+        }
+        int len = builder.length();
+        builder.append(text);
+        builder.setSpan(new URLSpan(link), len, len + text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
 
