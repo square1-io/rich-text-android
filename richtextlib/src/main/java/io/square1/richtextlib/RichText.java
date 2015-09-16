@@ -857,8 +857,15 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         if(link.indexOf("//") == 0){
             link = "http:" + link;
         }
+        final int maxLength = 20;
         if(TextUtils.isEmpty(text) == true){
-            text = link;
+            if(link.length() > maxLength){
+                text = link.substring(0,maxLength - 1);
+                text = text.trim();
+                text = text + "...";
+            }else {
+                text = link;
+            }
         }
         int len = builder.length();
         builder.append(text);
