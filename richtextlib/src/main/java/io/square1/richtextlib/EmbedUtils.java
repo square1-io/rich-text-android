@@ -48,19 +48,48 @@ public class EmbedUtils {
             return true;
         }
 
+        result = parseSoundCloud(link);
+        if(TextUtils.isEmpty(result) == false){
+            callback.onLinkParsed(calling, result, TEmbedType.ESoundCloud);
+            return true;
+        }
+
+
         return false;
        // callback.onLinkParsed(link,TLinkType.EUnsupported);
 
     }
 
-    public static String parseSoundCloud(String baseURL , String key){
+    /**
+     *
+     * @param baseURL
+     * @param key
+     * @return the soundcloud track id
+     */
+    public static String parseSoundCloud(String baseURL){
 
-        Uri base = Uri.parse(baseURL);
+        String trackURL = null;
+        if(baseURL.indexOf("api.soundcloud") >= 0 ){
+            trackURL = baseURL;
+        }else if(baseURL.indexOf("soundcloud") >= 0){
+            Uri parsedURI = Uri.parse(baseURL);
+            try {
+                trackURL =  parsedURI.getQueryParameter("url");
+            }catch (Exception exc){
+
+            }
+        }
+
+        if(TextUtils.isEmpty(trackURL) == true){
+            return null;
+        }
+
+        Uri base = Uri.parse(trackURL);
 
         List<String> segments =  base.getPathSegments();
         for(String segment : segments){
             if(TextUtils.isDigitsOnly(segment) == true){
-                return String.format("https://api.soundcloud.com/tracks/%1$s/stream?consumer_key=%2$s",segment,key);
+                return segment;// String.format("https://api.soundcloud.com/tracks/%1$s/stream?consumer_key=%2$s",segment,key);
             }
         }
 
@@ -123,8 +152,15 @@ public class EmbedUtils {
             }
         }
 
-        if(TextUtils.isEmpty(id) == false){
-            return String.format("https://api.soundcloud.com/tracks/%1$s/stream?consumer_key=%2$s", id, clientId);
+
+        return getSoundCloudStreamFroTrackId(id,clientId);
+    }
+
+    public static String getSoundCloudStreamFroTrackId(String trackId,String clientId){
+        //196567484
+
+        if(TextUtils.isEmpty(trackId) == false){
+            return String.format("https://api.soundcloud.com/tracks/%1$s/stream?consumer_key=%2$s", trackId, clientId);
         }
 
         return null;

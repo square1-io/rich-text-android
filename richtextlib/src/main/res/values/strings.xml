@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">RichTextLib</string>
     <string name="loading">Please wait...</string>
+    <string name="zero_time">00:00:00</string>
 </resources>
