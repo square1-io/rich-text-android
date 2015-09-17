@@ -13,7 +13,7 @@ import io.square1.richtextlib.v2.RichTextV2;
  */
 public class InternalContentHandler  implements ContentHandler, EmbedUtils.ParseLinkCallback {
 
-    RichTextV2 mHandler;
+    private RichTextV2 mHandler;
     private StringBuilder mAccumulatedText;
 
     public InternalContentHandler(RichTextV2 context){
@@ -49,12 +49,24 @@ public class InternalContentHandler  implements ContentHandler, EmbedUtils.Parse
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
+
+        if(mAccumulatedText.length() > 0) {
+            mHandler.processAccumulatedTextContent(mAccumulatedText.toString());
+            mAccumulatedText.setLength(0);
+        }
+
         mHandler.startElement(uri, localName, atts, mAccumulatedText);
         mAccumulatedText.setLength(0);
     }
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
+
+        if(mAccumulatedText.length() > 0) {
+            mHandler.processAccumulatedTextContent(mAccumulatedText.toString());
+            mAccumulatedText.setLength(0);
+        }
+
         mHandler.endElement(uri, localName, mAccumulatedText);
         mAccumulatedText.setLength(0);
     }

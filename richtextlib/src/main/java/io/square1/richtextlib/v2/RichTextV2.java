@@ -157,6 +157,7 @@ public class RichTextV2 {
 
 
 
+    private ArrayList<ContentItem> mResult = new ArrayList<>();
     private Stack<MarkupTag> mStack = new Stack<>();
     private ParcelableSpannedBuilder mOutput;
     private MarkupContext mCurrentContext;
@@ -164,6 +165,8 @@ public class RichTextV2 {
     private RichTextV2(Context context) {
         mCurrentContext = new MarkupContext(new DefaultStyle(context));
         mOutput = new ParcelableSpannedBuilder();
+        mResult = new ArrayList<>();
+        mResult.add(mOutput);
     }
 
 
@@ -211,7 +214,7 @@ public class RichTextV2 {
                                                          Style style)  {
 
 
-        ArrayList<ContentItem> result = new ArrayList<>();
+
 
         try {
 
@@ -240,18 +243,18 @@ public class RichTextV2 {
             reader.setContentHandler(new InternalContentHandler(richText));
             reader.parse(new InputSource(new StringReader(source)));
 
-            result.add(richText.mOutput);
+            return richText.mResult;
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return result;
+        return new ArrayList<>();
     }
 
     public void onEmbedItemFound(OEmbedContentHandler item, String textBefore){
 
-        processAccumulatedTextContent(textBefore);
+
 
 
 
@@ -301,7 +304,7 @@ public class RichTextV2 {
                 @Override
                 public void onLinkParsed(Object callingObject, String result, EmbedUtils.TEmbedType type) {
                     if(type == EmbedUtils.TEmbedType.EYoutube){
-                       // makeYoutube(result, mSpannableStringBuilder);
+                        SpannedBuilderUtils.makeYoutube(result, getCurrentStyle().maxImageWidth(), mOutput);
                     }
                 }
             }) == false){

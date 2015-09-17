@@ -5,6 +5,7 @@ import android.text.TextUtils;
 
 import io.square1.richtextlib.ParcelableSpannedBuilder;
 import io.square1.richtextlib.style.URLSpan;
+import io.square1.richtextlib.style.YouTubeSpan;
 
 /**
  * Created by roberto on 04/09/15.
@@ -42,6 +43,18 @@ public class SpannedBuilderUtils {
 
     }
 
+    public static void makeYoutube(String youtubeId, int maxImageWidth, ParcelableSpannedBuilder builder){
+
+        ensureAtLeastThoseNewLines(builder, 1);
+        int len = builder.length();
+        builder.append(NO_SPACE);
+        builder.setSpan(new YouTubeSpan(youtubeId, maxImageWidth),
+                len,
+                builder.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+    }
+
     public static void makeLink(String link, String text, ParcelableSpannedBuilder builder){
         //clean the link:
         if(link.indexOf("//") == 0){
@@ -54,7 +67,6 @@ public class SpannedBuilderUtils {
         builder.append(text);
         builder.setSpan(new URLSpan(link), len, len + text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
-
 
     public static void startSpan(ParcelableSpannedBuilder text, Object mark) {
         int len = text.length();
