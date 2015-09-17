@@ -274,21 +274,21 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     }
 
 
-    public void convert() {
+    public void convert() throws Exception{
 
 
         mReader.setContentHandler(this);
-        try {
+      //  try {
             mReader.parse(new InputSource(new StringReader(mSource)));
-        } catch (IOException e) {
-            // We are reading from a string. There should not be IO problems.
-            throw new RuntimeException(e);
-        } catch (SAXException e) {
-            // TagSoup doesn't throw parse exceptions.
-            throw new RuntimeException(e);
-        }catch (Exception e){
-            throw new RuntimeException(e);
-        }
+//      //  } catch (IOException e) {
+//            // We are reading from a string. There should not be IO problems.
+//            throw new RuntimeException(e);
+//        } catch (SAXException e) {
+//            // TagSoup doesn't throw parse exceptions.
+//            throw new RuntimeException(e);
+//        }catch (Exception e){
+//            throw new RuntimeException(e);
+//        }
 
         if(mSpannableStringBuilder.length() > 0){
             fixFlags(mSpannableStringBuilder);

@@ -68,8 +68,13 @@ public class EmbedUtils {
      */
     public static String parseSoundCloud(String baseURL){
 
+        Uri parsed = Uri.parse(baseURL);
+        String authority = parsed.getAuthority();
         String trackURL = null;
-        if(baseURL.indexOf("api.soundcloud") >= 0 ){
+        if(TextUtils.isEmpty(authority)){
+            return null;
+        }
+        if(authority.indexOf("api.soundcloud") >= 0 ){
             trackURL = baseURL;
         }else if(baseURL.indexOf("soundcloud") >= 0){
             Uri parsedURI = Uri.parse(baseURL);
@@ -153,10 +158,10 @@ public class EmbedUtils {
         }
 
 
-        return getSoundCloudStreamFroTrackId(id,clientId);
+        return getSoundCloudStreamFromTrackId(id, clientId);
     }
 
-    public static String getSoundCloudStreamFroTrackId(String trackId,String clientId){
+    public static String getSoundCloudStreamFromTrackId(String trackId, String clientId){
         //196567484
 
         if(TextUtils.isEmpty(trackId) == false){

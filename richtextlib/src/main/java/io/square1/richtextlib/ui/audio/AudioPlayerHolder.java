@@ -1,4 +1,4 @@
-package io.square1.richtextlib.ui;
+package io.square1.richtextlib.ui.audio;
 
 
 import android.text.TextUtils;
@@ -16,6 +16,9 @@ public class AudioPlayerHolder {
 
     public interface AudioPlayerProvider {
 
+        void registerHolder(String audio, AudioPlayerHolder holder);
+        void deregisterHolder(AudioPlayerHolder holder);
+
         void onPlay(String audio);
         void onStop(String audio);
         void onRew(String audio);
@@ -25,7 +28,14 @@ public class AudioPlayerHolder {
         int getProgress(String audio);
         boolean isPlaying(String audio);
 
-        String getLabelForPogress(int progress, String audio);
+        String getLabelForProgress(int progress, String audio);
+
+        //follows Activity Lifecycle
+         void onCreate();
+         void onResume();
+         void onPause();
+         void onDestroy();
+
 
     }
 
@@ -88,14 +98,14 @@ public class AudioPlayerHolder {
 
         int progress = mAudioPlayerProvider.getProgress(mCurrentFile);
         if(progress > 0){
-            mTimeCurrentLabel.setText(mAudioPlayerProvider.getLabelForPogress(progress, mCurrentFile));
+            mTimeCurrentLabel.setText(mAudioPlayerProvider.getLabelForProgress(progress, mCurrentFile));
             mProgress.setProgress(progress);
         }
 
         if(mAudioPlayerProvider.isPlaying(mCurrentFile) == false){
 
             int duration = mAudioPlayerProvider.getDuration(mCurrentFile);
-            mTimeLabel.setText(mAudioPlayerProvider.getLabelForPogress(duration,mCurrentFile));
+            mTimeLabel.setText(mAudioPlayerProvider.getLabelForProgress(duration, mCurrentFile));
             mProgress.setMax(duration);
             mPlayButton.setVisibility(View.VISIBLE);
             mPauseButton.setVisibility(View.GONE);
@@ -125,6 +135,7 @@ public class AudioPlayerHolder {
     public void setAudioFile(String audioFileId) {
 
        if(TextUtils.equals(mCurrentFile,audioFileId) == false){
+
            mCurrentFile = audioFileId;
            mTimeLabel.setText(ZERO_TIME);
            mTimeCurrentLabel.setText(ZERO_TIME);
