@@ -159,8 +159,9 @@ public class AudioPlayerHolder {
 
     }
 
-    public void reset(){
+    public void destroy(){
         mAudioPlayerProvider.onStop(mCurrentFile);
+        mAudioPlayerProvider = null;
     }
 
 }

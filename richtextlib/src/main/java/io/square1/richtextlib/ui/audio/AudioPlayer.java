@@ -98,8 +98,10 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider , Medi
         cleanCurrentPLayer();
         Set<AudioPlayerHolder> keys = mAudioToPlayer.keySet();
         for(AudioPlayerHolder holder : keys){
-            holder.reset();
+            holder.destroy();
         }
+
+        mAudioToPlayer.clear();
     }
 
     @Override
@@ -302,7 +304,11 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider , Medi
 
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
-        Toast.makeText(mContext, R.string.audio_media_player,Toast.LENGTH_LONG).show();
+
+        Toast.makeText(mContext,
+                R.string.audio_media_player,
+                Toast.LENGTH_LONG).show();
+
         return false;
     }
 }
