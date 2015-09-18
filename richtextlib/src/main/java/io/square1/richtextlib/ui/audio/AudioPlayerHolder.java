@@ -14,6 +14,13 @@ import io.square1.richtextlib.R;
 */
 public class AudioPlayerHolder {
 
+    public static String formatTime(int time){
+
+        int minutes = time > 0 ? time / (60 * 1000) : 0;
+        int seconds = time > 0 ? (time / 1000) % 60 : 0;
+        return String.format("%02d:%02d", minutes, seconds);
+    }
+
     public interface AudioPlayerProvider {
 
         void registerHolder(String audio, AudioPlayerHolder holder);
@@ -96,23 +103,29 @@ public class AudioPlayerHolder {
 
     protected void synchronizeState(){
 
+
+        int duration = mAudioPlayerProvider.getDuration(mCurrentFile);
+        //is duration available ?
+        if(duration > 0) {
+            mTimeLabel.setText(mAudioPlayerProvider.getLabelForProgress(duration, mCurrentFile));
+            mProgress.setMax(duration);
+        }
+
         int progress = mAudioPlayerProvider.getProgress(mCurrentFile);
-        if(progress > 0){
+        //is progress available ?
+        if(progress >= 0){
             mTimeCurrentLabel.setText(mAudioPlayerProvider.getLabelForProgress(progress, mCurrentFile));
             mProgress.setProgress(progress);
         }
 
-        if(mAudioPlayerProvider.isPlaying(mCurrentFile) == false){
 
-            int duration = mAudioPlayerProvider.getDuration(mCurrentFile);
-            mTimeLabel.setText(mAudioPlayerProvider.getLabelForProgress(duration, mCurrentFile));
-            mProgress.setMax(duration);
+        if(mAudioPlayerProvider.isPlaying(mCurrentFile) == false){
             mPlayButton.setVisibility(View.VISIBLE);
             mPauseButton.setVisibility(View.GONE);
 
         }else{
-            mPlayButton.setVisibility(View.VISIBLE);
-            mPauseButton.setVisibility(View.GONE);
+            mPlayButton.setVisibility(View.GONE);
+            mPauseButton.setVisibility(View.VISIBLE);
         }
 //
 //        else if(PPlusNavigation.PlayStateRequest.EStop == request){
@@ -135,7 +148,7 @@ public class AudioPlayerHolder {
     public void setAudioFile(String audioFileId) {
 
        if(TextUtils.equals(mCurrentFile,audioFileId) == false){
-
+           mAudioPlayerProvider.registerHolder(audioFileId,this);
            mCurrentFile = audioFileId;
            mTimeLabel.setText(ZERO_TIME);
            mTimeCurrentLabel.setText(ZERO_TIME);

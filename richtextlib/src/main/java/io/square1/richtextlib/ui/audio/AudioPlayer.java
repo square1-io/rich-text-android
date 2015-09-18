@@ -8,14 +8,18 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
+
+import io.square1.richtextlib.R;
 
 /**
  * Created by roberto on 17/09/15.
  */
-public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider , MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener {
+public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider , MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener {
 
 
     private static HashMap<String,Media> mMediaMap;
@@ -36,7 +40,11 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider , Medi
         mHandler = new Handler(){
             @Override
             public void handleMessage(Message msg) {
-                synchronizeHolders();
+                if(msg.what == 0) {
+                    synchronizeHolders();
+                }else if (msg.what == 1){
+                    synchronizeCurrent();
+                }
             }
         };
 
@@ -55,6 +63,22 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider , Medi
 
     private void synchronizeHolders(){
 
+        Set<AudioPlayerHolder> keys = mAudioToPlayer.keySet();
+        for(AudioPlayerHolder holder : keys){
+            holder.synchronizeState();
+        }
+    }
+
+    private void synchronizeCurrent() {
+
+        Set<Map.Entry<AudioPlayerHolder,String>> entries = mAudioToPlayer.entrySet();
+        for(Map.Entry<AudioPlayerHolder,String> entry : entries){
+            if(TextUtils.equals(entry.getValue(),mCurrentFile)){
+                entry.getKey().synchronizeState();
+                mHandler.sendEmptyMessageDelayed(1,1000);
+                return;
+            }
+        }
     }
 
     public void onCreate(){
@@ -80,7 +104,7 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider , Medi
 
     @Override
     public void registerHolder(String audio, AudioPlayerHolder holder) {
-        mAudioToPlayer.put(holder,audio);
+        mAudioToPlayer.put(holder, audio);
     }
 
     @Override
@@ -97,9 +121,13 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider , Medi
             replaceCurrentPLayer();
 
             //prepare
+
             MediaPlayer mediaPlayer = new MediaPlayer();
+
             mediaPlayer.setOnPreparedListener(this);
             mediaPlayer.setOnCompletionListener(this);
+            mediaPlayer.setOnErrorListener(this);
+
             try {
                 mPendingFile = audio;
                 mediaPlayer.setDataSource(audio);
@@ -113,9 +141,8 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider , Medi
         }else if(mMediaPlayer != null &&
                 mMediaPlayer.isPlaying() == false ){
             mMediaPlayer.start();
-            Bundle status = new Bundle();
-            //notifyState(status);
-            mHandler.sendEmptyMessageDelayed(0,1000);
+            mHandler.sendEmptyMessage(1);
+            notifyState();
         }
 
     }
@@ -130,8 +157,8 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider , Medi
         if(TextUtils.equals(mCurrentFile, audio) == true ){
             mMediaPlayer.pause();
             mHandler.removeMessages(0);
-            Bundle status = new Bundle();
-            notifyState(status);
+            mHandler.removeMessages(1);
+            notifyState();
         }
         else if(TextUtils.equals(mPendingFile, audio) == true ){
             mPendingFile = null;
@@ -157,17 +184,30 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider , Medi
 
     @Override
     public int getProgress(String audio) {
+        if(mMediaPlayer != null &&
+                TextUtils.equals(mCurrentFile,audio)) {
+           return mMediaPlayer.getCurrentPosition() ;
+        }
+
         return 0;
     }
 
     @Override
     public boolean isPlaying(String audio) {
+        if( mMediaPlayer != null &&
+                TextUtils.equals(audio, mCurrentFile) ){
+            return mMediaPlayer.isPlaying();
+        }
+        if(TextUtils.equals(mPendingFile,audio) == true){
+            return true;
+        }
+
         return false;
     }
 
     @Override
     public String getLabelForProgress(int progress, String audio) {
-        return null;
+        return AudioPlayerHolder.formatTime(progress);
     }
 
 
@@ -177,11 +217,11 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider , Medi
         if(mMediaPlayer != null){
 
             if(TextUtils.isEmpty(mCurrentFile) == false){
-                Bundle status = new Bundle();
-                notifyState(status);
+                notifyState();
             }
 
             mHandler.removeMessages(0);
+            mHandler.removeMessages(1);
 
             mMediaPlayer.release();
             mCurrentFile = null;
@@ -194,12 +234,11 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider , Medi
         if(mMediaPlayer != null){
 
             if(TextUtils.isEmpty(mCurrentFile) == false){
-                Bundle status = new Bundle();
-
-                notifyState(status);
+                notifyState();
             }
 
             mHandler.removeMessages(0);
+            mHandler.removeMessages(1);
 
             mMediaPlayer.release();
             mCurrentFile = null;
@@ -212,6 +251,7 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider , Medi
 
         if(TextUtils.equals(mCurrentFile, file) &&
                 mMediaPlayer != null ){
+
             int currentPosition = mMediaPlayer.getCurrentPosition();
             Media media = getMedia(file);
             if(media.duration == Media.DURATION_UNKNOWN) {
@@ -231,33 +271,38 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider , Medi
 
 
 
-    private void notifyState(Bundle data){
-
-
+    private void notifyState(){
+        mHandler.sendEmptyMessage(0);
     }
 
     @Override
     public void onPrepared(MediaPlayer mp) {
         mMediaPlayer = mp;
-        //if(mp == mMediaPlayer){
         //ready to play
         mCurrentFile = mPendingFile;
         mPendingFile = null;
-        Bundle status = new Bundle();
+        Media media = getMedia(mCurrentFile);
+        if(media.duration == Media.DURATION_UNKNOWN) {
+            int duration = mMediaPlayer.getDuration();
+            media.duration = duration;
+        }
         mMediaPlayer.start();
-        notifyState(status);
-        mHandler.sendEmptyMessageDelayed(0,1000);
-        //  }
+        notifyState();
+        mHandler.sendEmptyMessageDelayed(1,1000);
     }
 
     @Override
     public void onCompletion(MediaPlayer mp) {
         if(mp == mMediaPlayer){
             //ready to play
-            Bundle status = new Bundle();
-            notifyState(status);
+            notifyState();
             cleanCurrentPLayer();
         }
     }
 
+    @Override
+    public boolean onError(MediaPlayer mp, int what, int extra) {
+        Toast.makeText(mContext, R.string.audio_media_player,Toast.LENGTH_LONG).show();
+        return false;
+    }
 }

@@ -2,4 +2,5 @@
     <string name="app_name">RichTextLib</string>
     <string name="loading">Please wait...</string>
     <string name="zero_time">00:00:00</string>
+    <string name="audio_media_player">There was an error playing this audio file.</string>
 </resources>
