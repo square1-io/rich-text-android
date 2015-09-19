@@ -1,36 +1,35 @@
 package io.square1.richtextlib.v2.parser.handlers;
 
-import android.text.TextUtils;
-
-import java.util.HashMap;
-
-import io.square1.richtextlib.EmbedUtils;
 import io.square1.richtextlib.ParcelableSpannedBuilder;
 import io.square1.richtextlib.v2.parser.MarkupContext;
 import io.square1.richtextlib.v2.parser.MarkupTag;
 import io.square1.richtextlib.v2.parser.TagHandler;
+import io.square1.richtextlib.v2.utils.SpannedBuilderUtils;
 
 /**
  * Created by roberto on 04/09/15.
  */
-public class SOUNDCLOUDHandler extends TagHandler {
+public abstract class BaseListHandler extends TagHandler {
+
+    private static int sNestedListsCount = 0;
+
+    public static int getNestedListsCount(){
+        return sNestedListsCount;
+    }
 
     @Override
     public void onTagOpen(MarkupContext context, MarkupTag tag, ParcelableSpannedBuilder out) {
-
-        String src = tag.attributes.getValue("", "url");
-        src = EmbedUtils.getSoundCloudStream(src,"1f6456941b1176c22d44fb16ec2015a2");
-        // mSpannableStringBuilder.append("\uFFFC");
-        if(TextUtils.isEmpty(src) == false) {
-            context.getRichText().onEmbedFound(EmbedUtils.TEmbedType.ESoundCloud, src);
-        }
-
+        SpannedBuilderUtils.ensureAtLeastThoseNewLines(out, 1);
+        sNestedListsCount ++;
     }
 
     @Override
     public void onTagClose(MarkupContext context, MarkupTag tag, ParcelableSpannedBuilder out) {
+        SpannedBuilderUtils.ensureAtLeastThoseNewLines(out,1);
+        sNestedListsCount --;
 
     }
+
 
     @Override
     public boolean closeWhenSplitting(){

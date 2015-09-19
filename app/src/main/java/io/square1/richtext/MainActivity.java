@@ -5,6 +5,7 @@ import android.database.DataSetObserver;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.Html;
 import android.text.Spanned;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -131,6 +132,8 @@ public class MainActivity extends ActionBarActivity implements UrlBitmapDownload
         String html = ReadFromfile("complete_set.html");
         final JSONArray output = new JSONArray();
 
+        Spanned text = Html.fromHtml(html);
+
        final ArrayList<ContentItem> mItems =  RichTextV2.fromHtml(this, html);
 
         //((RichTextView) findViewById(R.id.textView)).setText(content);
@@ -160,7 +163,7 @@ public class MainActivity extends ActionBarActivity implements UrlBitmapDownload
 
             @Override
             public int getCount() {
-                return 1;// mItems.size();
+                return  mItems.size();
             }
 
             @Override

@@ -17,6 +17,8 @@ public class MarkupTag {
          public final Attributes attributes;
          public final List<String> elementClasses;
 
+    private TagHandler mTagHandler;
+
          public MarkupTag(String tag, Attributes attributes){
              this.tag = tag;
              this.closeOnEnd = true;
@@ -25,6 +27,14 @@ public class MarkupTag {
              String attributeClass = attributes.getValue("class");
              this.elementClasses = parseClassAttribute(attributeClass);
          }
+
+    public void setTagHandler(TagHandler handler){
+        mTagHandler = handler;
+    }
+
+    public TagHandler getTagHandler(){
+        return mTagHandler;
+    }
 
          @Override
          public String toString() {

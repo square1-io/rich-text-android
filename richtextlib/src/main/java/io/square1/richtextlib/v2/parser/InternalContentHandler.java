@@ -11,7 +11,7 @@ import io.square1.richtextlib.v2.RichTextV2;
 /**
  * Created by roberto on 07/09/15.
  */
-public class InternalContentHandler  implements ContentHandler, EmbedUtils.ParseLinkCallback {
+public class InternalContentHandler  implements ContentHandler {
 
     private RichTextV2 mHandler;
     private StringBuilder mAccumulatedText;
@@ -71,8 +71,8 @@ public class InternalContentHandler  implements ContentHandler, EmbedUtils.Parse
         mAccumulatedText.setLength(0);
     }
 
-    @Override
-    public void characters(char[] ch, int start, int length) throws SAXException {
+
+    public void characters1(char[] ch, int start, int length) throws SAXException {
 
         /*
          * Ignore whitespace that immediately follows other whitespace;
@@ -81,8 +81,8 @@ public class InternalContentHandler  implements ContentHandler, EmbedUtils.Parse
 
         if(mHandler.getCurrentStyle().treatAsHtml() == true) {
 
-
             for (int i = 0; i < length; i++) {
+
                 char c = ch[i + start];
 
                 if (c == ' ' || c == '\n') {
@@ -118,6 +118,42 @@ public class InternalContentHandler  implements ContentHandler, EmbedUtils.Parse
 
     }
 
+
+    @Override
+    public void characters(char[] ch, int start, int length) throws SAXException {
+
+        for (int i = 0; i < length; i++) {
+            char c = ch[i + start];
+
+            if (c == ' ' || c == '\n') {
+
+                char pred;
+                int len = mAccumulatedText.length();
+
+                //no text yet in the accumulated buffer
+                if (len == 0) {
+
+                    len =  mHandler.getCurrentOutput().length();
+
+                    if (len == 0) {
+                        pred = '\n';
+                    } else {
+                        pred =  mHandler.getCurrentOutput().charAt(len - 1);
+                    }
+                } else {
+                    pred = mAccumulatedText.charAt(len - 1);
+                }
+
+                if (pred != ' ' && pred != '\n') {
+                    mAccumulatedText.append(' ');
+                }
+            } else {
+                mAccumulatedText.append(c);
+            }
+        }
+    }
+
+
     @Override
     public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
 
@@ -133,8 +169,4 @@ public class InternalContentHandler  implements ContentHandler, EmbedUtils.Parse
 
     }
 
-    @Override
-    public void onLinkParsed(Object callingObject, String result, EmbedUtils.TEmbedType type) {
-
-    }
 }

@@ -53,6 +53,8 @@ public final class P2ParcelUtils {
                 return UrlBitmapSpan.CREATOR.createFromParcel(in);
             if(type == YouTubeSpan.TYPE)
                 return YouTubeSpan.CREATOR.createFromParcel(in);
+            if(type == LeadingMarginSpan.TYPE)
+                return LeadingMarginSpan.CREATOR.createFromParcel(in);
 
             return null;
         }

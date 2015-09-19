@@ -26,7 +26,7 @@ import io.square1.richtextlib.v2.ContentItem;
 /**
  * This is the class for text whose content and markup can both be changed.
  */
-public class ParcelableSpannedBuilder extends ContentItem implements CharSequence, GetChars, Spannable, Editable, Appendable {
+public class ParcelableSpannedBuilder extends ContentItem implements CharSequence, GetChars, Spannable, Appendable {
     /**
      * Create a new SpannableStringBuilder with empty contents
      */
@@ -349,7 +349,6 @@ public class ParcelableSpannedBuilder extends ContentItem implements CharSequenc
         if (tbend > tbstart && end - start == 0) {
             if (notify) {
                 sendTextChange(recipients, start, end - start, tbend - tbstart);
-                sendTextHasChanged(recipients);
             }
 
             return ret;
@@ -386,7 +385,7 @@ public class ParcelableSpannedBuilder extends ContentItem implements CharSequenc
 
         if (notify) {
             sendTextChange(recipients, start, end - start, tbend - tbstart);
-            sendTextHasChanged(recipients);
+
         }
 
         return ret;
@@ -504,7 +503,7 @@ public class ParcelableSpannedBuilder extends ContentItem implements CharSequenc
                 setSpan(false, Selection.SELECTION_END, selend, selend, Spanned.SPAN_POINT_POINT);
             }
             sendTextChange(recipients, start, origlen, inserted);
-            sendTextHasChanged(recipients);
+
         }
 
         return this;
@@ -881,13 +880,7 @@ public class ParcelableSpannedBuilder extends ContentItem implements CharSequenc
         }
     }
 
-    private void sendTextHasChanged(TextWatcher[] recip) {
-        int n = recip.length;
 
-        for (int i = 0; i < n; i++) {
-            recip[i].afterTextChanged(this);
-        }
-    }
 
     private void sendSpanAdded(Object what, int start, int end) {
         SpanWatcher[] recip = getSpans(start, end, SpanWatcher.class);

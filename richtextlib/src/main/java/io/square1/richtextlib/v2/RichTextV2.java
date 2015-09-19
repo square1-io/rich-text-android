@@ -60,7 +60,6 @@ public class RichTextV2 {
     public final static String NO_SPACE_CHAR = "\uFFFC";
 
 
-
     public enum TNodeType {
         EText,
         EEmbed,
@@ -142,18 +141,9 @@ public class RichTextV2 {
     }
 
 
-
-
     private static class HtmlParser {
         private static final HTMLSchema schema = new HTMLSchema();
     }
-
-    public interface RichTextCallback {
-
-        void onElementFound(TNodeType type, Object content, HashMap<String, Object> attributes);
-        void onError(Exception exc);
-    }
-
 
 
 
@@ -163,10 +153,9 @@ public class RichTextV2 {
     private MarkupContext mCurrentContext;
 
     private RichTextV2(Context context) {
-        mCurrentContext = new MarkupContext(new DefaultStyle(context));
+        mCurrentContext = new MarkupContext(this, new DefaultStyle(context));
         mOutput = new ParcelableSpannedBuilder();
         mResult = new ArrayList<>();
-        mResult.add(mOutput);
     }
 
 
@@ -242,6 +231,7 @@ public class RichTextV2 {
             RichTextV2 richText = new RichTextV2(context);
             reader.setContentHandler(new InternalContentHandler(richText));
             reader.parse(new InputSource(new StringReader(source)));
+            richText.appendRemainder();
 
             return richText.mResult;
 
@@ -252,13 +242,7 @@ public class RichTextV2 {
         return new ArrayList<>();
     }
 
-    public void onEmbedItemFound(OEmbedContentHandler item, String textBefore){
 
-
-
-
-
-    }
 
     public void startElement(String uri, String localName, Attributes atts, StringBuilder textContent) {
         MarkupTag tag = new MarkupTag(localName,atts);
@@ -266,7 +250,7 @@ public class RichTextV2 {
         if(textContent.length() > 0) {
             mOutput.append(textContent);
         }
-        mCurrentContext.onTagOpen(tag,mOutput);
+        mCurrentContext.onTagOpen(tag, mOutput, false);
     }
 
     public void endElement(String uri, String localName, StringBuilder textContent) {
@@ -275,7 +259,7 @@ public class RichTextV2 {
             mOutput.append(textContent);
         }
         if(tag.tag.equalsIgnoreCase(localName) == true) {
-            mCurrentContext.onTagClose(tag, mOutput);
+            mCurrentContext.onTagClose(tag, mOutput, false);
         }
     }
 
@@ -305,6 +289,8 @@ public class RichTextV2 {
                 public void onLinkParsed(Object callingObject, String result, EmbedUtils.TEmbedType type) {
                     if(type == EmbedUtils.TEmbedType.EYoutube){
                         SpannedBuilderUtils.makeYoutube(result, getCurrentStyle().maxImageWidth(), mOutput);
+                    }else{
+                        onEmbedFound(type, result);
                     }
                 }
             }) == false){
@@ -326,6 +312,52 @@ public class RichTextV2 {
         mOutput.append(buffer);
 
         return mOutput;
+    }
+
+    public void onEmbedFound(EmbedUtils.TEmbedType type, String content){
+
+        ParcelableSpannedBuilder newOut = new ParcelableSpannedBuilder();
+        /// close output
+        if(mOutput != null &&
+                mOutput.length() > 0){
+
+            for(int index = (mStack.size() - 1); index >= 0 ; index --){
+               mCurrentContext.onTagClose(mStack.get(index), mOutput, true);
+            }
+
+            SpannedBuilderUtils.fixFlags(mOutput);
+            mResult.add(mOutput);
+
+            //create new Output
+        for(int index = 0; index < mStack.size(); index ++){
+                mCurrentContext.onTagOpen(mStack.get(index), newOut, true );
+            }
+
+            mOutput = newOut;
+        }
+
+        mResult.add(OEmbedContentHandler.newInstance(type, content));
+
+    }
+
+    public MarkupTag getParent(MarkupTag child) {
+
+        for(int index = (mStack.size() - 1); index >= 0 ; index --){
+            MarkupTag parent = mStack.get(index);
+            if(parent != child) return parent;
+        }
+
+        return null;
+    }
+
+
+
+    private void appendRemainder(){
+        if(mOutput != null &&
+                mOutput.length() > 0){
+            SpannedBuilderUtils.fixFlags(mOutput);
+            mResult.add(mOutput);
+        }
     }
 
 

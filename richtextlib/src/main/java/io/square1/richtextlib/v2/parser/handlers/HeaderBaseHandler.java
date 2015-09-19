@@ -54,6 +54,8 @@ public abstract class HeaderBaseHandler extends TagHandler {
                     where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             out.setSpan(new StyleSpan(Typeface.BOLD),
                     where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            SpannedBuilderUtils.ensureAtLeastThoseNewLines(out, 2);
         }
 
     }

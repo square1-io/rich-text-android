@@ -9,15 +9,7 @@ import io.square1.richtextlib.v2.utils.SpannedBuilderUtils;
 /**
  * Created by roberto on 04/09/15.
  */
-public class ULHandler extends TagHandler {
+public class ULHandler extends BaseListHandler {
 
-    @Override
-    public void onTagOpen(MarkupContext context, MarkupTag tag, ParcelableSpannedBuilder out) {
-        SpannedBuilderUtils.ensureAtLeastThoseNewLines(out,2);
-    }
 
-    @Override
-    public void onTagClose(MarkupContext context, MarkupTag tag, ParcelableSpannedBuilder out) {
-        SpannedBuilderUtils.ensureAtLeastThoseNewLines(out,2);
-    }
 }

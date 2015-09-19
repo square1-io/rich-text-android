@@ -4,6 +4,7 @@ import android.graphics.Typeface;
 import android.text.Spannable;
 
 import io.square1.richtextlib.ParcelableSpannedBuilder;
+import io.square1.richtextlib.style.LeadingMarginSpan;
 import io.square1.richtextlib.style.QuoteSpan;
 import io.square1.richtextlib.style.Style;
 import io.square1.richtextlib.style.StyleSpan;
@@ -15,13 +16,13 @@ import io.square1.richtextlib.v2.utils.SpannedBuilderUtils;
 /**
  * Created by roberto on 04/09/15.
  */
-public class BLOCKQUOTEHandler extends TagHandler {
+public class CODEHandler extends TagHandler {
 
     @Override
     public void onTagOpen(MarkupContext context, MarkupTag tag, ParcelableSpannedBuilder out) {
 
         SpannedBuilderUtils.ensureAtLeastThoseNewLines(out, 2);
-        SpannedBuilderUtils.startSpan(out, new Markers.Blockquote(tag.elementClasses));
+        SpannedBuilderUtils.startSpan(out, new Markers.Code());
        // handleP(spannable);
     }
 
@@ -29,7 +30,7 @@ public class BLOCKQUOTEHandler extends TagHandler {
     public void onTagClose(MarkupContext context, MarkupTag tag, ParcelableSpannedBuilder out) {
 
         //TODO handle Tweets
-        Markers.Blockquote obj = out.getLastSpan(Markers.Blockquote.class);
+        Markers.Code obj = out.getLastSpan(Markers.Code.class);
         if(obj == null) return;
 
         SpannedBuilderUtils.ensureAtLeastThoseNewLines(out, 2);
@@ -44,8 +45,7 @@ public class BLOCKQUOTEHandler extends TagHandler {
 
                 StyleSpan styleSpan = new StyleSpan(Typeface.ITALIC);
                 out.setSpan(styleSpan, where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-                QuoteSpan quoteSpan = new QuoteSpan(style.getQuoteBackgroundColor(), style.quoteBitmap());
+                LeadingMarginSpan quoteSpan = new LeadingMarginSpan(10,10);
                 out.setSpan(quoteSpan, where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
     }

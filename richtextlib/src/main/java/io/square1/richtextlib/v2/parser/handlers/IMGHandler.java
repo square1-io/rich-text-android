@@ -48,4 +48,16 @@ public class IMGHandler extends TagHandler {
     public void onTagClose(MarkupContext context, MarkupTag tag, ParcelableSpannedBuilder out) {
 
     }
+
+
+    @Override
+    public boolean closeWhenSplitting(){
+        return false;
+    }
+
+
+    @Override
+    public boolean openWhenSplitting(){
+        return false;
+    }
 }

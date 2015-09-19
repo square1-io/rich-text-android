@@ -1,44 +1,28 @@
 package io.square1.richtextlib.v2.parser.handlers;
 
 import io.square1.richtextlib.ParcelableSpannedBuilder;
+import io.square1.richtextlib.style.LeadingMarginSpan;
+import io.square1.richtextlib.style.RelativeSizeSpan;
 import io.square1.richtextlib.v2.parser.MarkupContext;
 import io.square1.richtextlib.v2.parser.MarkupTag;
 import io.square1.richtextlib.v2.parser.TagHandler;
 import io.square1.richtextlib.v2.utils.SpannedBuilderUtils;
 
 /**
- * Created by roberto on 04/09/15.
+ * Created by roberto on 19/08/15.
  */
-public class LIHandler extends TagHandler {
+public class DDHandler extends TagHandler {
 
     @Override
     public void onTagOpen(MarkupContext context, MarkupTag tag, ParcelableSpannedBuilder out) {
-
         SpannedBuilderUtils.ensureAtLeastThoseNewLines(out,1);
-        MarkupTag parent = context.getParent(tag);
-
-        int nestedListsCount = BaseListHandler.getNestedListsCount();
-
-        for (int index = 0; index < nestedListsCount; index ++) {
-            out.append(SpannedBuilderUtils.TAB);
-        }
-
-        TagHandler parentHandler = parent.getTagHandler();
-
-
-        if(parentHandler instanceof OLHandler){
-            out.append( String.valueOf (((OLHandler)parentHandler).getNextIndex()));
-        }else{
-            out.append(SpannedBuilderUtils.BULLET);
-        }
-
-        out.append(SpannedBuilderUtils.SPACE);
-        out.append(SpannedBuilderUtils.SPACE);
+        SpannedBuilderUtils.startSpan(out, new Markers.LeadingMargin());
     }
 
     @Override
     public void onTagClose(MarkupContext context, MarkupTag tag, ParcelableSpannedBuilder out) {
         SpannedBuilderUtils.ensureAtLeastThoseNewLines(out,1);
+        SpannedBuilderUtils.endSpan(out, Markers.LeadingMargin.class, new LeadingMarginSpan(10,10));
     }
 
 

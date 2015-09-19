@@ -2,9 +2,11 @@ package io.square1.richtextlib.v2.utils;
 
 import android.text.Spannable;
 import android.text.TextUtils;
+import android.text.style.ParagraphStyle;
 
 import io.square1.richtextlib.ParcelableSpannedBuilder;
 import io.square1.richtextlib.style.URLSpan;
+import io.square1.richtextlib.style.UnsupportedContentSpan;
 import io.square1.richtextlib.style.YouTubeSpan;
 
 /**
@@ -55,6 +57,19 @@ public class SpannedBuilderUtils {
 
     }
 
+    public static void makeUnsupported(String link,String text,ParcelableSpannedBuilder builder){
+        //clean the link:
+        if(link.indexOf("//") == 0){
+            link = "http:" + link;
+        }
+        if(TextUtils.isEmpty(text) == true){
+            text = link;
+        }
+        int len = builder.length();
+        builder.append(text);
+        builder.setSpan(new UnsupportedContentSpan(link), len, len + text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+    }
+
     public static void makeLink(String link, String text, ParcelableSpannedBuilder builder){
         //clean the link:
         if(link.indexOf("//") == 0){
@@ -84,5 +99,30 @@ public class SpannedBuilderUtils {
         if (where != len) {
             text.setSpan(repl, where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
+    }
+
+    public static void fixFlags(ParcelableSpannedBuilder builder){
+
+        // Fix flags and range for paragraph-type markup.
+        Object[] obj = builder.getSpans(0, builder.length(), ParagraphStyle.class);
+        for (int i = 0; i < obj.length; i++) {
+            int start = builder.getSpanStart(obj[i]);
+            int end = builder.getSpanEnd(obj[i]);
+
+            // If the last line of the range is blank, back off by one.
+            if (end - 2 >= 0) {
+                if (builder.charAt(end - 1) == '\n' &&
+                        builder.charAt(end - 2) == '\n') {
+                    end--;
+                }
+            }
+
+            if (end == start) {
+                builder.removeSpan(obj[i]);
+            } else {
+                builder.setSpan(obj[i], start, end, Spannable.SPAN_PARAGRAPH);
+            }
+        }
+
     }
 }

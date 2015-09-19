@@ -12,6 +12,7 @@ import io.square1.richtextlib.EmbedUtils;
 public interface Markers {
 
     //those are just markers classes to tag specific index in the string
+      class LeadingMargin {}
       class Bold { }
       class Italic { }
       class Underline { }
@@ -19,6 +20,7 @@ public interface Markers {
       class Small { }
       class Monospace { }
       class Bullet { }
+      class Code {}
       class Blockquote {
 
         public static final String CLASS_TWEET = "twitter-tweet";
