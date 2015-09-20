@@ -13,13 +13,12 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.text.style.ReplacementSpan;
 import android.text.style.UpdateAppearance;
-import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
 
 import io.square1.richtextlib.EmbedUtils;
 import io.square1.richtextlib.R;
-import io.square1.richtextlib.ui.RichTextView;
+import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.NumberUtils;
 import io.square1.richtextlib.util.UniqueId;
 import io.square1.richtextlib.v2.utils.SpanUtils;
@@ -89,7 +88,7 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
                 mRef.get() != null &&
                 mRef.get().getMeasuredWidth() != 0){
 
-            final RichTextView view = mRef.get();
+            final RichContentViewDisplay view = mRef.get();
             double availableWidth =  (double)(view.getMeasuredWidth());
 
             double availableHeight = availableWidth / 16 * 9;
@@ -116,10 +115,10 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
         mMaxImageWidth = src.readInt();
     }
 
-    WeakReference<RichTextView> mRef;
+    WeakReference<RichContentViewDisplay> mRef;
 
     @Override
-    public void onSpannedSetToView(RichTextView view) {
+    public void onSpannedSetToView(RichContentViewDisplay view) {
 
         if(mYoutubeIcon == null){
             mYoutubeIcon = BitmapFactory.decodeResource(view.getContext().getResources(),
@@ -132,13 +131,13 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
     }
 
     @Override
-    public void onAttachedToView(RichTextView view) {
+    public void onAttachedToView(RichContentViewDisplay view) {
         mAttachedToWindow = true;
         loadImage();
     }
 
     @Override
-    public void onDetachedFromView(RichTextView view) {
+    public void onDetachedFromView(RichContentViewDisplay view) {
         mAttachedToWindow  = false;
     }
 
@@ -255,7 +254,7 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
             mImageHeight = bitmap.getIntrinsicHeight();
         }
         mBitmap.setBounds(getBitmapSize());
-        final RichTextView view = mRef.get();
+        final RichContentViewDisplay view = mRef.get();
 
         if(view != null && mAttachedToWindow){
             mBitmap.setCallback(view);

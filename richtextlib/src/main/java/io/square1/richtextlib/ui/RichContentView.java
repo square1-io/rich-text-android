@@ -4,22 +4,21 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.text.DynamicLayout;
 import android.text.Layout;
-import android.text.StaticLayout;
 import android.text.TextPaint;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
-import android.view.SurfaceView;
 import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import io.square1.richtextlib.ParcelableSpannedBuilder;
@@ -34,7 +33,7 @@ import io.square1.richtextlib.style.YouTubeSpan;
 /**
  * Created by roberto on 20/09/15.
  */
-public class RichTextViewV2 extends View implements RichTextView{
+public class RichContentView extends View implements RichContentViewDisplay {
 
     private UrlBitmapDownloader mBitmapManager;
 
@@ -54,17 +53,17 @@ public class RichTextViewV2 extends View implements RichTextView{
 
 
 
-    public RichTextViewV2(Context context) {
+    public RichContentView(Context context) {
         super(context);
         init(context, null, -1, -1);
     }
 
-    public RichTextViewV2(Context context, AttributeSet attrs) {
+    public RichContentView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs, -1, -1);
     }
 
-    public RichTextViewV2(Context context, AttributeSet attrs, int defStyleAttr) {
+    public RichContentView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs, defStyleAttr, -1);
     }
@@ -110,9 +109,12 @@ public class RichTextViewV2 extends View implements RichTextView{
 
     }
 
+    public void setOnSpanClickedObserver( OnSpanClickedObserver observer){
+        mOnSpanClickedObserver = observer;
+    }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public RichTextViewV2(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public RichContentView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(context, attrs, defStyleAttr, defStyleRes);
 
@@ -132,6 +134,8 @@ public class RichTextViewV2 extends View implements RichTextView{
         setRawTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                 15,
                 res.getDisplayMetrics()));
+
+        parseCustomAttributes(context,attrs);
 
     }
 
@@ -287,6 +291,38 @@ public class RichTextViewV2 extends View implements RichTextView{
             }
         }
 
+    }
+
+    private void parseCustomAttributes(Context ctx, AttributeSet attrs) {
+
+        if(attrs == null){
+            return;
+        }
+
+        TypedArray a = ctx.obtainStyledAttributes(attrs, R.styleable.io_square1_richtextlib_ui_RichContentView);
+        String customFont = a.getString(R.styleable.io_square1_richtextlib_ui_RichContentView_fontName);
+        setCustomFont(ctx, customFont);
+        a.recycle();
+    }
+
+    public boolean setCustomFont(Context ctx, String asset) {
+
+        if(TextUtils.isEmpty(asset)){
+            return false;
+        }
+
+        try {
+
+            Typeface tf  = Typeface.createFromAsset(ctx.getAssets(), asset);
+            mTextPaint.setTypeface(tf);
+
+        } catch (Exception e) {
+
+            return false;
+
+        }
+
+        return true;
     }
 
 }

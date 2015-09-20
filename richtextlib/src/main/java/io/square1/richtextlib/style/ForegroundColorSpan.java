@@ -5,7 +5,7 @@ import android.text.TextPaint;
 import android.text.style.CharacterStyle;
 import android.text.style.UpdateAppearance;
 
-import io.square1.richtextlib.ui.RichTextView;
+import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.UniqueId;
 
 public class ForegroundColorSpan extends CharacterStyle implements UpdateAppearance, P2ParcelableSpan {
@@ -57,17 +57,17 @@ public class ForegroundColorSpan extends CharacterStyle implements UpdateAppeara
     }
 
     @Override
-    public void onAttachedToView(RichTextView view) {
+    public void onAttachedToView(RichContentViewDisplay view) {
 
     }
 
     @Override
-    public void onDetachedFromView(RichTextView view) {
+    public void onDetachedFromView(RichContentViewDisplay view) {
 
     }
 
     @Override
-    public void onSpannedSetToView(RichTextView view){
+    public void onSpannedSetToView(RichContentViewDisplay view){
 
     }
 }

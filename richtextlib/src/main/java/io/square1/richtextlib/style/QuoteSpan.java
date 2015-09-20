@@ -2,7 +2,6 @@ package io.square1.richtextlib.style;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Parcel;
@@ -14,7 +13,7 @@ import android.text.style.LeadingMarginSpan;
 import android.text.style.LineBackgroundSpan;
 import android.text.style.MetricAffectingSpan;
 
-import io.square1.richtextlib.ui.RichTextView;
+import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.UniqueId;
 
 
@@ -197,17 +196,17 @@ public class QuoteSpan extends MetricAffectingSpan implements /*LineHeightSpan,*
     }
 
     @Override
-    public void onAttachedToView(RichTextView view) {
+    public void onAttachedToView(RichContentViewDisplay view) {
 
     }
 
     @Override
-    public void onDetachedFromView(RichTextView view) {
+    public void onDetachedFromView(RichContentViewDisplay view) {
 
     }
 
     @Override
-    public void onSpannedSetToView(RichTextView view){
+    public void onSpannedSetToView(RichContentViewDisplay view){
 
     }
 }
