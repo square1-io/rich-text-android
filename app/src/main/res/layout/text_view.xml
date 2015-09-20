@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<io.square1.richtextlib.ui.RichTextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<io.square1.richtextlib.ui.RichTextViewV2 xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-</io.square1.richtextlib.ui.RichTextView>
+    android:layout_height="wrap_content">
+</io.square1.richtextlib.ui.RichTextViewV2>

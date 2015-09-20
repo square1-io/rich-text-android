@@ -36,4 +36,7 @@ public abstract class TagHandler {
     public abstract void onTagOpen(MarkupContext context, MarkupTag tag , ParcelableSpannedBuilder out);
     public abstract void onTagClose(MarkupContext context, MarkupTag tag , ParcelableSpannedBuilder out);
 
+    public boolean processContent() {
+        return true;
+    }
 }

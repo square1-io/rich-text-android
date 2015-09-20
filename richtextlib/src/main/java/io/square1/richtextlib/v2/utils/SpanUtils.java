@@ -10,7 +10,7 @@ import io.square1.richtextlib.ui.RichTextView;
  */
 public class SpanUtils {
 
-    public static UrlBitmapDownloader getDownloader(View view){
+    public static UrlBitmapDownloader getDownloader(RichTextView view){
 
         if(view == null) return null;
 
