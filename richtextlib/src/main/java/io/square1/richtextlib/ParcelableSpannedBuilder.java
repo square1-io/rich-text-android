@@ -1052,4 +1052,7 @@ public class ParcelableSpannedBuilder extends ContentItem implements CharSequenc
         }
     }
 
+    public P2ParcelableSpan[] getSpans() {
+        return getSpans(0,length(),P2ParcelableSpan.class);
+    }
 }

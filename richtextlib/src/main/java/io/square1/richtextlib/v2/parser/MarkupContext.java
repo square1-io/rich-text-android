@@ -62,7 +62,9 @@ public class MarkupContext {
 
         }catch (Exception e){
             Exception ex = e;
-            return new DefaultHandler();
+            TagHandler defaultHandler = new DefaultHandler();
+            tag.setTagHandler(defaultHandler);
+            return defaultHandler;
         }
 
     }

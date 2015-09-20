@@ -50,24 +50,15 @@ public class InternalContentHandler  implements ContentHandler {
     @Override
     public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
 
-        if(mAccumulatedText.length() > 0) {
-            mHandler.processAccumulatedTextContent(mAccumulatedText.toString());
-            mAccumulatedText.setLength(0);
-        }
-
-        mHandler.startElement(uri, localName, atts, mAccumulatedText);
+        mHandler.startElement(uri, localName, atts, mAccumulatedText.toString());
         mAccumulatedText.setLength(0);
     }
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
 
-        if(mAccumulatedText.length() > 0) {
-            mHandler.processAccumulatedTextContent(mAccumulatedText.toString());
-            mAccumulatedText.setLength(0);
-        }
 
-        mHandler.endElement(uri, localName, mAccumulatedText);
+        mHandler.endElement(uri, localName, mAccumulatedText.toString());
         mAccumulatedText.setLength(0);
     }
 

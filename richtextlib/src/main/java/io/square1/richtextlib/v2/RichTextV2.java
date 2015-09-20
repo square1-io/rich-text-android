@@ -244,27 +244,31 @@ public class RichTextV2 {
 
 
 
-    public void startElement(String uri, String localName, Attributes atts, StringBuilder textContent) {
+    public void startElement(String uri, String localName, Attributes atts, String textContent) {
+
+        processAccumulatedTextContent(textContent);
         MarkupTag tag = new MarkupTag(localName,atts);
         mStack.push(tag);
-        if(textContent.length() > 0) {
-            mOutput.append(textContent);
-        }
         mCurrentContext.onTagOpen(tag, mOutput, false);
     }
 
-    public void endElement(String uri, String localName, StringBuilder textContent) {
+    public void endElement(String uri, String localName, String textContent) {
+
         MarkupTag tag = mStack.pop();
-        if(textContent.length() > 0) {
-            mOutput.append(textContent);
+
+        if(tag.getTagHandler().processContent() == true) {
+            processAccumulatedTextContent(textContent);
         }
+
+
+
         if(tag.tag.equalsIgnoreCase(localName) == true) {
             mCurrentContext.onTagClose(tag, mOutput, false);
         }
     }
 
 
-    public ParcelableSpannedBuilder processAccumulatedTextContent(String accumulatedText)  {
+    private ParcelableSpannedBuilder processAccumulatedTextContent(String accumulatedText)  {
 
         if(TextUtils.isEmpty(accumulatedText)){
             return null;
@@ -342,9 +346,16 @@ public class RichTextV2 {
 
     public MarkupTag getParent(MarkupTag child) {
 
+        boolean childFound = false;
         for(int index = (mStack.size() - 1); index >= 0 ; index --){
             MarkupTag parent = mStack.get(index);
-            if(parent != child) return parent;
+            //while walking back on the stack first we find the child
+            // then look at the next element in the stack which will be the parent
+            if(childFound == true) {
+                if (parent != child) return parent;
+            }else {
+                childFound = (parent != child);
+            }
         }
 
         return null;

@@ -18,6 +18,7 @@ import io.square1.richtextlib.ParcelableSpannedBuilder;
 import io.square1.richtextlib.style.RemoteBitmapSpan;
 import io.square1.richtextlib.style.UrlBitmapDownloader;
 import io.square1.richtextlib.ui.RichTextView;
+import io.square1.richtextlib.ui.RichTextViewV2;
 
 
 public class MainActivity2Activity extends ActionBarActivity implements UrlBitmapDownloader {
@@ -34,8 +35,8 @@ public class MainActivity2Activity extends ActionBarActivity implements UrlBitma
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_activity2);
         ParcelableSpannedBuilder store = getIntent().getParcelableExtra("d");
-        RichTextView.class.cast(findViewById(R.id.textView)).setUrlBitmapDownloader(this);
-        RichTextView.class.cast(findViewById(R.id.textView)).setText(store);
+       // RichTextViewV2.class.cast(findViewById(R.id.textView)).setUrlBitmapDownloader(this);
+        RichTextViewV2.class.cast(findViewById(R.id.textView)).setText(store);
     }
 
     @Override

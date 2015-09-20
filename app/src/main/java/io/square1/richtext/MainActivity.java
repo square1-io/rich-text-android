@@ -34,25 +34,14 @@ import io.square1.richtextlib.ParcelableSpannedBuilder;
 import io.square1.richtextlib.style.RemoteBitmapSpan;
 import io.square1.richtextlib.style.UrlBitmapDownloader;
 import io.square1.richtextlib.ui.RichTextView;
+
+import io.square1.richtextlib.ui.RichTextViewV2;
 import io.square1.richtextlib.v2.ContentItem;
 import io.square1.richtextlib.v2.RichTextV2;
 
 
-public class MainActivity extends ActionBarActivity implements UrlBitmapDownloader, RichText.RichTextCallback {
+public class MainActivity extends ActionBarActivity implements UrlBitmapDownloader {
 
-
-    @Override
-    public void onElementFound(RichText.TNodeType type, Object content, HashMap<String, Object> attributes) {
-        if (type == RichText.TNodeType.EText){
-            ((RichTextView) findViewById(R.id.textView)).setText((ParcelableSpannedBuilder) content);
-             MainActivity2Activity.show(this, (ParcelableSpannedBuilder) content);
-    }
-}
-
-    @Override
-    public void onError(Exception exc) {
-
-    }
 
     public  class SimpleTargetDrawable extends SimpleTarget<GlideDrawable> {
 
@@ -183,25 +172,29 @@ public class MainActivity extends ActionBarActivity implements UrlBitmapDownload
 
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
+                return getViewV2(position,convertView,parent);
+            }
+
+
+
+            public View getViewV2(int position, View convertView, ViewGroup parent) {
 
                 Object item = getItem(position);
-                RichTextView view = (RichTextView)convertView;
+                RichTextViewV2 view = (RichTextViewV2)convertView;
                 if(convertView == null){
-                    view = new RichTextView(MainActivity.this);
+                    view = new RichTextViewV2(MainActivity.this);
                     view.setUrlBitmapDownloader(MainActivity.this);
                     view.setDrawingCacheEnabled(false);
-                    view.setRichTextContentChanged(new RichTextView.RichTextContentChanged() {
-                        @Override
-                        public void onContentChanged(RichTextView view) {
-                            adapter.notifyDataSetChanged();
-                        }
-                    });
+//                    view.setRichTextContentChanged(new RichTextView.RichTextContentChanged() {
+//                        @Override
+//                        public void onContentChanged(RichTextView view) {
+//                            adapter.notifyDataSetChanged();
+//                        }
+//                    });
                 }
 
-                if(item instanceof Spanned){
-                    view.setText((Spanned)item);
-                }else{
-                   view.setText(String.valueOf(item));
+                if(item instanceof ParcelableSpannedBuilder){
+                    view.setText((ParcelableSpannedBuilder)item);
                 }
                 return view;
             }

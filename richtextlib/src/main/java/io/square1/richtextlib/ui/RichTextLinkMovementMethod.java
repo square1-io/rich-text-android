@@ -3,8 +3,10 @@ package io.square1.richtextlib.ui;
 import android.text.Layout;
 import android.text.Spannable;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.TextView;
 
+import io.square1.richtextlib.RichText;
 import io.square1.richtextlib.style.ClickableSpan;
 
 /**
@@ -29,7 +31,7 @@ import io.square1.richtextlib.style.ClickableSpan;
 		mObserver = observer;
 	}
 
-	public boolean onTouchEvent(TextView widget, Spannable buffer, MotionEvent event){
+	public boolean onTouchEvent(View widget, Layout layout, Spannable buffer, MotionEvent event){
 		// Get the event action
 		int action = event.getAction();
 		
@@ -38,13 +40,12 @@ import io.square1.richtextlib.style.ClickableSpan;
 			// Locate the area that was pressed
 			int x = (int) event.getX();
 			int y = (int) event.getY();
-			x -= widget.getTotalPaddingLeft();
-			y -= widget.getTotalPaddingTop();
+			x -= widget.getPaddingLeft();
+			y -= widget.getPaddingTop();
 			x += widget.getScrollX();
 			y += widget.getScrollY();
 			
 			// Locate the URL text
-			Layout layout = widget.getLayout();
 			int line = layout.getLineForVertical(y);
 			int off = layout.getOffsetForHorizontal(line, x);
 
@@ -56,6 +57,6 @@ import io.square1.richtextlib.style.ClickableSpan;
 				return true;
 			}
 		}
-		return super.onTouchEvent(widget, buffer, event);
+		return false;
 	}	
 }
