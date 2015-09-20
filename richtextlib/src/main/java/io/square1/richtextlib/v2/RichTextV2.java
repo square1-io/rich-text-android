@@ -3,35 +3,23 @@
 package io.square1.richtextlib.v2;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Typeface;
 
-import android.net.Uri;
-import android.text.Spannable;
-import android.text.Spanned;
 import android.text.TextUtils;
-import android.text.style.ParagraphStyle;
 import android.util.Patterns;
 
 
 import org.ccil.cowan.tagsoup.HTMLSchema;
 import org.ccil.cowan.tagsoup.Parser;
 import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
-import org.xml.sax.Locator;
-import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.ListIterator;
 import java.util.Stack;
 import java.util.regex.Matcher;
 
@@ -43,8 +31,6 @@ import io.square1.richtextlib.v2.parser.InternalContentHandler;
 import io.square1.richtextlib.v2.parser.MarkupContext;
 import io.square1.richtextlib.v2.parser.MarkupTag;
 import io.square1.richtextlib.style.*;
-import io.square1.richtextlib.util.NumberUtils;
-import io.square1.richtextlib.v2.parser.TagHandler;
 import io.square1.richtextlib.v2.utils.SpannedBuilderUtils;
 
 /**
@@ -67,7 +53,7 @@ public class RichTextV2 {
     }
 
 
-    public static class DefaultStyle implements  Style {
+    public static class V2DefaultStyle implements  Style {
 
         private static final float[] HEADER_SIZES = {
                 1.5f, 1.4f, 1.3f, 1.2f, 1.1f, 1f,
@@ -77,7 +63,7 @@ public class RichTextV2 {
         private Bitmap mQuoteBitmap;
         private int mMaxImageWidth;
 
-        public DefaultStyle(Context context){
+        public V2DefaultStyle(Context context){
             mApplicationContext = context.getApplicationContext();
             Resources resources = context.getResources();
             mQuoteBitmap = BitmapFactory.decodeResource(resources, R.drawable.quote);
@@ -153,7 +139,7 @@ public class RichTextV2 {
     private MarkupContext mCurrentContext;
 
     private RichTextV2(Context context) {
-        mCurrentContext = new MarkupContext(this, new DefaultStyle(context));
+        mCurrentContext = new MarkupContext(this, new V2DefaultStyle(context));
         mOutput = new ParcelableSpannedBuilder();
         mResult = new ArrayList<>();
     }
@@ -181,7 +167,7 @@ public class RichTextV2 {
 
     public static ArrayList<ContentItem> fromHtml(Context context, String source) {
 
-        final Style defaultStyle = new DefaultStyle(context);
+        final Style defaultStyle = new V2DefaultStyle(context);
        return fromHtmlImpl(context, source, defaultStyle);
 
     }
