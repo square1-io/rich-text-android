@@ -1,5 +1,3 @@
-
-
 package io.square1.richtextlib;
 
 import android.content.Context;

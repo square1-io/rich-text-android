@@ -49,6 +49,8 @@ public class RichContentView extends View implements RichContentViewDisplay {
 
     private int mLastMeasuredWidth;
 
+    private float mDefaultPixelSize;
+
     private OnSpanClickedObserver mOnSpanClickedObserver;
 
 
@@ -127,13 +129,15 @@ public class RichContentView extends View implements RichContentViewDisplay {
 
         final Resources res = getResources();
         mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-        mTextPaint.linkColor = Color.RED;
+        mTextPaint.linkColor = Color.BLUE;
         mTextPaint.density = res.getDisplayMetrics().density;
         mLastMeasuredWidth = 0;
 
-        setRawTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+        mDefaultPixelSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                 15,
-                res.getDisplayMetrics()));
+                res.getDisplayMetrics());
+
+        setRawTextSize(mDefaultPixelSize);
 
         parseCustomAttributes(context,attrs);
 
@@ -300,20 +304,40 @@ public class RichContentView extends View implements RichContentViewDisplay {
         }
 
         TypedArray a = ctx.obtainStyledAttributes(attrs, R.styleable.io_square1_richtextlib_ui_RichContentView);
-        String customFont = a.getString(R.styleable.io_square1_richtextlib_ui_RichContentView_fontName);
-        setCustomFont(ctx, customFont);
+
+        String customFont = a.getString(R.styleable.io_square1_richtextlib_ui_RichContentView_fontFamily);
+        setFontFamily(customFont);
+
+        if(a.hasValue(R.styleable.io_square1_richtextlib_ui_RichContentView_textSize)) {
+           int textSize =  a.getDimensionPixelSize(R.styleable.io_square1_richtextlib_ui_RichContentView_textSize, (int)mDefaultPixelSize);
+           setRawTextSize(textSize);
+        }
+
+        if(a.hasValue(R.styleable.io_square1_richtextlib_ui_RichContentView_textColor)) {
+            int color =  a.getColor(R.styleable.io_square1_richtextlib_ui_RichContentView_textColor, Color.BLACK);
+            mTextPaint.setColor(color);
+        }
+
+
+        if(a.hasValue(R.styleable.io_square1_richtextlib_ui_RichContentView_textColorLink)) {
+            int color =  a.getColor(R.styleable.io_square1_richtextlib_ui_RichContentView_textColorLink,Color.BLUE);
+            mTextPaint.linkColor = color;
+        }
+
+
+
         a.recycle();
     }
 
-    public boolean setCustomFont(Context ctx, String asset) {
+    public boolean setFontFamily(String customFont) {
 
-        if(TextUtils.isEmpty(asset)){
+        if(TextUtils.isEmpty(customFont)){
             return false;
         }
 
         try {
 
-            Typeface tf  = Typeface.createFromAsset(ctx.getAssets(), asset);
+            Typeface tf  = Typeface.createFromAsset(getContext().getAssets(), customFont);
             mTextPaint.setTypeface(tf);
 
         } catch (Exception e) {
