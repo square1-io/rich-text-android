@@ -8,7 +8,7 @@ import android.text.Layout;
 import android.text.Spanned;
 import android.text.style.LeadingMarginSpan;
 
-import io.square1.richtextlib.ui.RichTextView;
+import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.UniqueId;
 
 public class BulletSpan implements LeadingMarginSpan, P2ParcelableSpan {
@@ -113,17 +113,17 @@ public class BulletSpan implements LeadingMarginSpan, P2ParcelableSpan {
     }
 
     @Override
-    public void onAttachedToView(RichTextView view) {
+    public void onAttachedToView(RichContentViewDisplay view) {
 
     }
 
     @Override
-    public void onDetachedFromView(RichTextView view) {
+    public void onDetachedFromView(RichContentViewDisplay view) {
 
     }
 
     @Override
-    public void onSpannedSetToView(RichTextView view){
+    public void onSpannedSetToView(RichContentViewDisplay view){
 
     }
 }

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="post_details_content_padding">10dip</dimen>
+    <dimen name="post_details_content_padding_2dip">20dip</dimen>
+</resources>

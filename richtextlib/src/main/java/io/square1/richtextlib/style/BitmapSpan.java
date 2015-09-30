@@ -8,7 +8,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.style.ReplacementSpan;
 
-import io.square1.richtextlib.ui.RichTextView;
+import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.UniqueId;
 
 /**
@@ -63,17 +63,17 @@ public class BitmapSpan extends ReplacementSpan implements P2ParcelableSpan , Cl
     }
 
     @Override
-    public void onSpannedSetToView(RichTextView view) {
+    public void onSpannedSetToView(RichContentViewDisplay view) {
 
     }
 
     @Override
-    public void onAttachedToView(RichTextView view) {
+    public void onAttachedToView(RichContentViewDisplay view) {
 
     }
 
     @Override
-    public void onDetachedFromView(RichTextView view) {
+    public void onDetachedFromView(RichContentViewDisplay view) {
 
     }
 

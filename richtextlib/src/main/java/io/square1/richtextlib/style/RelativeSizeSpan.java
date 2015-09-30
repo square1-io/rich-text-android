@@ -5,7 +5,7 @@ import android.os.Parcelable;
 import android.text.TextPaint;
 import android.text.style.MetricAffectingSpan;
 
-import io.square1.richtextlib.ui.RichTextView;
+import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.UniqueId;
 
 public class RelativeSizeSpan extends MetricAffectingSpan implements P2ParcelableSpan {
@@ -64,17 +64,17 @@ public class RelativeSizeSpan extends MetricAffectingSpan implements P2Parcelabl
     }
 
     @Override
-    public void onAttachedToView(RichTextView view) {
+    public void onAttachedToView(RichContentViewDisplay view) {
 
     }
 
     @Override
-    public void onDetachedFromView(RichTextView view) {
+    public void onDetachedFromView(RichContentViewDisplay view) {
 
     }
 
     @Override
-    public void onSpannedSetToView(RichTextView view){
+    public void onSpannedSetToView(RichContentViewDisplay view){
 
     }
 }

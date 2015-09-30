@@ -6,7 +6,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.Layout;
 
-import io.square1.richtextlib.ui.RichTextView;
+import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.UniqueId;
 
 /**
@@ -48,17 +48,17 @@ public class LeadingMarginSpan implements P2ParcelableSpan, android.text.style.L
     }
 
     @Override
-    public void onSpannedSetToView(RichTextView view) {
+    public void onSpannedSetToView(RichContentViewDisplay view) {
 
     }
 
     @Override
-    public void onAttachedToView(RichTextView view) {
+    public void onAttachedToView(RichContentViewDisplay view) {
 
     }
 
     @Override
-    public void onDetachedFromView(RichTextView view) {
+    public void onDetachedFromView(RichContentViewDisplay view) {
 
     }
 

@@ -9,7 +9,7 @@ import android.provider.Browser;
 import android.text.style.ClickableSpan;
 import android.view.View;
 
-import io.square1.richtextlib.ui.RichTextView;
+import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.UniqueId;
 
 public class URLSpan extends ClickableSpan implements io.square1.richtextlib.style.ClickableSpan, P2ParcelableSpan {
@@ -66,17 +66,17 @@ public class URLSpan extends ClickableSpan implements io.square1.richtextlib.sty
     }
 
     @Override
-    public void onAttachedToView(RichTextView view) {
+    public void onAttachedToView(RichContentViewDisplay view) {
 
     }
 
     @Override
-    public void onDetachedFromView(RichTextView view) {
+    public void onDetachedFromView(RichContentViewDisplay view) {
 
     }
 
     @Override
-    public void onSpannedSetToView(RichTextView view){
+    public void onSpannedSetToView(RichContentViewDisplay view){
 
     }
 }

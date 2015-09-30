@@ -17,7 +17,15 @@ public class OEmbedContentHandler extends ContentItem {
         mType = type;
     }
 
+    public EmbedUtils.TEmbedType getType(){
+        return mType;
+    }
+
     public static OEmbedContentHandler newInstance(EmbedUtils.TEmbedType type, String content){
        return new OEmbedContentHandler(content, content, type);
+    }
+
+    public String getContent() {
+        return mId;
     }
 }

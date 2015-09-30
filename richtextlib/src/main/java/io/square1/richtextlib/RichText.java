@@ -1,5 +1,3 @@
-
-
 package io.square1.richtextlib;
 
 import android.content.Context;
@@ -268,21 +266,21 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     }
 
 
-    public void convert() {
+    public void convert() throws Exception{
 
 
         mReader.setContentHandler(this);
-        try {
+      //  try {
             mReader.parse(new InputSource(new StringReader(mSource)));
-        } catch (IOException e) {
-            // We are reading from a string. There should not be IO problems.
-            throw new RuntimeException(e);
-        } catch (SAXException e) {
-            // TagSoup doesn't throw parse exceptions.
-            throw new RuntimeException(e);
-        }catch (Exception e){
-            throw new RuntimeException(e);
-        }
+//      //  } catch (IOException e) {
+//            // We are reading from a string. There should not be IO problems.
+//            throw new RuntimeException(e);
+//        } catch (SAXException e) {
+//            // TagSoup doesn't throw parse exceptions.
+//            throw new RuntimeException(e);
+//        }catch (Exception e){
+//            throw new RuntimeException(e);
+//        }
 
         if(mSpannableStringBuilder.length() > 0){
             fixFlags(mSpannableStringBuilder);
@@ -853,8 +851,15 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         if(link.indexOf("//") == 0){
             link = "http:" + link;
         }
+        final int maxLength = 20;
         if(TextUtils.isEmpty(text) == true){
-            text = link;
+            if(link.length() > maxLength){
+                text = link.substring(0,maxLength - 1);
+                text = text.trim();
+                text = text + "...";
+            }else {
+                text = link;
+            }
         }
         int len = builder.length();
         builder.append(text);

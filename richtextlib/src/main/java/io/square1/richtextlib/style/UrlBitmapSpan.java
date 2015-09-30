@@ -4,10 +4,8 @@ package io.square1.richtextlib.style;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -19,7 +17,7 @@ import android.text.style.UpdateAppearance;
 
 import java.lang.ref.WeakReference;
 
-import io.square1.richtextlib.ui.RichTextView;
+import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.NumberUtils;
 import io.square1.richtextlib.util.UniqueId;
 import io.square1.richtextlib.v2.utils.SpanUtils;
@@ -108,23 +106,23 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
         mImageHeight = src.readInt();
     }
 
-    WeakReference<RichTextView> mRef;
+    WeakReference<RichContentViewDisplay> mRef;
 
     @Override
-    public void onSpannedSetToView(RichTextView view) {
+    public void onSpannedSetToView(RichContentViewDisplay view) {
         mRef = new WeakReference(view);
         mAttachedToWindow = view.viewAttachedToWindow();
         loadImage();
     }
 
     @Override
-    public void onAttachedToView(RichTextView view) {
+    public void onAttachedToView(RichContentViewDisplay view) {
         mAttachedToWindow = true;
         loadImage();
     }
 
     @Override
-    public void onDetachedFromView(RichTextView view) {
+    public void onDetachedFromView(RichContentViewDisplay view) {
         mAttachedToWindow  = false;
     }
 
@@ -276,7 +274,7 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
         mImageHeight = bitmap.getIntrinsicHeight();
 
         mBitmap.setBounds(0,0,mImageWidth,mImageHeight);
-        final RichTextView view = mRef.get();
+        final RichContentViewDisplay view = mRef.get();
         Rect newRect = getBitmapBounds();
         mBitmap.setBounds(newRect);
 
