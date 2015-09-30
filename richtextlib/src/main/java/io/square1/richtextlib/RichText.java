@@ -255,7 +255,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     private StringBuilder mAccumulatedText;
     private ParcelableSpannedBuilder mSpannableStringBuilder;
     private RichText.RichTextCallback mCallback;
-    private UrlBitmapDownloader mDownloader;
+    //private UrlBitmapDownloader mDownloader;
     private Style mStyle;
 
     public HtmlToSpannedConverter(String source,
@@ -265,7 +265,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
                                   UrlBitmapDownloader dowloader) {
         mStyle = style;
         mCallback = callback;
-        mDownloader = dowloader;
+       // mDownloader = dowloader;
         mSource = String.format("<root>%s</root>" , source);
         mReader = reader;
         mAccumulatedText = new StringBuilder();
@@ -701,7 +701,6 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
         int maxSize = mStyle.maxImageWidth();
         UrlBitmapSpan imageDrawable = new UrlBitmapSpan(Uri.parse(src),
-                mDownloader,
                 NumberUtils.parseImageDimension(attributes.getValue("width"),maxSize),
                 NumberUtils.parseImageDimension(attributes.getValue("height"),0),
                         mStyle.maxImageWidth() );
@@ -877,7 +876,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         ensureAtLeastOneNewLine(builder);
         int len = builder.length();
         builder.append(NO_SPACE_CHAR);
-        builder.setSpan(new YouTubeSpan(youtubeId, mStyle.maxImageWidth(), mDownloader),
+        builder.setSpan(new YouTubeSpan(youtubeId, mStyle.maxImageWidth()),
                 len, builder.length(),
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 

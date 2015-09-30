@@ -125,7 +125,7 @@ public class MainActivity extends ActionBarActivity implements UrlBitmapDownload
 
         final ArrayList<Object> mItems = new ArrayList<>();
         final ArrayList<Object> obs = new ArrayList<>();
-        String html = ReadFromfile("exception.html");
+        String html = ReadFromfile("image.html");
         final JSONArray output = new JSONArray();
 
 //        RichText.fromHtml(this, html, new RichText.RichTextCallback() {
@@ -173,7 +173,7 @@ public class MainActivity extends ActionBarActivity implements UrlBitmapDownload
 //
 
 
-        RichText.fromHtml(this,html,this,this);
+        RichText.fromHtml(this, html, this, this);
 
         adapter = new BaseAdapter() {
 

@@ -33,7 +33,6 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
 
 
     private Uri mImage;
-    private UrlBitmapDownloader mUrlBitmapDownloader;
     private Drawable mBitmap;
     private Bitmap mYoutubeIcon;
     private int mImageHeight;
@@ -49,12 +48,11 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
 
     public YouTubeSpan(){}
 
-    public YouTubeSpan(String youtubeId, int maxWidth, UrlBitmapDownloader downloader){
+    public YouTubeSpan(String youtubeId, int maxWidth){
         super();
         mYoutubeId = youtubeId;
         mImageWidth = mImageHeight = NumberUtils.INVALID;
         mMaxImageWidth = maxWidth;
-        mUrlBitmapDownloader = downloader;
 
         mImage = Uri.parse(EmbedUtils.getYoutubeThumbnailUrl(youtubeId));
 
@@ -280,10 +278,10 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
     private void loadImage(){
         if(mAttachedToWindow == true && mLoading == false){
             mLoading = true;
-            if(mUrlBitmapDownloader == null){
-                mUrlBitmapDownloader = mRef.get().getDownloader();
+            UrlBitmapDownloader downloader = SpanUtil.get(mRef);
+            if(downloader != null){
+                downloader.downloadImage(this,mImage);
             }
-            mUrlBitmapDownloader.downloadImage(this,mImage);
         }
     }
 

@@ -51,19 +51,18 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
     private int mImageHeight;
 
     private Uri mImage;
-    private UrlBitmapDownloader mUrlBitmapDownloader;
+   // private UrlBitmapDownloader mUrlBitmapDownloader;
     private Drawable mBitmap;
 
     public UrlBitmapSpan(){
         mVerticalAlignment = ALIGN_BASELINE;
     }
 
-    public UrlBitmapSpan(Uri image, UrlBitmapDownloader downloader, int imageWidth, int imageHeight, int maxImageWidth){
-        this(null,downloader,image, imageWidth,imageHeight,maxImageWidth,ALIGN_BOTTOM);
+    public UrlBitmapSpan(Uri image,  int imageWidth, int imageHeight, int maxImageWidth){
+        this(null,image, imageWidth,imageHeight,maxImageWidth,ALIGN_BOTTOM);
 
     }
     public UrlBitmapSpan(Bitmap bitmap,
-                         UrlBitmapDownloader downloader,
                          Uri image,
                          int  imageWidth,
                          int imageHeight,
@@ -71,7 +70,7 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
                          int alignment){
         super();
 
-        mUrlBitmapDownloader = downloader;
+        //mUrlBitmapDownloader = downloader;
         mImage = image;
         mMaxImageWidth = maxImageWidth;
         mImageWidth = imageWidth;
@@ -306,11 +305,11 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
     private void loadImage(){
         if(mAttachedToWindow == true && mLoading == false){
             mLoading = true;
-            if(mUrlBitmapDownloader == null){
+            UrlBitmapDownloader downloader = SpanUtil.get(mRef);
+            if(downloader != null){
                 //acquire one from the view
-               mUrlBitmapDownloader =  mRef.get().getDownloader();
+                downloader.downloadImage(this,mImage);
             }
-            mUrlBitmapDownloader.downloadImage(this,mImage);
         }
     }
 
