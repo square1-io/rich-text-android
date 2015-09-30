@@ -4,9 +4,11 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.SurfaceTexture;
 import android.net.Uri;
 import android.os.Build;
 import android.text.DynamicLayout;
@@ -16,11 +18,14 @@ import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
+import android.view.Surface;
 import android.view.SurfaceView;
+import android.view.TextureView;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import io.square1.richtextlib.ParcelableSpannedBuilder;
 import io.square1.richtextlib.R;
@@ -49,6 +54,7 @@ public class RichTextViewV2 extends View implements RichTextView{
     private float mSpacingAdd = 0.0f;
 
     private int mLastMeasuredWidth;
+    private Surface mSurface;
 
     private OnSpanClickedObserver mOnSpanClickedObserver;
 
@@ -57,6 +63,7 @@ public class RichTextViewV2 extends View implements RichTextView{
     public RichTextViewV2(Context context) {
         super(context);
         init(context, null, -1, -1);
+
     }
 
     public RichTextViewV2(Context context, AttributeSet attrs) {
@@ -283,10 +290,13 @@ public class RichTextViewV2 extends View implements RichTextView{
                 FallbackWebDialog dialog = new FallbackWebDialog(getContext(),url);
                 dialog.setCancelable(true);
                 dialog.show();
+                SurfaceView v = new SurfaceView(getContext());
+
 
             }
         }
 
     }
+
 
 }
