@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.Animatable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -286,6 +287,9 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
 
             mBitmap.setCallback(view);
             mBitmap.invalidateSelf();
+            if(mBitmap instanceof Animatable){
+                ((Animatable)mBitmap).start();
+            }
 
             if(needsLayout == true){
                 view.requestLayout();

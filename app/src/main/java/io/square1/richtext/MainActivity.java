@@ -173,7 +173,7 @@ public class MainActivity extends ActionBarActivity implements UrlBitmapDownload
 //
 
 
-        RichText.fromHtml(this, html, this, this);
+        RichText.fromHtml(this, html, this);
 
         adapter = new BaseAdapter() {
 

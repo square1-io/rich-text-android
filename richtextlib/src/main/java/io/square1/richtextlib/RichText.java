@@ -171,21 +171,19 @@ public class RichText {
 
     public static void fromHtml(Context context,
                                 String source,
-                                RichTextCallback callback,
-                                UrlBitmapDownloader downloader) {
+                                RichTextCallback callback) {
 
         final Style defaultStyle = new DefaultStyle(context);
-        fromHtmlImpl(context, source, defaultStyle, callback, downloader);
+        fromHtmlImpl(context, source, defaultStyle, callback);
 
     }
 
     public static void fromHtml(Context context,
                                 String source,
                                 RichTextCallback callback,
-                                Style style,
-                                UrlBitmapDownloader downloader) {
+                                Style style ) {
 
-        fromHtmlImpl(context, source, style, callback, downloader);
+        fromHtmlImpl(context, source, style, callback);
 
     }
 
@@ -199,8 +197,7 @@ public class RichText {
     private static void fromHtmlImpl(Context context,
                                  String source,
                                  Style style,
-                                 RichTextCallback callback,
-                                 UrlBitmapDownloader downloader)  {
+                                 RichTextCallback callback)  {
 
         HtmlToSpannedConverter converter = null;
         try {
@@ -225,7 +222,7 @@ public class RichText {
               //  }
             }
 
-            converter = new HtmlToSpannedConverter(source, reader, style, callback, downloader);
+            converter = new HtmlToSpannedConverter(source, reader, style, callback);
             converter.convert();
 
         } catch (Exception e) {
@@ -255,14 +252,12 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     private StringBuilder mAccumulatedText;
     private ParcelableSpannedBuilder mSpannableStringBuilder;
     private RichText.RichTextCallback mCallback;
-    //private UrlBitmapDownloader mDownloader;
     private Style mStyle;
 
     public HtmlToSpannedConverter(String source,
                                   XMLReader reader,
                                   Style style,
-                                  RichText.RichTextCallback callback,
-                                  UrlBitmapDownloader dowloader) {
+                                  RichText.RichTextCallback callback) {
         mStyle = style;
         mCallback = callback;
        // mDownloader = dowloader;
