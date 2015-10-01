@@ -243,6 +243,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
     private boolean mInsideTweet  = false;
     private boolean mInsideFacebookVideo = false;
+    private boolean mInsideInstagram = false;
 
     private RichText.InternalTag mLastOpened;
     private RichText.InternalTag mLastClosed;
@@ -386,7 +387,11 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
             if(mInsideFacebookVideo == true) return;
 
             String elementClass = attributes.getValue("class");
-            if(Blockquote.CLASS_TWEET.equalsIgnoreCase(elementClass)){
+
+            if(Blockquote.CLASS_INSTAGRAM.equalsIgnoreCase(elementClass)){
+                mInsideInstagram = true;
+            }
+            else if(Blockquote.CLASS_TWEET.equalsIgnoreCase(elementClass)){
                 mInsideTweet = true;
                 internalTag.closeOnEnd = false;
                 internalTag.duplicateOnStart = false;
@@ -399,7 +404,11 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         } else if (tag.equalsIgnoreCase("tt")) {
             start(spannable, new Monospace());
         } else if (tag.equalsIgnoreCase("a")) {
-            startA(spannable, mInsideTweet, attributes);
+            if(mInsideInstagram == true){
+                startInstagramA(spannable,attributes);
+            }else {
+                startA(spannable, mInsideTweet, attributes);
+            }
         } else if (tag.equalsIgnoreCase("u")) {
             start(spannable, new Underline());
         } else if (tag.equalsIgnoreCase("sup")) {
@@ -467,6 +476,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         } else if (tag.equalsIgnoreCase("font")) {
             endFont(spannable);
         } else if (tag.equalsIgnoreCase("blockquote")) {
+            mInsideInstagram = false;
             mInsideTweet = false;
             if(mInsideFacebookVideo == false) {
                 endQuote(spannable);
@@ -900,6 +910,24 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         endA(mStack, text);
     }
 
+    private  void startInstagramA(ParcelableSpannedBuilder text,  Attributes attributes) {
+        String href = attributes.getValue("", "href");
+        //if( LinksUtils.parseLink( mStack.peek(), href,this) == false) {
+        int len = text.length();
+        Href h = new Href(href);
+
+        mLastOpened.closeOnEnd = false;
+        mLastOpened.duplicateOnStart = false;
+
+        if( h.type == EmbedUtils.TEmbedType.EInstagram ) {
+            // now here we are inside a tweet
+            onLinkParsed(this,h.mHref,h.type);
+        }else  {
+            text.setSpan(h, len, len, Spannable.SPAN_MARK_MARK);
+        }
+        // }
+    }
+
     private  void startA(ParcelableSpannedBuilder text, boolean insideTweet, Attributes attributes) {
         String href = attributes.getValue("", "href");
         //if( LinksUtils.parseLink( mStack.peek(), href,this) == false) {
@@ -1146,6 +1174,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     private static class Blockquote {
 
         public static final String CLASS_TWEET = "twitter-tweet";
+        public static final String CLASS_INSTAGRAM = "instagram-media";
 
         private String mClass;
 
