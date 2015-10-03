@@ -2,6 +2,7 @@ package io.square1.oembed;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,6 +13,16 @@ import java.util.HashMap;
  * Created by roberto on 30/09/15.
  */
 public class Oembed implements Parcelable {
+
+    public static boolean equals(Oembed o1, Oembed o2){
+
+        if (o1 == o2) return true;
+
+        if (o1 != null && o2 != null) {
+                return TextUtils.equals(o1.mMainUrl,o2.mMainUrl);
+        }
+        return false;
+    }
 
     @Override
     public boolean equals(Object o) {
