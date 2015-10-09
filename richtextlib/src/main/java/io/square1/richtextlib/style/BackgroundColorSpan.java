@@ -6,6 +6,7 @@ import android.text.TextPaint;
 import android.text.style.CharacterStyle;
 import android.text.style.UpdateAppearance;
 
+import io.square1.parcelable.DynamicParcelableCreator;
 import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.UniqueId;
 
@@ -15,7 +16,7 @@ public class BackgroundColorSpan extends CharacterStyle implements UpdateAppeara
 
     private int mColor;
 
-    public static final Parcelable.Creator<BackgroundColorSpan> CREATOR  = P2ParcelableCreator.get(BackgroundColorSpan.class);
+    public static final Parcelable.Creator<BackgroundColorSpan> CREATOR  = DynamicParcelableCreator.getInstance(BackgroundColorSpan.class);
 
     public BackgroundColorSpan(int color) {
         mColor = color;

@@ -1,4 +1,4 @@
-package io.square1.richtextlib.style;
+package io.square1.parcelable;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -8,16 +8,16 @@ import java.lang.reflect.Array;
 /**
  * Created by roberto on 12/06/15.
  */
-public class P2ParcelableCreator<T extends P2ParcelableSpan> implements Parcelable.Creator<T> {
+public class DynamicParcelableCreator<T extends DynamicParcelable> implements Parcelable.Creator<T> {
 
 
-    public static <E extends P2ParcelableSpan> P2ParcelableCreator<E> get(Class<E> tClass){
-        return new P2ParcelableCreator<E>(tClass);
+    public static <E extends DynamicParcelable> DynamicParcelableCreator<E> getInstance(Class<E> tClass){
+        return new DynamicParcelableCreator<E>(tClass);
     }
 
     Class<T> mType;
 
-    P2ParcelableCreator(Class<T> tClass){
+    DynamicParcelableCreator(Class<T> tClass){
         mType = tClass;
     }
 
@@ -27,8 +27,6 @@ public class P2ParcelableCreator<T extends P2ParcelableSpan> implements Parcelab
         try {
 
             T obj =  mType.newInstance();
-            //skip type
-            source.readInt();
             obj.readFromParcel(source);
             return obj;
 

@@ -1,8 +1,6 @@
-package io.square1.richtextlib;
+package io.square1.richtextlib.v2.content;
 
 import android.os.Parcel;
-import android.os.Parcelable;
-import android.text.Editable;
 import android.text.GetChars;
 import android.text.InputFilter;
 import android.text.NoCopySpan;
@@ -18,19 +16,22 @@ import android.text.TextWatcher;
 
 import java.lang.reflect.Array;
 
+import io.square1.parcelable.DynamicParcelableCreator;
 import io.square1.richtextlib.style.P2ParcelUtils;
 import io.square1.richtextlib.style.P2ParcelableSpan;
 import io.square1.richtextlib.util.ArrayUtils;
-import io.square1.richtextlib.v2.ContentItem;
 
 /**
  * This is the class for text whose content and markup can both be changed.
  */
-public class ParcelableSpannedBuilder extends ContentItem implements CharSequence, GetChars, Spannable, Appendable {
+public class RichTextDocumentElement extends DocumentElement implements CharSequence, GetChars, Spannable, Appendable {
+
+    public static final Creator<RichTextDocumentElement> CREATOR = DynamicParcelableCreator.getInstance(RichTextDocumentElement.class);
+
     /**
      * Create a new SpannableStringBuilder with empty contents
      */
-    public ParcelableSpannedBuilder() {
+    public RichTextDocumentElement() {
         this("");
     }
 
@@ -38,7 +39,7 @@ public class ParcelableSpannedBuilder extends ContentItem implements CharSequenc
      * Create a new SpannableStringBuilder containing a copy of the
      * specified text, including its spans if any.
      */
-    public ParcelableSpannedBuilder(CharSequence text) {
+    public RichTextDocumentElement(CharSequence text) {
         this(text, 0, text.length());
     }
 
@@ -46,7 +47,7 @@ public class ParcelableSpannedBuilder extends ContentItem implements CharSequenc
      * Create a new SpannableStringBuilder containing a copy of the
      * specified slice of the specified text, including its spans if any.
      */
-    public ParcelableSpannedBuilder(CharSequence text, int start, int end) {
+    public RichTextDocumentElement(CharSequence text, int start, int end) {
         int srclen = end - start;
 
         int len = ArrayUtils.idealCharArraySize(srclen + 1);
@@ -201,18 +202,18 @@ public class ParcelableSpannedBuilder extends ContentItem implements CharSequenc
     }
 
     // Documentation from interface
-    public ParcelableSpannedBuilder insert(int where, CharSequence tb, int start, int end) {
+    public RichTextDocumentElement insert(int where, CharSequence tb, int start, int end) {
         return replace(where, where, tb, start, end);
     }
 
     // Documentation from interface
-    public ParcelableSpannedBuilder insert(int where, CharSequence tb) {
+    public RichTextDocumentElement insert(int where, CharSequence tb) {
         return replace(where, where, tb, 0, tb.length());
     }
 
     // Documentation from interface
-    public ParcelableSpannedBuilder delete(int start, int end) {
-        ParcelableSpannedBuilder ret = replace(start, end, "", 0, 0);
+    public RichTextDocumentElement delete(int start, int end) {
+        RichTextDocumentElement ret = replace(start, end, "", 0, 0);
 
         if (mGapLength > 2 * length())
             resizeFor(length());
@@ -245,19 +246,19 @@ public class ParcelableSpannedBuilder extends ContentItem implements CharSequenc
     }
 
     // Documentation from interface
-    public ParcelableSpannedBuilder append(CharSequence text) {
+    public RichTextDocumentElement append(CharSequence text) {
         int length = length();
         return replace(length, length, text, 0, text.length());
     }
 
     // Documentation from interface
-    public ParcelableSpannedBuilder append(CharSequence text, int start, int end) {
+    public RichTextDocumentElement append(CharSequence text, int start, int end) {
         int length = length();
         return replace(length, length, text, start, end);
     }
 
     // Documentation from interface
-    public ParcelableSpannedBuilder append(char text) {
+    public RichTextDocumentElement append(char text) {
         return append(String.valueOf(text));
     }
 
@@ -414,12 +415,12 @@ public class ParcelableSpannedBuilder extends ContentItem implements CharSequenc
     }
 
     // Documentation from interface
-    public ParcelableSpannedBuilder replace(int start, int end, CharSequence tb) {
+    public RichTextDocumentElement replace(int start, int end, CharSequence tb) {
         return replace(start, end, tb, 0, tb.length());
     }
 
     // Documentation from interface
-    public ParcelableSpannedBuilder replace(final int start, final int end,
+    public RichTextDocumentElement replace(final int start, final int end,
                                           CharSequence tb, int tbstart, int tbend) {
         int filtercount = mFilters.length;
         for (int i = 0; i < filtercount; i++) {
@@ -687,7 +688,7 @@ public class ParcelableSpannedBuilder extends ContentItem implements CharSequenc
 
     /**
      * Return an array of the spans of the specified type that overlap
-     * the specified range of the buffer.  The kind may be Object.class to get
+     * the specified range of the buffer.  The kind may be Object.class to getInstance
      * a list of all the spans regardless of type.
      */
     @SuppressWarnings("unchecked")
@@ -972,25 +973,25 @@ public class ParcelableSpannedBuilder extends ContentItem implements CharSequenc
     private static final int END_MASK = 0x0F;
     private static final int START_SHIFT = 4;
 
-    public static final Parcelable.Creator<ParcelableSpannedBuilder> CREATOR  = new Parcelable.Creator<ParcelableSpannedBuilder>() {
+//    public static final Parcelable.Creator<ParcelableSpannedBuilder> CREATOR  = new Parcelable.Creator<ParcelableSpannedBuilder>() {
+//
+//        public ParcelableSpannedBuilder createFromParcel(Parcel in) {
+//            return new ParcelableSpannedBuilder(in);
+//        }
+//
+//        public ParcelableSpannedBuilder[] newArray(int size) {
+//            return new ParcelableSpannedBuilder[size];
+//        }
+//    };
+//
+//    private ParcelableSpannedBuilder(Parcel in) {
+//        readFromParcel(in);
+//    }
 
-        public ParcelableSpannedBuilder createFromParcel(Parcel in) {
-            return new ParcelableSpannedBuilder(in);
-        }
-
-        public ParcelableSpannedBuilder[] newArray(int size) {
-            return new ParcelableSpannedBuilder[size];
-        }
-    };
-
-    private ParcelableSpannedBuilder(Parcel in) {
-        readFromParcel(in);
-    }
 
 
-
+    @Override
     public void readFromParcel(Parcel in){
-
         mText = in.createCharArray();
         mGapStart = in.readInt();
         mGapLength = in.readInt();
@@ -1005,7 +1006,7 @@ public class ParcelableSpannedBuilder extends ContentItem implements CharSequenc
         mSpanEnds = in.createIntArray();
         mSpanFlags = in.createIntArray();
         mSpanCount = in.readInt();
-
+//
 
 
     }
@@ -1016,7 +1017,7 @@ public class ParcelableSpannedBuilder extends ContentItem implements CharSequenc
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
+    public void write(Parcel dest, int flags) {
 
         dest.writeCharArray(mText);
         dest.writeInt(mGapStart);

@@ -4,7 +4,7 @@ import android.text.Spannable;
 import android.text.TextUtils;
 import android.text.style.ParagraphStyle;
 
-import io.square1.richtextlib.ParcelableSpannedBuilder;
+import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 import io.square1.richtextlib.style.URLSpan;
 import io.square1.richtextlib.style.UnsupportedContentSpan;
 import io.square1.richtextlib.style.YouTubeSpan;
@@ -21,7 +21,7 @@ public class SpannedBuilderUtils {
 
 
 
-    public static void ensureAtLeastThoseNewLines(ParcelableSpannedBuilder text, int newLines){
+    public static void ensureAtLeastThoseNewLines(RichTextDocumentElement text, int newLines){
 
         int len = text.length();
 
@@ -45,7 +45,7 @@ public class SpannedBuilderUtils {
 
     }
 
-    public static void makeYoutube(String youtubeId, int maxImageWidth, ParcelableSpannedBuilder builder){
+    public static void makeYoutube(String youtubeId, int maxImageWidth, RichTextDocumentElement builder){
 
         ensureAtLeastThoseNewLines(builder, 1);
         int len = builder.length();
@@ -57,7 +57,7 @@ public class SpannedBuilderUtils {
 
     }
 
-    public static void makeUnsupported(String link,String text,ParcelableSpannedBuilder builder){
+    public static void makeUnsupported(String link,String text,RichTextDocumentElement builder){
         //clean the link:
         if(link.indexOf("//") == 0){
             link = "http:" + link;
@@ -70,7 +70,7 @@ public class SpannedBuilderUtils {
         builder.setSpan(new UnsupportedContentSpan(link), len, len + text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
-    public static void makeLink(String link, String text, ParcelableSpannedBuilder builder){
+    public static void makeLink(String link, String text, RichTextDocumentElement builder){
         //clean the link:
         if(link.indexOf("//") == 0){
             link = "http:" + link;
@@ -83,12 +83,12 @@ public class SpannedBuilderUtils {
         builder.setSpan(new URLSpan(link), len, len + text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
-    public static void startSpan(ParcelableSpannedBuilder text, Object mark) {
+    public static void startSpan(RichTextDocumentElement text, Object mark) {
         int len = text.length();
         text.setSpan(mark, len, len, Spannable.SPAN_MARK_MARK);
     }
 
-    public static void endSpan(ParcelableSpannedBuilder text, Class kind, Object repl) {
+    public static void endSpan(RichTextDocumentElement text, Class kind, Object repl) {
 
         int len = text.length();
         Object obj = text.getLastSpan(kind);
@@ -101,7 +101,7 @@ public class SpannedBuilderUtils {
         }
     }
 
-    public static void fixFlags(ParcelableSpannedBuilder builder){
+    public static void fixFlags(RichTextDocumentElement builder){
 
         // Fix flags and range for paragraph-type markup.
         Object[] obj = builder.getSpans(0, builder.length(), ParagraphStyle.class);

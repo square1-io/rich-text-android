@@ -6,7 +6,7 @@ import android.graphics.Color;
 import android.text.Spannable;
 import android.text.TextUtils;
 
-import io.square1.richtextlib.ParcelableSpannedBuilder;
+import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 import io.square1.richtextlib.style.ForegroundColorSpan;
 import io.square1.richtextlib.style.TextAppearanceSpan;
 import io.square1.richtextlib.style.TypefaceSpan;
@@ -20,7 +20,7 @@ import io.square1.richtextlib.v2.parser.TagHandler;
 public class FONTHandler extends TagHandler {
 
     @Override
-    public void onTagOpen(MarkupContext context, MarkupTag tag, ParcelableSpannedBuilder out) {
+    public void onTagOpen(MarkupContext context, MarkupTag tag, RichTextDocumentElement out) {
 
         String color = tag.attributes.getValue("", "color");
         String face = tag.attributes.getValue("", "face");
@@ -30,7 +30,7 @@ public class FONTHandler extends TagHandler {
     }
 
     @Override
-    public void onTagClose(MarkupContext context, MarkupTag tag, ParcelableSpannedBuilder out) {
+    public void onTagClose(MarkupContext context, MarkupTag tag, RichTextDocumentElement out) {
 
         int len = out.length();
         Markers.Font f = out.getLastSpan(Markers.Font.class);

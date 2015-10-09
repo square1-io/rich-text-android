@@ -8,6 +8,7 @@ import android.os.Parcelable;
 import android.text.TextPaint;
 import android.text.style.MetricAffectingSpan;
 
+import io.square1.parcelable.DynamicParcelableCreator;
 import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.UniqueId;
 
@@ -23,7 +24,7 @@ public class TextAppearanceSpan extends MetricAffectingSpan implements P2Parcela
     private  ColorStateList mTextColor;
     private  ColorStateList mTextColorLink;
 
-    public static final Parcelable.Creator<TextAppearanceSpan> CREATOR  = P2ParcelableCreator.get(TextAppearanceSpan.class);
+    public static final Parcelable.Creator<TextAppearanceSpan> CREATOR  = DynamicParcelableCreator.getInstance(TextAppearanceSpan.class);
 
     public static final int TYPE = UniqueId.getType();
 

@@ -8,6 +8,7 @@ import android.os.Parcelable;
 import android.provider.Browser;
 import android.view.View;
 
+import io.square1.parcelable.DynamicParcelableCreator;
 import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.UniqueId;
 
@@ -16,7 +17,7 @@ import io.square1.richtextlib.util.UniqueId;
  */
 public class UnsupportedContentSpan extends android.text.style.ClickableSpan implements io.square1.richtextlib.style.ClickableSpan, P2ParcelableSpan {
 
-    public static final Parcelable.Creator<UnsupportedContentSpan> CREATOR  = P2ParcelableCreator.get(UnsupportedContentSpan.class);
+    public static final Parcelable.Creator<UnsupportedContentSpan> CREATOR  = DynamicParcelableCreator.getInstance(UnsupportedContentSpan.class);
 
     public static final int TYPE = UniqueId.getType();
 

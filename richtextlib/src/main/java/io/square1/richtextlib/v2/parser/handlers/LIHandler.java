@@ -1,6 +1,6 @@
 package io.square1.richtextlib.v2.parser.handlers;
 
-import io.square1.richtextlib.ParcelableSpannedBuilder;
+import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 import io.square1.richtextlib.v2.parser.MarkupContext;
 import io.square1.richtextlib.v2.parser.MarkupTag;
 import io.square1.richtextlib.v2.parser.TagHandler;
@@ -12,10 +12,10 @@ import io.square1.richtextlib.v2.utils.SpannedBuilderUtils;
 public class LIHandler extends TagHandler {
 
     @Override
-    public void onTagOpen(MarkupContext context, MarkupTag tag, ParcelableSpannedBuilder out) {
+    public void onTagOpen(MarkupContext context, MarkupTag tag, RichTextDocumentElement out) {
 
         SpannedBuilderUtils.ensureAtLeastThoseNewLines(out,1);
-        MarkupTag parent = context.getParent(tag);
+        MarkupTag parent = context.getParent(tag,BaseListHandler.class);
 
         int nestedListsCount = BaseListHandler.getNestedListsCount();
 
@@ -37,7 +37,7 @@ public class LIHandler extends TagHandler {
     }
 
     @Override
-    public void onTagClose(MarkupContext context, MarkupTag tag, ParcelableSpannedBuilder out) {
+    public void onTagClose(MarkupContext context, MarkupTag tag, RichTextDocumentElement out) {
         SpannedBuilderUtils.ensureAtLeastThoseNewLines(out,1);
     }
 

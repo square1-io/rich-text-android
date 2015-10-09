@@ -12,6 +12,25 @@ import java.util.regex.Pattern;
  */
 public class EmbedUtils {
 
+    public static final String OEMBED_API_INSTAGRAM = "http://api.instagram.com/oembed";
+    public static final String OEMBED_API_VINE = "https://vine.co/oembed.json";
+    public static final String OEMBED_API_VIMEO = "https://vimeo.com/api/oembed.json";
+
+    public static String oembedRequestUrl(TEmbedType type) {
+
+        switch (type){
+            case EInstagram:
+                return OEMBED_API_INSTAGRAM;
+            case EVimeo:
+                return OEMBED_API_VIMEO;
+            case EVine:
+                return OEMBED_API_VINE;
+            default:
+                return "";
+        }
+
+    }
+
     public interface ParseLinkCallback {
          void onLinkParsed(Object callingObject, String result, TEmbedType type);
     }
@@ -21,7 +40,10 @@ public class EmbedUtils {
         EGfycat,
         ESoundCloud,
         ETwitter,
-        EUnsupported
+        EVimeo,
+        EVine,
+        EInstagram,
+       EUnsupported
     }
 
 
@@ -51,6 +73,24 @@ public class EmbedUtils {
         result = parseSoundCloud(link);
         if(TextUtils.isEmpty(result) == false){
             callback.onLinkParsed(calling, result, TEmbedType.ESoundCloud);
+            return true;
+        }
+
+        result = getVimeoId(link);
+        if(TextUtils.isEmpty(result) == false){
+            callback.onLinkParsed(calling, result, TEmbedType.EVimeo);
+            return true;
+        }
+
+        result = getVineId(link);
+        if(TextUtils.isEmpty(result) == false){
+            callback.onLinkParsed(calling, result, TEmbedType.EVine);
+            return true;
+        }
+
+        result = getInstagramId(link);
+        if(TextUtils.isEmpty(result) == false){
+            callback.onLinkParsed(calling, result, TEmbedType.EInstagram);
             return true;
         }
 
@@ -183,6 +223,70 @@ public class EmbedUtils {
 
         if(matcher.find()){
             return matcher.group(1);
+        }
+
+        return null;
+    }
+
+    public static TEmbedType getOembedType(String link){
+
+
+        String result = getVimeoId(link);
+        if(TextUtils.isEmpty(result) == false){
+            return TEmbedType.EVimeo;
+        }
+
+        result = getVineId(link);
+        if(TextUtils.isEmpty(result) == false){
+            return TEmbedType.EVine;
+        }
+
+        result = getInstagramId(link);
+        if(TextUtils.isEmpty(result) == false){
+            return TEmbedType.EInstagram;
+        }
+
+        return TEmbedType.EUnsupported;
+
+    }
+
+    public static String getVineId(String in){
+
+        Uri uri = Uri.parse(in);
+
+        final String host = uri.getHost();
+
+        if( TextUtils.isEmpty(host) == false &&
+                host.indexOf("vine") >= 0){
+            return in;
+        }
+
+        return null;
+    }
+
+    public static String getVimeoId(String in){
+
+        Uri uri = Uri.parse(in);
+
+        final String host = uri.getHost();
+
+        if( TextUtils.isEmpty(host) == false &&
+                host.indexOf("vimeo") >= 0){
+            return in;
+        }
+
+        return null;
+    }
+
+    public static String getInstagramId(String in){
+
+        Uri uri = Uri.parse(in);
+
+        final String host = uri.getHost();
+
+        if( TextUtils.isEmpty(host) == false &&
+                host.indexOf("instagram") >= 0){
+            return in;
         }
 
         return null;

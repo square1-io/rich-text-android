@@ -7,7 +7,7 @@ import android.text.TextUtils;
 
 import org.xml.sax.Attributes;
 
-import io.square1.richtextlib.ParcelableSpannedBuilder;
+import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 import io.square1.richtextlib.style.StyleSpan;
 import io.square1.richtextlib.style.UnsupportedContentSpan;
 import io.square1.richtextlib.v2.parser.MarkupContext;
@@ -20,7 +20,7 @@ import io.square1.richtextlib.v2.parser.TagHandler;
 public class DIVHandler extends TagHandler {
 
     @Override
-    public void onTagOpen(MarkupContext context, MarkupTag tag, ParcelableSpannedBuilder out) {
+    public void onTagOpen(MarkupContext context, MarkupTag tag, RichTextDocumentElement out) {
 
         Attributes attributes = tag.attributes;
         String elementClass = attributes.getValue("", "class");
@@ -63,7 +63,7 @@ public class DIVHandler extends TagHandler {
     }
 
     @Override
-    public void onTagClose(MarkupContext context, MarkupTag tag, ParcelableSpannedBuilder out) {
+    public void onTagClose(MarkupContext context, MarkupTag tag, RichTextDocumentElement out) {
 
     }
 }

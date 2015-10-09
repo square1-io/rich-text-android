@@ -5,7 +5,7 @@ import android.text.Spannable;
 
 import org.xml.sax.Attributes;
 
-import io.square1.richtextlib.ParcelableSpannedBuilder;
+import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 import io.square1.richtextlib.style.UrlBitmapSpan;
 import io.square1.richtextlib.util.NumberUtils;
 import io.square1.richtextlib.v2.parser.MarkupContext;
@@ -19,7 +19,7 @@ import io.square1.richtextlib.v2.utils.SpannedBuilderUtils;
 public class IMGHandler extends TagHandler {
 
     @Override
-    public void onTagOpen(MarkupContext context, MarkupTag tag, ParcelableSpannedBuilder out) {
+    public void onTagOpen(MarkupContext context, MarkupTag tag, RichTextDocumentElement out) {
 
         //buildNewSpannable();
         SpannedBuilderUtils.ensureAtLeastThoseNewLines(out,1);
@@ -45,7 +45,7 @@ public class IMGHandler extends TagHandler {
     }
 
     @Override
-    public void onTagClose(MarkupContext context, MarkupTag tag, ParcelableSpannedBuilder out) {
+    public void onTagClose(MarkupContext context, MarkupTag tag, RichTextDocumentElement out) {
 
     }
 

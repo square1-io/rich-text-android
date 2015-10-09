@@ -6,6 +6,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.Layout;
 
+import io.square1.parcelable.DynamicParcelableCreator;
 import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.UniqueId;
 
@@ -14,7 +15,7 @@ import io.square1.richtextlib.util.UniqueId;
  */
 public class LeadingMarginSpan implements P2ParcelableSpan, android.text.style.LeadingMarginSpan {
 
-    public static final Parcelable.Creator<LeadingMarginSpan> CREATOR  = P2ParcelableCreator.get(LeadingMarginSpan.class);
+    public static final Parcelable.Creator<LeadingMarginSpan> CREATOR  = DynamicParcelableCreator.getInstance(LeadingMarginSpan.class);
     public static final int TYPE = UniqueId.getType();
 
     private int mFirstLine;
@@ -23,6 +24,12 @@ public class LeadingMarginSpan implements P2ParcelableSpan, android.text.style.L
     public LeadingMarginSpan(int first, int rest){
         mFirstLine = first;
         mRest = rest;
+    }
+
+
+    public LeadingMarginSpan(){
+        super();
+        mFirstLine = mRest = 0;
     }
 
 

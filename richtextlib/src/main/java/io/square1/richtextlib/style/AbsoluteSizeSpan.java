@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.text.TextPaint;
 import android.text.style.MetricAffectingSpan;
 
+import io.square1.parcelable.DynamicParcelableCreator;
 import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.UniqueId;
 
@@ -16,7 +17,7 @@ public class AbsoluteSizeSpan extends MetricAffectingSpan implements P2Parcelabl
         return TYPE;
     }
 
-    public static final Creator<AbsoluteSizeSpan> CREATOR  = P2ParcelableCreator.get(AbsoluteSizeSpan.class);
+    public static final Creator<AbsoluteSizeSpan> CREATOR  = DynamicParcelableCreator.getInstance(AbsoluteSizeSpan.class);
 
     private  int mSize;
     private boolean mDip;

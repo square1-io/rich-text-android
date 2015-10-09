@@ -5,6 +5,7 @@ import android.os.Parcelable;
 import android.text.Layout;
 
 
+import io.square1.parcelable.DynamicParcelableCreator;
 import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.UniqueId;
 
@@ -21,7 +22,7 @@ public interface RichAlignmentSpan extends android.text.style.AlignmentSpan, P2P
             return TYPE;
         }
 
-        public static final Parcelable.Creator<Standard> CREATOR  = P2ParcelableCreator.get(Standard.class);
+        public static final Parcelable.Creator<Standard> CREATOR  = DynamicParcelableCreator.getInstance(Standard.class);
 
         public Standard(Layout.Alignment align) {
             mAlignment = align;

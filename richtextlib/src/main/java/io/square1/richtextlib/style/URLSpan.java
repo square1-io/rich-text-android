@@ -9,12 +9,13 @@ import android.provider.Browser;
 import android.text.style.ClickableSpan;
 import android.view.View;
 
+import io.square1.parcelable.DynamicParcelableCreator;
 import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.UniqueId;
 
 public class URLSpan extends ClickableSpan implements io.square1.richtextlib.style.ClickableSpan, P2ParcelableSpan {
 
-    public static final Parcelable.Creator<URLSpan> CREATOR  = P2ParcelableCreator.get(URLSpan.class);
+    public static final Parcelable.Creator<URLSpan> CREATOR  = DynamicParcelableCreator.getInstance(URLSpan.class);
 
     public static final int TYPE = UniqueId.getType();
 

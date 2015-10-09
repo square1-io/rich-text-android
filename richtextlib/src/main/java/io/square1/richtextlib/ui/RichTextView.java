@@ -7,6 +7,7 @@ import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.view.Surface;
 import android.widget.TextView;
 
 
@@ -15,6 +16,7 @@ import android.widget.TextView;
  * Created by roberto on 24/06/15.
  */
 public class RichTextView extends TextView  {
+
 
 
     public RichTextView(Context context, AttributeSet attrs) {

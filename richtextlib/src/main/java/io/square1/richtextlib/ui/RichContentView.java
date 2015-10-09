@@ -8,24 +8,27 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.SurfaceTexture;
 import android.graphics.Typeface;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
-import android.text.DynamicLayout;
 import android.text.Layout;
+import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.Surface;
+import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.TextureView;
 import android.view.View;
+import android.widget.AbsoluteLayout;
+import android.widget.FrameLayout;
 import android.widget.Toast;
-import android.widget.VideoView;
 
-import io.square1.richtextlib.ParcelableSpannedBuilder;
+import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 import io.square1.richtextlib.R;
 import io.square1.richtextlib.style.ClickableSpan;
 import io.square1.richtextlib.style.P2ParcelableSpan;
@@ -37,11 +40,14 @@ import io.square1.richtextlib.style.YouTubeSpan;
 /**
  * Created by roberto on 20/09/15.
  */
-public class RichContentView extends View implements RichContentViewDisplay {
+public class RichContentView extends FrameLayout implements RichContentViewDisplay, SurfaceHolder.Callback {
+
+    // Surface holder allows to control and monitor the surface
+    private SurfaceHolder mHolder;
 
     private UrlBitmapDownloader mBitmapManager;
 
-    private ParcelableSpannedBuilder mText;
+    private RichTextDocumentElement mText;
     private P2ParcelableSpan[] mSpans;
 
     private boolean mAttachedToWindow;
@@ -52,7 +58,7 @@ public class RichContentView extends View implements RichContentViewDisplay {
     private float mSpacingAdd = 0.0f;
 
     private int mLastMeasuredWidth;
-    private Surface mSurface;
+
 
     private float mDefaultPixelSize;
 
@@ -76,7 +82,12 @@ public class RichContentView extends View implements RichContentViewDisplay {
         init(context, attrs, defStyleAttr, -1);
     }
 
-    public void setText(ParcelableSpannedBuilder builder){
+    @Override
+    public void addSubView(View view) {
+        addView(view);
+    }
+
+    public void setText(RichTextDocumentElement builder){
         if(mText != builder) {
             mText = builder;
             mSpans = mText.getSpans();
@@ -84,6 +95,8 @@ public class RichContentView extends View implements RichContentViewDisplay {
             for(P2ParcelableSpan span : mSpans){
                 span.onSpannedSetToView(this);
             }
+           // MediaPlayer p;
+
             requestLayout();
         }
     }
@@ -130,7 +143,13 @@ public class RichContentView extends View implements RichContentViewDisplay {
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
 
-        mText = new ParcelableSpannedBuilder();
+       // SurfaceHolder holder = getHolder();
+       // holder.addCallback(this);
+       // holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+
+        setWillNotDraw(false);
+
+        mText = new RichTextDocumentElement();
         mSpans = mText.getSpans();
 
         final Resources res = getResources();
@@ -145,7 +164,9 @@ public class RichContentView extends View implements RichContentViewDisplay {
 
         setRawTextSize(mDefaultPixelSize);
 
-        parseCustomAttributes(context,attrs);
+        parseCustomAttributes(context, attrs);
+
+
 
     }
 
@@ -174,7 +195,7 @@ public class RichContentView extends View implements RichContentViewDisplay {
 
     private Layout makeLayout(int width){
 
-        DynamicLayout result = new DynamicLayout(mText,
+        StaticLayout result = new StaticLayout(mText,
                 mTextPaint,
                 width,
                 Layout.Alignment.ALIGN_NORMAL,
@@ -356,6 +377,26 @@ public class RichContentView extends View implements RichContentViewDisplay {
         }
 
         return true;
+    }
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        mHolder = holder;
+       // Canvas c = holder.lockCanvas(null);
+       // onDraw(c);
+       // holder.unlockCanvasAndPost(c);
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+        mHolder = holder;
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        if(mHolder == holder){
+            mHolder = null;
+        }
     }
 
 }

@@ -5,39 +5,36 @@ import android.database.DataSetObserver;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.text.Html;
-import android.text.Spanned;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.square1.richtextlib.RichText;
-import io.square1.richtextlib.ParcelableSpannedBuilder;
+import io.square1.richtextlib.v2.content.OembedElement;
+import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 import io.square1.richtextlib.style.RemoteBitmapSpan;
 import io.square1.richtextlib.style.UrlBitmapDownloader;
-import io.square1.richtextlib.ui.RichTextView;
+import io.square1.richtextlib.ui.RichContentView;
 
-import io.square1.richtextlib.ui.RichTextViewV2;
-import io.square1.richtextlib.v2.ContentItem;
+
 import io.square1.richtextlib.v2.RichTextV2;
+import io.square1.richtextlib.v2.content.RichDocument;
 
 
 public class MainActivity extends ActionBarActivity implements UrlBitmapDownloader {
@@ -116,17 +113,8 @@ public class MainActivity extends ActionBarActivity implements UrlBitmapDownload
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-        final ArrayList<Object> obs = new ArrayList<>();
-        String html = ReadFromfile("complete_set.html");
-        final JSONArray output = new JSONArray();
-
-        Spanned text = Html.fromHtml(html);
-
-       final ArrayList<ContentItem> mItems =  RichTextV2.fromHtml(this, html);
-
-        //((RichTextView) findViewById(R.id.textView)).setText(content);
-        ///MainActivity2Activity.show(this, content);
+        String html = ReadFromfile("html5.html");
+        final RichDocument document =  RichTextV2.fromHtml(this, html);
 
         adapter = new BaseAdapter() {
 
@@ -152,12 +140,12 @@ public class MainActivity extends ActionBarActivity implements UrlBitmapDownload
 
             @Override
             public int getCount() {
-                return  mItems.size();
+                return  document.getElements().size();
             }
 
             @Override
             public Object getItem(int position) {
-                return mItems.get(position);
+                return document.getElements().get(position);
             }
 
             @Override
@@ -180,23 +168,28 @@ public class MainActivity extends ActionBarActivity implements UrlBitmapDownload
             public View getViewV2(int position, View convertView, ViewGroup parent) {
 
                 Object item = getItem(position);
-                RichTextViewV2 view = (RichTextViewV2)convertView;
-                if(convertView == null){
-                    view = new RichTextViewV2(MainActivity.this);
-                    view.setUrlBitmapDownloader(MainActivity.this);
-                    view.setDrawingCacheEnabled(false);
-//                    view.setRichTextContentChanged(new RichTextView.RichTextContentChanged() {
-//                        @Override
-//                        public void onContentChanged(RichTextView view) {
-//                            adapter.notifyDataSetChanged();
-//                        }
-//                    });
+
+                if(item instanceof RichTextDocumentElement){
+
+                    RichContentView view = (RichContentView)convertView;
+                    if(convertView == null){
+                        view = new RichContentView(MainActivity.this);
+                        view.setUrlBitmapDownloader(MainActivity.this);
+                        convertView = view;
+                    }
+                    view.setText( (RichTextDocumentElement) item);
+                }
+                else if(item instanceof OembedElement){
+
+                    if(convertView == null){
+                        TextView text = new TextView(MainActivity.this);
+                        convertView = text;
+                    }
+                    OembedElement oembedElement = (OembedElement)item;
+                    ((TextView)convertView).setText(oembedElement.getType() + " " + oembedElement.getContent());
                 }
 
-                if(item instanceof ParcelableSpannedBuilder){
-                    view.setText((ParcelableSpannedBuilder)item);
-                }
-                return view;
+                return convertView;
             }
 
             @Override
@@ -220,6 +213,14 @@ public class MainActivity extends ActionBarActivity implements UrlBitmapDownload
 
         ((ListView) findViewById(R.id.list)).setAdapter(adapter);
 
+
+        findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                MainActivity2Activity.show(MainActivity.this, document);
+            }
+        });
     }
 
 

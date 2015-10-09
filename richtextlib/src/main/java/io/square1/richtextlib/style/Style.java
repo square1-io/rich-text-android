@@ -23,7 +23,7 @@ public interface Style {
      Bitmap quoteBitmap();
 
     /**
-     * get the background color for a quote tag
+     * getInstance the background color for a quote tag
      * @return
      */
     int getQuoteBackgroundColor();

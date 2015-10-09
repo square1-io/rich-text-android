@@ -6,12 +6,13 @@ import android.text.TextPaint;
 import android.text.style.CharacterStyle;
 import android.text.style.UpdateAppearance;
 
+import io.square1.parcelable.DynamicParcelableCreator;
 import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.UniqueId;
 
 public class UnderlineSpan extends CharacterStyle implements UpdateAppearance, P2ParcelableSpan {
 
- public static final Parcelable.Creator<UnderlineSpan> CREATOR  = P2ParcelableCreator.get(UnderlineSpan.class);
+ public static final Parcelable.Creator<UnderlineSpan> CREATOR  = DynamicParcelableCreator.getInstance(UnderlineSpan.class);
 
    public static final int TYPE = UniqueId.getType();
 
