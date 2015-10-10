@@ -8,22 +8,30 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.graphics.Typeface;
+import android.graphics.drawable.Animatable;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Looper;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Size;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.TextureView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AbsoluteLayout;
 import android.widget.FrameLayout;
 import android.widget.Toast;
@@ -40,10 +48,8 @@ import io.square1.richtextlib.style.YouTubeSpan;
 /**
  * Created by roberto on 20/09/15.
  */
-public class RichContentView extends FrameLayout implements RichContentViewDisplay, SurfaceHolder.Callback {
+public class RichContentView extends FrameLayout implements RichContentViewDisplay {
 
-    // Surface holder allows to control and monitor the surface
-    private SurfaceHolder mHolder;
 
     private UrlBitmapDownloader mBitmapManager;
 
@@ -58,9 +64,9 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
     private float mSpacingAdd = 0.0f;
 
     private int mLastMeasuredWidth;
-
-
     private float mDefaultPixelSize;
+
+    private Thread mThread;
 
     private OnSpanClickedObserver mOnSpanClickedObserver;
 
@@ -95,7 +101,6 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
             for(P2ParcelableSpan span : mSpans){
                 span.onSpannedSetToView(this);
             }
-           // MediaPlayer p;
 
             requestLayout();
         }
@@ -142,10 +147,6 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
     }
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-
-       // SurfaceHolder holder = getHolder();
-       // holder.addCallback(this);
-       // holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
         setWillNotDraw(false);
 
@@ -205,9 +206,10 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
 
         return result;
     }
+
+
     @Override
     public void onDraw(Canvas canvas){
-        super.onDraw(canvas);
         canvas.save();
         if (mLayout != null) {
             canvas.translate(getPaddingLeft(), getPaddingTop());
@@ -215,6 +217,7 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
         }
         canvas.restore();
     }
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -237,6 +240,16 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
             int line = mLayout.getLineForVertical(y);
             int off = mLayout.getOffsetForHorizontal(line, x);
 
+            Animatable[] animatables =  mText.getSpans(off, off, Animatable.class);
+            if(animatables.length > 0) return false;
+
+            if (animatables.length != 0 && action == MotionEvent.ACTION_UP) {
+                if(animatables[0].isRunning()){
+                    animatables[0].stop();
+                }else{
+                    animatables[0].start();
+                }
+            }
             // Find the URL that was pressed
             ClickableSpan[] link = mText.getSpans(off, off, ClickableSpan.class);
             // If we've found a URL
@@ -284,6 +297,15 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
         }
     }
 
+
+    public LayoutParams generateDefaultLayoutParams(Point position,int width, int height ){
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(width,height);
+        params.leftMargin = position.x;
+        params.topMargin = position.y;
+
+        return params;
+    }
+
     public void onSpansClicked(ClickableSpan[] spans) {
 
         if(spans == null) return;
@@ -318,9 +340,6 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
                 FallbackWebDialog dialog = new FallbackWebDialog(getContext(),url);
                 dialog.setCancelable(true);
                 dialog.show();
-                SurfaceView v = new SurfaceView(getContext());
-
-
             }
         }
 
@@ -379,24 +398,55 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
         return true;
     }
 
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-        mHolder = holder;
-       // Canvas c = holder.lockCanvas(null);
-       // onDraw(c);
-       // holder.unlockCanvasAndPost(c);
-    }
+    public Point getSpanOrigin(Object span) {
 
-    @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        mHolder = holder;
-    }
+        Rect parentTextViewRect = new Rect();
 
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
-        if(mHolder == holder){
-            mHolder = null;
+
+        double startOffsetOfClickedText = mText.getSpanStart(span);
+        double endOffsetOfClickedText = mText.getSpanEnd(span);
+        double startXCoordinatesOfClickedText = mLayout.getPrimaryHorizontal((int) startOffsetOfClickedText);
+        double endXCoordinatesOfClickedText = mLayout.getPrimaryHorizontal((int) endOffsetOfClickedText);
+
+
+        // Get the rectangle of the clicked text
+        int currentLineStartOffset = mLayout.getLineForOffset((int) startOffsetOfClickedText);
+        int currentLineEndOffset = mLayout.getLineForOffset((int) endOffsetOfClickedText);
+        boolean keywordIsInMultiLine = currentLineStartOffset != currentLineEndOffset;
+        mLayout.getLineBounds(currentLineStartOffset, parentTextViewRect);
+
+
+        // Update the rectangle position to his real position on screen
+        int[] parentTextViewLocation = {0, 0};
+        getLocationOnScreen(parentTextViewLocation);
+
+        double parentTextViewTopAndBottomOffset = (
+                parentTextViewLocation[1] -
+                        getScrollY() +
+                        getPaddingTop()
+        );
+        parentTextViewRect.top += parentTextViewTopAndBottomOffset;
+        parentTextViewRect.bottom += parentTextViewTopAndBottomOffset;
+
+        parentTextViewRect.left += (
+                parentTextViewLocation[0] +
+                        startXCoordinatesOfClickedText +
+                        getPaddingLeft() -
+                        getScrollX()
+        );
+
+        parentTextViewRect.right = (int) (
+                parentTextViewRect.left +
+                        endXCoordinatesOfClickedText -
+                        startXCoordinatesOfClickedText
+        );
+
+        int x = (parentTextViewRect.left + parentTextViewRect.right) / 2;
+        int y = parentTextViewRect.bottom;
+        if (keywordIsInMultiLine) {
+            x = parentTextViewRect.left;
         }
-    }
 
+        return  new Point(x,y);
+    }
 }

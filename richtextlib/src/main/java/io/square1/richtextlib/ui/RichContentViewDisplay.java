@@ -2,6 +2,7 @@ package io.square1.richtextlib.ui;
 
 import android.content.Context;
 
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 
@@ -16,6 +17,7 @@ import io.square1.richtextlib.style.UrlBitmapDownloader;
 public interface RichContentViewDisplay extends Drawable.Callback {
 
 
+    Point getSpanOrigin(Object span);
     void addSubView(View view);
     void setText(RichTextDocumentElement content);
     void setUrlBitmapDownloader(UrlBitmapDownloader downloader);
