@@ -47,7 +47,7 @@ public class VideoPlayerSpan extends ReplacementSpan implements ClickableSpan, U
     private ScrollableVideoView mPlayer;
 
     private boolean mAttachedToWindow;
-    private Bitmap mBitmap;
+
 
 
     public VideoPlayerSpan(){
@@ -101,13 +101,16 @@ public class VideoPlayerSpan extends ReplacementSpan implements ClickableSpan, U
     @Override
     public void onAttachedToView(RichContentViewDisplay view) {
         mAttachedToWindow = true;
-        mBitmap = getVideoFrame();
+
     }
 
     @Override
     public void onDetachedFromView(RichContentViewDisplay view) {
         mAttachedToWindow = false;
-        mPlayer = null;
+        if (mPlayer != null){
+            mPlayer.stopPlayback();
+            mPlayer = null;
+        }
     }
 
     @Override
@@ -213,21 +216,21 @@ public class VideoPlayerSpan extends ReplacementSpan implements ClickableSpan, U
         return false;
     }
 
-    private Bitmap getVideoFrame() {
-        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-        try {
-            retriever.setDataSource(mVideoUri.toString(), new HashMap<String, String>());
-            return retriever.getFrameAtTime();
-        } catch (IllegalArgumentException ex) {
-            ex.printStackTrace();
-        } catch (RuntimeException ex) {
-            ex.printStackTrace();
-        } finally {
-            try {
-                retriever.release();
-            } catch (RuntimeException ex) {
-            }
-        }
-        return null;
-    }
+//    private Bitmap getVideoFrame() {
+//        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+//        try {
+//            retriever.setDataSource(mVideoUri.toString(), new HashMap<String, String>());
+//            return retriever.getFrameAtTime();
+//        } catch (IllegalArgumentException ex) {
+//            ex.printStackTrace();
+//        } catch (RuntimeException ex) {
+//            ex.printStackTrace();
+//        } finally {
+//            try {
+//                retriever.release();
+//            } catch (RuntimeException ex) {
+//            }
+//        }
+//        return null;
+//    }
 }

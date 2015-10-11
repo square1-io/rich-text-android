@@ -1,36 +1,49 @@
 package io.square1.richtextlib.ui.video;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.pm.ActivityInfo;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.PixelFormat;
 import android.graphics.SurfaceTexture;
 import android.media.AudioManager;
-import android.media.MediaFormat;
 import android.media.MediaPlayer;
-import android.media.ThumbnailUtils;
 import android.net.Uri;
-import android.provider.MediaStore;
+import android.os.Bundle;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.Pair;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.Surface;
-import android.view.SurfaceHolder;
 import android.view.TextureView;
+import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.MediaController;
+import android.widget.PopupWindow;
+import android.widget.VideoView;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Vector;
+
+import io.square1.richtextlib.R;
+
 
 /**
  * Created by roberto on 10/10/15.
  */
-public class ScrollableVideoView extends FrameLayout implements MediaController.MediaPlayerControl, TextureView.SurfaceTextureListener {
+public class ScrollableVideoView extends FrameLayout implements FullScreenMediaController.OnMediaControllerInteractionListener, MediaController.MediaPlayerControl, TextureView.SurfaceTextureListener {
+
 
     public static final String TAG = "SCRVIDEO";
 
@@ -49,11 +62,18 @@ public class ScrollableVideoView extends FrameLayout implements MediaController.
     private int mVideoHeight;
     private int mSeekWhenPrepared;
     private int mBufferPercentage;
+
     private TextureView mTextureView;
-    private MediaController mMediaController;
+    private TextureView mFullScreenTextureView;
+
+    private FullScreenMediaController mMediaController;
 
     private Uri mUri;
+
+    private boolean mFullScreen;
     private SurfaceTexture mSurfaceTexture;
+    private SurfaceTexture mFullScreenSurfaceTexture;
+
 
 
     private MediaPlayer mMediaPlayer = null;
@@ -84,10 +104,13 @@ public class ScrollableVideoView extends FrameLayout implements MediaController.
 
     private void init(Context context){
 
+        mFullScreen = false;
         mTextureView = new TextureView(context);
 
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT);
+        setBackgroundColor(Color.RED);
+
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
         mTextureView.setLayoutParams(params);
         mTextureView.setSurfaceTextureListener(this);
         addView(mTextureView);
@@ -101,6 +124,19 @@ public class ScrollableVideoView extends FrameLayout implements MediaController.
         requestFocus();
         mCurrentState = STATE_IDLE;
         mTargetState  = STATE_IDLE;
+
+    }
+
+    @Override
+    public void onAttachedToWindow(){
+        super.onAttachedToWindow();
+
+
+    }
+
+
+    public void onDetachedFromWindow(){
+        super.onDetachedFromWindow();
 
     }
 
@@ -124,14 +160,16 @@ public class ScrollableVideoView extends FrameLayout implements MediaController.
 
     @Override
     public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-
+        if(mMediaPlayer != null){
+            //mMediaPlayer.set
+        }
     }
 
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
         mSurfaceTexture = null;
         release(true);
-        return false;
+        return true;
     }
 
     @Override
@@ -151,7 +189,9 @@ public class ScrollableVideoView extends FrameLayout implements MediaController.
 
     private void openVideo() {
 
-        if (mUri == null || mSurfaceTexture == null) {
+        SurfaceTexture texture = (mFullScreen) ? mFullScreenSurfaceTexture : mSurfaceTexture;
+
+        if (mUri == null || texture == null) {
             // not ready for playback just yet, will try again later
             return;
         }
@@ -171,12 +211,13 @@ public class ScrollableVideoView extends FrameLayout implements MediaController.
             mMediaPlayer.setOnCompletionListener(mInternalCompletionListener);
 
             if(mMediaController == null){
-                mMediaController = new MediaController(getContext());
+                mMediaController = new FullScreenMediaController(getContext());
+                mMediaController.setListener(this);
                 mMediaController.setAnchorView(this);
                 mMediaController.setMediaPlayer(this);
             }
 
-            Surface surface = new Surface(mSurfaceTexture);
+            Surface surface = new Surface(texture);
             mMediaPlayer.setSurface(surface);
             mMediaPlayer.setDataSource(getContext(),mUri,mHeaders);
             mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -390,15 +431,20 @@ public class ScrollableVideoView extends FrameLayout implements MediaController.
 
             mCurrentState = STATE_PREPARED;
 
-           // if (mOnPreparedListener != null) {
-           //     mOnPreparedListener.onPrepared(mMediaPlayer);
-           // }
-
             if (mMediaController != null) {
                 mMediaController.setEnabled(true);
             }
             mVideoWidth = mp.getVideoWidth();
             mVideoHeight = mp.getVideoHeight();
+
+            setAspectRatio((double) mVideoWidth / mVideoHeight);
+
+            if(mTextureView != null){
+                adjustAspectRatio(mTextureView, mVideoWidth, mVideoHeight);
+            }
+            if(mFullScreenTextureView != null) {
+                adjustAspectRatio(mFullScreenTextureView, mVideoWidth, mVideoHeight);
+            }
 
             if(mTargetState == STATE_PLAYING){
                 start();
@@ -422,6 +468,9 @@ public class ScrollableVideoView extends FrameLayout implements MediaController.
     private MediaPlayer.OnCompletionListener mInternalCompletionListener =
             new MediaPlayer.OnCompletionListener() {
                 public void onCompletion(MediaPlayer mp) {
+                    if(mFullScreen == true){
+                        mFullScreen = false;
+                    }
                     mCurrentState = STATE_PLAYBACK_COMPLETED;
                     mTargetState = STATE_PLAYBACK_COMPLETED;
                     if (mMediaController != null) {
@@ -429,4 +478,240 @@ public class ScrollableVideoView extends FrameLayout implements MediaController.
                     }
                 }
             };
+
+    @Override
+    public void onRequestFullScreen() {
+
+        final Activity activity = (Activity) getContext();
+        Dialog dialog = new Dialog(activity, R.style.full_screen_dialog) {
+            @Override
+            protected void onCreate(Bundle savedInstanceState) {
+                super.onCreate(savedInstanceState);
+                requestWindowFeature(Window.FEATURE_NO_TITLE);
+                getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                mFullScreenTextureView = new TextureView(getContext());
+                mFullScreenTextureView.setSurfaceTextureListener(mFullScreenTextureListener);
+
+                setContentView(mFullScreenTextureView);
+            }
+        };
+
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                transitionFromFullScreen();
+            }
+        });
+
+        dialog.show();
+
+//        Context context = getContext();
+//
+//        if(context instanceof Activity) {
+//
+//            mFullScreen = true;
+//
+//
+//
+//            final Activity activity = (Activity) context;
+//           final WindowManager windowManager = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
+//
+//            WindowManager.LayoutParams attrs = activity.getWindow().getAttributes();
+//            attrs.flags ^= WindowManager.LayoutParams.FLAG_FULLSCREEN;
+//            activity.getWindow().setAttributes(attrs);
+//
+//            WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams(WindowManager.LayoutParams.FIRST_SUB_WINDOW);
+//
+//            layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
+//            layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
+//            layoutParams.format = PixelFormat.RGBA_8888;
+//            layoutParams.flags =
+//                    WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
+//                            | WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED;
+//            layoutParams.token = activity.getWindow().getDecorView().getRootView().getWindowToken();
+//
+//
+//            //Feel free to inflate here
+//           final FrameLayout container = new FrameLayout(getContext());
+//            container.setBackgroundColor(Color.BLACK);
+//            container.setLayoutParams(layoutParams);
+//
+//            DisplayMetrics metrics = new DisplayMetrics();
+//            windowManager.getDefaultDisplay().getMetrics(metrics);
+//            FrameLayout.LayoutParams videoLayoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT ,
+//                    ViewGroup.LayoutParams.WRAP_CONTENT);
+//            videoLayoutParams.gravity = Gravity.CENTER;
+//            mFullScreenTextureView = new TextureView(getContext());
+//            mFullScreenTextureView.setSurfaceTextureListener(mFullScreenTextureListener);
+//            container.addView(mFullScreenTextureView, videoLayoutParams);
+//
+//           // FullScreenMediaController controller = new FullScreenMediaController(getContext());
+//           // controller.setListener(this);
+//           // controller.setMediaPlayer(this);
+//           // controller.setAnchorView(mFullScreenTextureView);
+//
+//            //Must wire up back button, otherwise it's not sent to our activity
+//            container.setOnKeyListener(new View.OnKeyListener() {
+//                @Override
+//                public boolean onKey(View v, int keyCode, KeyEvent event) {
+//                    if (keyCode == KeyEvent.KEYCODE_BACK) {
+//                        mFullScreen = false;
+//                        mMediaController.setAnchorView(ScrollableVideoView.this);
+//                        windowManager.removeView(container);
+//                    }
+//                    return true;
+//                }
+//            });
+//
+//
+//            mFullscreenContainer = container;
+//            requestLayout();
+//            invalidate();
+//        }
+
+    }
+
+    private void transitionToFullScreen(){
+
+        mFullScreen = true;
+
+        if(mFullScreenSurfaceTexture != null) {
+            mMediaPlayer.setSurface(new Surface(mFullScreenSurfaceTexture));
+        }
+
+    }
+
+    private void transitionFromFullScreen(){
+
+        mFullScreen = false;
+
+        if(mSurfaceTexture != null) {
+            mMediaPlayer.setSurface(new Surface(mSurfaceTexture));
+        }
+
+    }
+
+
+    private TextureView.SurfaceTextureListener mFullScreenTextureListener = new TextureView.SurfaceTextureListener() {
+
+        @Override
+        public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+            mFullScreenSurfaceTexture = surface;
+            transitionToFullScreen();
+            adjustAspectRatio(mFullScreenTextureView,mVideoWidth,mVideoHeight);
+        }
+
+        @Override
+        public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+
+        }
+
+        @Override
+        public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+            mFullScreenSurfaceTexture = null;
+            return true;
+        }
+
+        @Override
+        public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+
+        }
+    };
+
+
+    private double mTargetAspect = -1.0;
+
+    /**
+     * Sets the desired aspect ratio.  The value is <code>width / height</code>.
+     */
+    public void setAspectRatio(double aspectRatio) {
+        if (aspectRatio < 0) {
+            throw new IllegalArgumentException();
+        }
+        Log.d(TAG, "Setting aspect ratio to " + aspectRatio + " (was " + mTargetAspect + ")");
+        if (mTargetAspect != aspectRatio) {
+            mTargetAspect = aspectRatio;
+            requestLayout();
+        }
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        Log.d(TAG, "onMeasure target=" + mTargetAspect +
+                " width=[" + MeasureSpec.toString(widthMeasureSpec) +
+                "] height=[" + View.MeasureSpec.toString(heightMeasureSpec) + "]");
+
+        // Target aspect ratio will be < 0 if it hasn't been set yet.  In that case,
+        // we just use whatever we've been handed.
+        if (mTargetAspect > 0) {
+            int initialWidth = MeasureSpec.getSize(widthMeasureSpec);
+            int initialHeight = MeasureSpec.getSize(heightMeasureSpec);
+
+            // factor the padding out
+            int horizPadding = getPaddingLeft() + getPaddingRight();
+            int vertPadding = getPaddingTop() + getPaddingBottom();
+            initialWidth -= horizPadding;
+            initialHeight -= vertPadding;
+
+            double viewAspectRatio = (double) initialWidth / initialHeight;
+            double aspectDiff = mTargetAspect / viewAspectRatio - 1;
+
+            if (Math.abs(aspectDiff) < 0.01) {
+                // We're very close already.  We don't want to risk switching from e.g. non-scaled
+                // 1280x720 to scaled 1280x719 because of some floating-point round-off error,
+                // so if we're really close just leave it alone.
+                Log.d(TAG, "aspect ratio is good (target=" + mTargetAspect +
+                        ", view=" + initialWidth + "x" + initialHeight + ")");
+            } else {
+                if (aspectDiff > 0) {
+                    // limited by narrow width; restrict height
+                    initialHeight = (int) (initialWidth / mTargetAspect);
+                } else {
+                    // limited by short height; restrict width
+                    initialWidth = (int) (initialHeight * mTargetAspect);
+                }
+                Log.d(TAG, "new size=" + initialWidth + "x" + initialHeight + " + padding " +
+                        horizPadding + "x" + vertPadding);
+                initialWidth += horizPadding;
+                initialHeight += vertPadding;
+                widthMeasureSpec = MeasureSpec.makeMeasureSpec(initialWidth, MeasureSpec.EXACTLY);
+                heightMeasureSpec = MeasureSpec.makeMeasureSpec(initialHeight, MeasureSpec.EXACTLY);
+            }
+        }
+
+        //Log.d(TAG, "set width=[" + MeasureSpec.toString(widthMeasureSpec) +
+        //        "] height=[" + View.MeasureSpec.toString(heightMeasureSpec) + "]");
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
+
+    private static void adjustAspectRatio(TextureView textureView, int videoWidth, int videoHeight) {
+        int viewWidth = textureView.getWidth();
+        int viewHeight = textureView.getHeight();
+        double aspectRatio = (double) videoHeight / videoWidth;
+
+        int newWidth, newHeight;
+        if (viewHeight > (int) (viewWidth * aspectRatio)) {
+            // limited by narrow width; restrict height
+            newWidth = viewWidth;
+            newHeight = (int) (viewWidth * aspectRatio);
+        } else {
+            // limited by short height; restrict width
+            newWidth = (int) (viewHeight / aspectRatio);
+            newHeight = viewHeight;
+        }
+        int xoff = (viewWidth - newWidth) / 2;
+        int yoff = (viewHeight - newHeight) / 2;
+        Log.v(TAG, "video=" + videoWidth + "x" + videoHeight +
+                " view=" + viewWidth + "x" + viewHeight +
+                " newView=" + newWidth + "x" + newHeight +
+                " off=" + xoff + "," + yoff);
+
+        Matrix txform = new Matrix();
+        textureView.getTransform(txform);
+        txform.setScale((float) newWidth / viewWidth, (float) newHeight / viewHeight);
+        txform.postTranslate(xoff, yoff);
+        textureView.setTransform(txform);
+    }
+
 }
