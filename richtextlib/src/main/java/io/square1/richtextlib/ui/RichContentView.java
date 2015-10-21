@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -25,6 +26,7 @@ import io.square1.richtextlib.ParcelableSpannedBuilder;
 import io.square1.richtextlib.R;
 import io.square1.richtextlib.style.ClickableSpan;
 import io.square1.richtextlib.style.P2ParcelableSpan;
+import io.square1.richtextlib.style.Style;
 import io.square1.richtextlib.style.URLSpan;
 import io.square1.richtextlib.style.UnsupportedContentSpan;
 import io.square1.richtextlib.style.UrlBitmapDownloader;
@@ -34,6 +36,69 @@ import io.square1.richtextlib.style.YouTubeSpan;
  * Created by roberto on 20/09/15.
  */
 public class RichContentView extends View implements RichContentViewDisplay {
+
+
+    private Style mInternalStyle = new Style() {
+
+        private Bitmap mQuoteBitmap = null;
+        private int mQuoteBackgroundColor = Style.NOT_SET;
+        private int mTextColorHeader = Style.NOT_SET;
+
+        @Override
+        public Context getApplicationContext() {
+            return RichContentView.this.getContext();
+        }
+
+        @Override
+        public Bitmap quoteBitmap() {
+            return mQuoteBitmap;
+        }
+
+        @Override
+        public int getQuoteBackgroundColor() {
+            return mQuoteBackgroundColor;
+        }
+
+        @Override
+        public int headerColor() {
+            return mTextColorHeader;
+        }
+
+        @Override
+        public int backgroundColor() {
+            return 0;
+        }
+
+        @Override
+        public int maxImageWidth() {
+            return 0;
+        }
+
+        @Override
+        public int maxImageHeight() {
+            return 0;
+        }
+
+        @Override
+        public float headerIncrease(int headerLevel) {
+            return 0;
+        }
+
+        @Override
+        public float smallTextReduce() {
+            return 0;
+        }
+
+        @Override
+        public boolean parseWordPressTags() {
+            return false;
+        }
+
+        @Override
+        public boolean treatAsHtml() {
+            return false;
+        }
+    };
 
     private UrlBitmapDownloader mBitmapManager;
 
@@ -303,6 +368,7 @@ public class RichContentView extends View implements RichContentViewDisplay {
             return;
         }
 
+
         TypedArray a = ctx.obtainStyledAttributes(attrs, R.styleable.io_square1_richtextlib_ui_RichContentView);
 
         String customFont = a.getString(R.styleable.io_square1_richtextlib_ui_RichContentView_fontFamily);
@@ -323,6 +389,8 @@ public class RichContentView extends View implements RichContentViewDisplay {
             int color =  a.getColor(R.styleable.io_square1_richtextlib_ui_RichContentView_textColorLink,Color.BLUE);
             mTextPaint.linkColor = color;
         }
+
+       // a.getColor(R.stryleable)
 
 
 

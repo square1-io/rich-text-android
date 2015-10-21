@@ -4,11 +4,15 @@
     <attr name="textSize" format="dimension"/>
     <attr name="textColor" format="color"/>
     <attr name="textColorLink" format="color"/>
+    <attr name="textColorQuote" format="color"/>
+    <attr name="drawableQuoteSign" format="reference"/>
     <declare-styleable name="io.square1.richtextlib.ui.RichContentView">
         <attr name="fontFamily"/>
         <attr name="textSize" />
         <attr name="textColor" />
         <attr name="textColorLink"/>
+        <attr name="textColorQuote"/>
+        <attr name="drawableQuoteSign"/>
     </declare-styleable>
     <declare-styleable name="io.square1.richtextlib.ui.RichTextView">
         <attr name="fontFamily" />

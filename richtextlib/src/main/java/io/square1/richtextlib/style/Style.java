@@ -12,7 +12,8 @@ import android.graphics.Bitmap;
 public interface Style {
 
 
-    int USE_DEFAULT = Integer.MIN_VALUE;
+    static final int NOT_SET = Integer.MIN_VALUE;
+    static final int USE_DEFAULT = Integer.MIN_VALUE;
 
     Context getApplicationContext();
 
