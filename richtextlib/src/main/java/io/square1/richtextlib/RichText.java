@@ -25,7 +25,6 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.ListIterator;
@@ -33,11 +32,10 @@ import java.util.Stack;
 import java.util.regex.Matcher;
 
 
-import io.square1.richtextlib.v2.parser.MarkupContext;
+import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 import io.square1.richtextlib.v2.parser.MarkupTag;
 import io.square1.richtextlib.style.*;
 import io.square1.richtextlib.util.NumberUtils;
-import io.square1.richtextlib.v2.parser.TagHandler;
 
 /**
  * This class processes HTML strings into displayable styled text.
@@ -165,21 +163,19 @@ public class RichText {
 
     public static void fromHtml(Context context,
                                 String source,
-                                RichTextCallback callback,
-                                UrlBitmapDownloader downloader) {
+                                RichTextCallback callback) {
 
         final Style defaultStyle = new DefaultStyle(context);
-        fromHtmlImpl(context, source, defaultStyle, callback, downloader);
+        fromHtmlImpl(context, source, defaultStyle, callback);
 
     }
 
     public static void fromHtml(Context context,
                                 String source,
                                 RichTextCallback callback,
-                                Style style,
-                                UrlBitmapDownloader downloader) {
+                                Style style ) {
 
-        fromHtmlImpl(context, source, style, callback, downloader);
+        fromHtmlImpl(context, source, style, callback);
 
     }
 
@@ -193,8 +189,7 @@ public class RichText {
     private static void fromHtmlImpl(Context context,
                                  String source,
                                  Style style,
-                                 RichTextCallback callback,
-                                 UrlBitmapDownloader downloader)  {
+                                 RichTextCallback callback)  {
 
         HtmlToSpannedConverter converter = null;
         try {
@@ -219,7 +214,7 @@ public class RichText {
               //  }
             }
 
-            converter = new HtmlToSpannedConverter(source, reader, style, callback, downloader);
+            converter = new HtmlToSpannedConverter(source, reader, style, callback);
             converter.convert();
 
         } catch (Exception e) {
@@ -238,6 +233,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
     private boolean mInsideTweet  = false;
     private boolean mInsideFacebookVideo = false;
+    private boolean mInsideInstagram = false;
 
     private MarkupTag mLastOpened;
     private MarkupTag mLastClosed;
@@ -245,23 +241,21 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     private String mSource;
     private XMLReader mReader;
     private StringBuilder mAccumulatedText;
-    private ParcelableSpannedBuilder mSpannableStringBuilder;
+    private RichTextDocumentElement mSpannableStringBuilder;
     private RichText.RichTextCallback mCallback;
-    private UrlBitmapDownloader mDownloader;
     private Style mStyle;
 
     public HtmlToSpannedConverter(String source,
                                   XMLReader reader,
                                   Style style,
-                                  RichText.RichTextCallback callback,
-                                  UrlBitmapDownloader dowloader) {
+                                  RichText.RichTextCallback callback) {
         mStyle = style;
         mCallback = callback;
-        mDownloader = dowloader;
+       // mDownloader = dowloader;
         mSource = String.format("<root>%s</root>" , source);
         mReader = reader;
         mAccumulatedText = new StringBuilder();
-        mSpannableStringBuilder = new ParcelableSpannedBuilder();
+        mSpannableStringBuilder = new RichTextDocumentElement();
 
     }
 
@@ -289,7 +283,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
     }
 
-    private static void fixFlags(ParcelableSpannedBuilder builder){
+    private static void fixFlags(RichTextDocumentElement builder){
 
         // Fix flags and range for paragraph-type markup.
         Object[] obj = builder.getSpans(0, builder.length(), ParagraphStyle.class);
@@ -339,7 +333,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
     }
 
-    private void applyStartTag(ParcelableSpannedBuilder spannable, MarkupTag internalTag, Attributes attributes) {
+    private void applyStartTag(RichTextDocumentElement spannable, MarkupTag internalTag, Attributes attributes) {
 
         final String tag = internalTag.tag;
 
@@ -386,7 +380,11 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
             if(mInsideFacebookVideo == true) return;
 
             String elementClass = attributes.getValue("class");
-            if(Blockquote.CLASS_TWEET.equalsIgnoreCase(elementClass)){
+
+            if(Blockquote.CLASS_INSTAGRAM.equalsIgnoreCase(elementClass)){
+                mInsideInstagram = true;
+            }
+            else if(Blockquote.CLASS_TWEET.equalsIgnoreCase(elementClass)){
                 mInsideTweet = true;
                 internalTag.closeOnEnd = false;
                 internalTag.duplicateOnStart = false;
@@ -399,7 +397,11 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         } else if (tag.equalsIgnoreCase("tt")) {
             start(spannable, new Monospace());
         } else if (tag.equalsIgnoreCase("a")) {
-            startA(spannable, mInsideTweet, attributes);
+            if(mInsideInstagram == true){
+                startInstagramA(spannable,attributes);
+            }else {
+                startA(spannable, mInsideTweet, attributes);
+            }
         } else if (tag.equalsIgnoreCase("u")) {
             start(spannable, new Underline());
         } else if (tag.equalsIgnoreCase("sup")) {
@@ -423,14 +425,14 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 //        }
     }
 
-    private void handleEndTag(ParcelableSpannedBuilder spannable, String tag) {
+    private void handleEndTag(RichTextDocumentElement spannable, String tag) {
 
         spannable = processAccumulatedTextContent();
         MarkupTag current = mStack.pop();
         applyEndTag(spannable, tag);
         mLastClosed = current;
     }
-    private void applyEndTag(ParcelableSpannedBuilder spannable, String tag) {
+    private void applyEndTag(RichTextDocumentElement spannable, String tag) {
 
         if (tag.equalsIgnoreCase("root")) {
             handleEndRoot(spannable);
@@ -467,6 +469,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         } else if (tag.equalsIgnoreCase("font")) {
             endFont(spannable);
         } else if (tag.equalsIgnoreCase("blockquote")) {
+            mInsideInstagram = false;
             mInsideTweet = false;
             if(mInsideFacebookVideo == false) {
                 endQuote(spannable);
@@ -496,11 +499,11 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     }
 
 
-    private  void handleStartRoot(ParcelableSpannedBuilder spannable){
+    private  void handleStartRoot(RichTextDocumentElement spannable){
        // start(spannable, new Background(mStyle.backgroundColor()));
     }
 
-    private  void handleEndRoot(ParcelableSpannedBuilder text){
+    private  void handleEndRoot(RichTextDocumentElement text){
 
 //        int len = text.length();
 //        Background obj = (Background)getLast(text, Background.class);
@@ -514,7 +517,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 //        }
     }
 
-    private static void ensureAtLeastOneNewLine(ParcelableSpannedBuilder text){
+    private static void ensureAtLeastOneNewLine(RichTextDocumentElement text){
 
         ensureAtLeastThoseNewLines(text,1);
 
@@ -526,7 +529,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
     }
 
-    private static void ensureAtLeastThoseNewLines(ParcelableSpannedBuilder text, int newLines){
+    private static void ensureAtLeastThoseNewLines(RichTextDocumentElement text, int newLines){
 
         int len = text.length();
 
@@ -551,7 +554,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
     }
 
-    private  void handleP(ParcelableSpannedBuilder text) {
+    private  void handleP(RichTextDocumentElement text) {
 
         if(mInsideTweet == true) return;
 
@@ -574,7 +577,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         }
     }
 
-    private static void handleBr(ParcelableSpannedBuilder text) {
+    private static void handleBr(RichTextDocumentElement text) {
         text.append("\n");
     }
 
@@ -592,12 +595,12 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         }
     }
 
-    private static void start(ParcelableSpannedBuilder text, Object mark) {
+    private static void start(RichTextDocumentElement text, Object mark) {
         int len = text.length();
         text.setSpan(mark, len, len, Spannable.SPAN_MARK_MARK);
     }
 
-    private static void end(ParcelableSpannedBuilder text, Class kind,
+    private static void end(RichTextDocumentElement text, Class kind,
                             Object repl) {
         int len = text.length();
         Object obj = getLast(text, kind);
@@ -610,7 +613,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         }
     }
 
-    private  void endQuote(ParcelableSpannedBuilder text) {
+    private  void endQuote(RichTextDocumentElement text) {
 
 
 
@@ -643,7 +646,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     }
 
 
-    private  void startDiv(ParcelableSpannedBuilder text, Attributes attributes) {
+    private  void startDiv(RichTextDocumentElement text, Attributes attributes) {
 
         String elementClass = attributes.getValue("", "class");
 
@@ -750,7 +753,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
     private void buildNewSpannable(){
 
-        ParcelableSpannedBuilder newSpannable = new ParcelableSpannedBuilder("");
+        RichTextDocumentElement newSpannable = new RichTextDocumentElement("");
         //skip the current image tag
         ListIterator<MarkupTag> tags = mStack.listIterator(mStack.size() - 1);
 
@@ -779,7 +782,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
     }
 
-    private static void startFont(ParcelableSpannedBuilder text,
+    private static void startFont(RichTextDocumentElement text,
                                   Attributes attributes) {
         String color = attributes.getValue("", "color");
         String face = attributes.getValue("", "face");
@@ -788,7 +791,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         text.setSpan(new Font(color, face), len, len, Spannable.SPAN_MARK_MARK);
     }
 
-    private static void endFont(ParcelableSpannedBuilder text) {
+    private static void endFont(RichTextDocumentElement text) {
         int len = text.length();
         Object obj = getLast(text, Font.class);
         int where = text.getSpanStart(obj);
@@ -826,14 +829,14 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         }
     }
 
-    private  void startIFrame(ParcelableSpannedBuilder text, Attributes attributes) {
+    private  void startIFrame(RichTextDocumentElement text, Attributes attributes) {
         String href = attributes.getValue("", "src");
         if( EmbedUtils.parseLink(mStack.peek(), href, this) == false) {
             makeUnsupported(href,null,text);
         }
     }
 
-    private void makeUnsupported(String link,String text,ParcelableSpannedBuilder builder){
+    private void makeUnsupported(String link,String text,RichTextDocumentElement builder){
         //clean the link:
         if(link.indexOf("//") == 0){
             link = "http:" + link;
@@ -846,7 +849,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         builder.setSpan(new UnsupportedContentSpan(link), len, len + text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
-    private void makeLink(String link,String text,ParcelableSpannedBuilder builder){
+    private void makeLink(String link,String text,RichTextDocumentElement builder){
         //clean the link:
         if(link.indexOf("//") == 0){
             link = "http:" + link;
@@ -866,7 +869,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         builder.setSpan(new URLSpan(link), len, len + text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
-    private void makeYoutube(String youtubeId,ParcelableSpannedBuilder builder){
+    private void makeYoutube(String youtubeId,RichTextDocumentElement builder){
 
         ensureAtLeastOneNewLine(builder);
         int len = builder.length();
@@ -878,12 +881,12 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     }
 
 
-    private  void endIFrame(ParcelableSpannedBuilder text) {
+    private  void endIFrame(RichTextDocumentElement text) {
         endA(mStack, text);
     }
 
 
-    private  void startSoundCloud(ParcelableSpannedBuilder text, Attributes attributes) {
+    private  void startSoundCloud(RichTextDocumentElement text, Attributes attributes) {
 
         buildNewSpannable();
         String src = attributes.getValue("", "url");
@@ -896,11 +899,29 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         }
     }
 
-    private  void endSoundCloud(ParcelableSpannedBuilder text) {
+    private  void endSoundCloud(RichTextDocumentElement text) {
         endA(mStack, text);
     }
 
-    private  void startA(ParcelableSpannedBuilder text, boolean insideTweet, Attributes attributes) {
+    private  void startInstagramA(RichTextDocumentElement text,  Attributes attributes) {
+        String href = attributes.getValue("", "href");
+        //if( LinksUtils.parseLink( mStack.peek(), href,this) == false) {
+        int len = text.length();
+        Href h = new Href(href);
+
+        mLastOpened.closeOnEnd = false;
+        mLastOpened.duplicateOnStart = false;
+
+        if( h.type == EmbedUtils.TEmbedType.EInstagram ) {
+            // now here we are inside a tweet
+            onLinkParsed(this,h.mHref,h.type);
+        }else  {
+            text.setSpan(h, len, len, Spannable.SPAN_MARK_MARK);
+        }
+        // }
+    }
+
+    private  void startA(RichTextDocumentElement text, boolean insideTweet, Attributes attributes) {
         String href = attributes.getValue("", "href");
         //if( LinksUtils.parseLink( mStack.peek(), href,this) == false) {
             int len = text.length();
@@ -918,7 +939,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
        // }
     }
 
-    private static void endA(Stack<MarkupTag> stack, ParcelableSpannedBuilder text) {
+    private static void endA(Stack<MarkupTag> stack, RichTextDocumentElement text) {
         int len = text.length();
         Object obj = getLast(text, Href.class);
         int where = text.getSpanStart(obj);
@@ -956,7 +977,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
         return null;
     }
 
-    private  void endHeader(ParcelableSpannedBuilder text) {
+    private  void endHeader(RichTextDocumentElement text) {
         int len = text.length();
         Object obj = getLast(text, Header.class);
 
@@ -1060,7 +1081,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
 
     }
 
-    public ParcelableSpannedBuilder processAccumulatedTextContent()  {
+    public RichTextDocumentElement processAccumulatedTextContent()  {
 
         if(storeContent(getCurrent()) == false ||
                 mAccumulatedText.length() == 0){
@@ -1146,6 +1167,7 @@ static class HtmlToSpannedConverter implements ContentHandler, EmbedUtils.ParseL
     private static class Blockquote {
 
         public static final String CLASS_TWEET = "twitter-tweet";
+        public static final String CLASS_INSTAGRAM = "instagram-media";
 
         private String mClass;
 

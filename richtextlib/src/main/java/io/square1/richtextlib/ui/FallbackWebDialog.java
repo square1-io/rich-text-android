@@ -205,7 +205,7 @@ public class FallbackWebDialog extends Dialog {
         Display display = wm.getDefaultDisplay();
         DisplayMetrics metrics = new DisplayMetrics();
         display.getMetrics(metrics);
-        // always use the portrait dimensions to do the scaling calculations so we always get a portrait shaped
+        // always use the portrait dimensions to do the scaling calculations so we always getInstance a portrait shaped
         // web dialog
         int width = metrics.widthPixels < metrics.heightPixels ? metrics.widthPixels : metrics.heightPixels;
         int height = metrics.widthPixels < metrics.heightPixels ? metrics.heightPixels : metrics.widthPixels;

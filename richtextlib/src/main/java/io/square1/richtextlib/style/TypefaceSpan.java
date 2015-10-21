@@ -8,6 +8,7 @@ import android.os.Parcelable;
 import android.text.TextPaint;
 import android.text.style.MetricAffectingSpan;
 
+import io.square1.parcelable.DynamicParcelableCreator;
 import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.UniqueId;
 
@@ -16,7 +17,7 @@ import io.square1.richtextlib.util.UniqueId;
  */
 public class TypefaceSpan extends MetricAffectingSpan implements P2ParcelableSpan {
 
-    public static final Parcelable.Creator<TypefaceSpan> CREATOR  = P2ParcelableCreator.get(TypefaceSpan.class);
+    public static final Parcelable.Creator<TypefaceSpan> CREATOR  = DynamicParcelableCreator.getInstance(TypefaceSpan.class);
 
     public static final int TYPE = UniqueId.getType();
 

@@ -3,7 +3,6 @@ package io.square1.richtext;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -14,19 +13,20 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 
-import io.square1.richtextlib.ParcelableSpannedBuilder;
+import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 import io.square1.richtextlib.style.RemoteBitmapSpan;
 import io.square1.richtextlib.style.UrlBitmapDownloader;
-import io.square1.richtextlib.ui.RichTextView;
-import io.square1.richtextlib.ui.RichTextViewV2;
+import io.square1.richtextlib.ui.RichContentView;
+import io.square1.richtextlib.v2.content.DocumentElement;
+import io.square1.richtextlib.v2.content.RichDocument;
 
 
 public class MainActivity2Activity extends ActionBarActivity implements UrlBitmapDownloader {
 
-    public static void show(Context c, ParcelableSpannedBuilder store){
+    public static void show(Context c, RichDocument document){
         Intent start = new Intent();
         start.setClass(c,MainActivity2Activity.class);
-        start.putExtra("d", (Parcelable) store);
+        start.putExtra("d",  document);
         c.startActivity(start);
     }
 
@@ -34,9 +34,14 @@ public class MainActivity2Activity extends ActionBarActivity implements UrlBitma
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_activity2);
-        ParcelableSpannedBuilder store = getIntent().getParcelableExtra("d");
+        RichDocument store = getIntent().getParcelableExtra("d");
        // RichTextViewV2.class.cast(findViewById(R.id.textView)).setUrlBitmapDownloader(this);
-        RichTextViewV2.class.cast(findViewById(R.id.textView)).setText(store);
+        for(DocumentElement element : store.getElements()) {
+            if(element instanceof RichTextDocumentElement) {
+                RichContentView.class.cast(findViewById(R.id.textView)).setText((RichTextDocumentElement)element);
+                break;
+            }
+        }
     }
 
     @Override

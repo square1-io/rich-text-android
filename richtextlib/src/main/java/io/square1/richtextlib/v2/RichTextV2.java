@@ -19,18 +19,23 @@ import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
 import java.io.StringReader;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Stack;
 import java.util.regex.Matcher;
 
 
 import io.square1.richtextlib.EmbedUtils;
-import io.square1.richtextlib.ParcelableSpannedBuilder;
+import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 import io.square1.richtextlib.R;
+import io.square1.richtextlib.v2.content.DocumentElement;
+import io.square1.richtextlib.v2.content.OembedElement;
+import io.square1.richtextlib.v2.content.RichDocument;
 import io.square1.richtextlib.v2.parser.InternalContentHandler;
 import io.square1.richtextlib.v2.parser.MarkupContext;
 import io.square1.richtextlib.v2.parser.MarkupTag;
 import io.square1.richtextlib.style.*;
+import io.square1.richtextlib.v2.parser.TagHandler;
 import io.square1.richtextlib.v2.utils.SpannedBuilderUtils;
 
 /**
@@ -39,19 +44,7 @@ import io.square1.richtextlib.v2.utils.SpannedBuilderUtils;
  */
 public class RichTextV2 {
 
-    public static final String EMBED_TYPE = "EMBED_TYPE";
-    public static final String IMAGE_WIDTH = "width";
-    public static final String  IMAGE_HEIGHT = "height";
-
-    public final static String NO_SPACE_CHAR = "\uFFFC";
-
-
-    public enum TNodeType {
-        EText,
-        EEmbed,
-        EImage
-    }
-
+    public static final String TAG = "RICHTXT";
 
     public static class V2DefaultStyle implements  Style {
 
@@ -133,14 +126,17 @@ public class RichTextV2 {
 
 
 
-    private ArrayList<ContentItem> mResult = new ArrayList<>();
+    private ArrayList<DocumentElement> mResult = new ArrayList<>();
     private Stack<MarkupTag> mStack = new Stack<>();
-    private ParcelableSpannedBuilder mOutput;
+    private Stack<MarkupContext> mMarkupContextStack = new Stack<>();
+    private RichTextDocumentElement mOutput;
     private MarkupContext mCurrentContext;
 
     private RichTextV2(Context context) {
         mCurrentContext = new MarkupContext(this, new V2DefaultStyle(context));
-        mOutput = new ParcelableSpannedBuilder();
+        mMarkupContextStack.push(mCurrentContext);
+
+        mOutput = new RichTextDocumentElement();
         mResult = new ArrayList<>();
     }
 
@@ -149,7 +145,7 @@ public class RichTextV2 {
         return mCurrentContext.getStyle();
     }
 
-    public ParcelableSpannedBuilder getCurrentOutput(){
+    public RichTextDocumentElement getCurrentOutput(){
         return mOutput;
     }
 
@@ -165,14 +161,14 @@ public class RichTextV2 {
      */
 
 
-    public static ArrayList<ContentItem> fromHtml(Context context, String source) {
+    public static RichDocument fromHtml(Context context, String source) {
 
         final Style defaultStyle = new V2DefaultStyle(context);
        return fromHtmlImpl(context, source, defaultStyle);
 
     }
 
-    public static  ArrayList<ContentItem>  fromHtml(Context context, String source, Style style) {
+    public static  RichDocument  fromHtml(Context context, String source, Style style) {
        return fromHtmlImpl(context, source, style);
 
     }
@@ -184,7 +180,7 @@ public class RichTextV2 {
     final static String INTERACTION_REPLACEMENT = "";
 
 
-    private static ArrayList<ContentItem> fromHtmlImpl(Context context,
+    private static RichDocument fromHtmlImpl(Context context,
                                                          String source,
                                                          Style style)  {
 
@@ -214,18 +210,19 @@ public class RichTextV2 {
             }
 
 
+
             RichTextV2 richText = new RichTextV2(context);
             reader.setContentHandler(new InternalContentHandler(richText));
             reader.parse(new InputSource(new StringReader(source)));
             richText.appendRemainder();
-
-            return richText.mResult;
+            RichDocument out = new RichDocument("",richText.mResult);
+            return out;
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return new ArrayList<>();
+        return RichDocument.EMPTY;
     }
 
 
@@ -235,7 +232,8 @@ public class RichTextV2 {
         processAccumulatedTextContent(textContent);
         MarkupTag tag = new MarkupTag(localName,atts);
         mStack.push(tag);
-        mCurrentContext.onTagOpen(tag, mOutput, false);
+        mCurrentContext = mCurrentContext.onTagOpen(tag, mOutput, false);
+        mMarkupContextStack.push( mCurrentContext );
     }
 
     public void endElement(String uri, String localName, String textContent) {
@@ -251,10 +249,11 @@ public class RichTextV2 {
         if(tag.tag.equalsIgnoreCase(localName) == true) {
             mCurrentContext.onTagClose(tag, mOutput, false);
         }
+        mCurrentContext = mMarkupContextStack.pop();
     }
 
 
-    private ParcelableSpannedBuilder processAccumulatedTextContent(String accumulatedText)  {
+    private RichTextDocumentElement processAccumulatedTextContent(String accumulatedText)  {
 
         if(TextUtils.isEmpty(accumulatedText)){
             return null;
@@ -306,7 +305,7 @@ public class RichTextV2 {
 
     public void onEmbedFound(EmbedUtils.TEmbedType type, String content){
 
-        ParcelableSpannedBuilder newOut = new ParcelableSpannedBuilder();
+        RichTextDocumentElement newOut = new RichTextDocumentElement();
         /// close output
         if(mOutput != null &&
                 mOutput.length() > 0){
@@ -326,22 +325,37 @@ public class RichTextV2 {
             mOutput = newOut;
         }
 
-        mResult.add(OEmbedContentHandler.newInstance(type, content));
+        mResult.add(OembedElement.newInstance(type, content));
 
     }
 
-    public MarkupTag getParent(MarkupTag child) {
+    public MarkupTag getParent(MarkupTag child, Class<? extends TagHandler> parentClass) {
 
         boolean childFound = false;
+
         for(int index = (mStack.size() - 1); index >= 0 ; index --){
-            MarkupTag parent = mStack.get(index);
-            //while walking back on the stack first we find the child
-            // then look at the next element in the stack which will be the parent
-            if(childFound == true) {
-                if (parent != child) return parent;
+
+            MarkupTag current = mStack.get(index);
+
+            if(childFound == false){
+                childFound = (current == child);
             }else {
-                childFound = (parent != child);
+                TagHandler handler = current.getTagHandler();
+                if(parentClass.isAssignableFrom(handler.getClass())){
+                    return current;
+                }
             }
+
+
+
+//            //while walking back on the stack first we find the child
+//            // then look at the next element in the stack which will be the parent
+//
+//            if(childFound == true) {
+//                if (parent != child) return parent;
+//            }else {
+//                childFound = (parent != child);
+//            }
         }
 
         return null;

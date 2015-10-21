@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.Animatable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -17,17 +18,17 @@ import android.text.style.UpdateAppearance;
 
 import java.lang.ref.WeakReference;
 
+import io.square1.parcelable.DynamicParcelableCreator;
 import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.NumberUtils;
 import io.square1.richtextlib.util.UniqueId;
-import io.square1.richtextlib.v2.utils.SpanUtils;
 
 /**
  * Created by roberto on 23/06/15.
  */
 public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, ClickableSpan, UpdateAppearance, P2ParcelableSpan {
 
-    public static final Creator<UrlBitmapSpan> CREATOR  = P2ParcelableCreator.get(UrlBitmapSpan.class);
+    public static final Creator<UrlBitmapSpan> CREATOR  = DynamicParcelableCreator.getInstance(UrlBitmapSpan.class);
     public static final int TYPE = UniqueId.getType();
 
     /**
@@ -50,6 +51,7 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
     private int mImageHeight;
 
     private Uri mImage;
+
     private Drawable mBitmap;
 
     public UrlBitmapSpan(){
@@ -67,6 +69,7 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
                          int maxImageWidth,
                          int alignment){
         super();
+
 
         mImage = image;
         mMaxImageWidth = maxImageWidth;
@@ -284,6 +287,9 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
 
             mBitmap.setCallback(view);
             mBitmap.invalidateSelf();
+            if(mBitmap instanceof Animatable){
+                ((Animatable)mBitmap).start();
+            }
 
             if(needsLayout == true){
                 view.performLayout();
@@ -301,13 +307,13 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
 
 
     private void loadImage(){
-        if(mAttachedToWindow == true &&
-                mLoading == false &&
-                mRef != null){
 
-            UrlBitmapDownloader downloader = SpanUtils.getDownloader(mRef.get());
-            if(downloader != null) {
-                downloader.downloadImage(this, mImage);
+        if(mAttachedToWindow == true && mLoading == false){
+            mLoading = true;
+            UrlBitmapDownloader downloader = SpanUtil.get(mRef);
+            if(downloader != null){
+                //acquire one from the view
+                downloader.downloadImage(this,mImage);
             }
         }
     }

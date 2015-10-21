@@ -6,6 +6,7 @@ import android.os.Parcel;
 import android.text.TextPaint;
 import android.text.style.MetricAffectingSpan;
 
+import io.square1.parcelable.DynamicParcelableCreator;
 import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.UniqueId;
 
@@ -14,12 +15,12 @@ import io.square1.richtextlib.util.UniqueId;
  * Describes a style in a span.
  * Note that styles are cumulative -- if both bold and italic are set in
  * separate spans, or if the base style is bold and a span calls for italic,
- * you get bold italic.  You can't turn off a style from the base style.
+ * you getInstance bold italic.  You can't turn off a style from the base style.
  *
  */
 public class StyleSpan extends MetricAffectingSpan implements P2ParcelableSpan {
 
-    public static final Creator<StyleSpan> CREATOR  = P2ParcelableCreator.get(StyleSpan.class);
+    public static final Creator<StyleSpan> CREATOR  = DynamicParcelableCreator.getInstance(StyleSpan.class);
 
     public static final int TYPE = UniqueId.getType();
 

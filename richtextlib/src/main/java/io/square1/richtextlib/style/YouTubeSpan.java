@@ -16,19 +16,19 @@ import android.text.style.UpdateAppearance;
 
 import java.lang.ref.WeakReference;
 
+import io.square1.parcelable.DynamicParcelableCreator;
 import io.square1.richtextlib.EmbedUtils;
 import io.square1.richtextlib.R;
 import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.NumberUtils;
 import io.square1.richtextlib.util.UniqueId;
-import io.square1.richtextlib.v2.utils.SpanUtils;
 
 /**
  * Created by roberto on 23/06/15.
  */
 public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, ClickableSpan, UpdateAppearance, P2ParcelableSpan {
 
-    public static final Creator<YouTubeSpan> CREATOR  = P2ParcelableCreator.get(YouTubeSpan.class);
+    public static final Creator<YouTubeSpan> CREATOR  = DynamicParcelableCreator.getInstance(YouTubeSpan.class);
     public static final int TYPE = UniqueId.getType();
 
 
@@ -77,7 +77,7 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
 
     public Rect getBitmapSize(){
 
-       // mRef.get().getPaddingLeft()
+       // mRef.getInstance().getPaddingLeft()
 //        if(mBitmap != null){
 //         int measured = mMaxImageWidth;
 //         double rate = (double)measured / (double)mBitmap.getIntrinsicWidth();
@@ -208,8 +208,8 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
 //        c.save();
 //
 //        Rect rect = mYoutubeIcon.copyBounds();
-//        float x = (mRef.get().getMeasuredWidth() - rect.width()) / 2 + offset;
-//        c.translate(x, (mRef.get().getMeasuredHeight() - rect.height()) / 2);
+//        float x = (mRef.getInstance().getMeasuredWidth() - rect.width()) / 2 + offset;
+//        c.translate(x, (mRef.getInstance().getMeasuredHeight() - rect.height()) / 2);
 //        mYoutubeIcon.draw(c);
 //        c.restore();
 //    }
@@ -277,13 +277,9 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
     private void loadImage(){
         if(mAttachedToWindow == true && mLoading == false && mRef != null){
             mLoading = true;
-            if(mRef.get() == null){
-                return;
-            }
-
-            UrlBitmapDownloader downloader = SpanUtils.getDownloader(mRef.get());
-            if(downloader != null) {
-                downloader.downloadImage(this, mImage);
+            UrlBitmapDownloader downloader = SpanUtil.get(mRef);
+            if(downloader != null){
+                downloader.downloadImage(this,mImage);
             }
         }
     }

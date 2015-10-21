@@ -8,12 +8,13 @@ import android.text.Layout;
 import android.text.Spanned;
 import android.text.style.LeadingMarginSpan;
 
+import io.square1.parcelable.DynamicParcelableCreator;
 import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.UniqueId;
 
 public class BulletSpan implements LeadingMarginSpan, P2ParcelableSpan {
 
-    public static final Creator<BulletSpan> CREATOR  = P2ParcelableCreator.get(BulletSpan.class);
+    public static final Creator<BulletSpan> CREATOR  = DynamicParcelableCreator.getInstance(BulletSpan.class);
 
     public static final int TYPE = UniqueId.getType();
 

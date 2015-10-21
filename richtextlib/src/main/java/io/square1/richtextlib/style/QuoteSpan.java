@@ -13,13 +13,14 @@ import android.text.style.LeadingMarginSpan;
 import android.text.style.LineBackgroundSpan;
 import android.text.style.MetricAffectingSpan;
 
+import io.square1.parcelable.DynamicParcelableCreator;
 import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.UniqueId;
 
 
 public class QuoteSpan extends MetricAffectingSpan implements /*LineHeightSpan,*/ LineBackgroundSpan,P2ParcelableSpan,LeadingMarginSpan {
 
-    public static final Parcelable.Creator<QuoteSpan> CREATOR  = P2ParcelableCreator.get(QuoteSpan.class);
+    public static final Parcelable.Creator<QuoteSpan> CREATOR  = DynamicParcelableCreator.getInstance(QuoteSpan.class);
     public static final int TYPE = UniqueId.getType();
 
 

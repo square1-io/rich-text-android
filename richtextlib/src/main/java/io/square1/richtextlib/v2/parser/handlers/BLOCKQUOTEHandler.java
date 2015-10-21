@@ -3,7 +3,7 @@ package io.square1.richtextlib.v2.parser.handlers;
 import android.graphics.Typeface;
 import android.text.Spannable;
 
-import io.square1.richtextlib.ParcelableSpannedBuilder;
+import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 import io.square1.richtextlib.style.QuoteSpan;
 import io.square1.richtextlib.style.Style;
 import io.square1.richtextlib.style.StyleSpan;
@@ -18,7 +18,7 @@ import io.square1.richtextlib.v2.utils.SpannedBuilderUtils;
 public class BLOCKQUOTEHandler extends TagHandler {
 
     @Override
-    public void onTagOpen(MarkupContext context, MarkupTag tag, ParcelableSpannedBuilder out) {
+    public void onTagOpen(MarkupContext context, MarkupTag tag, RichTextDocumentElement out) {
 
         SpannedBuilderUtils.ensureAtLeastThoseNewLines(out, 2);
         SpannedBuilderUtils.startSpan(out, new Markers.Blockquote(tag.elementClasses));
@@ -26,7 +26,7 @@ public class BLOCKQUOTEHandler extends TagHandler {
     }
 
     @Override
-    public void onTagClose(MarkupContext context, MarkupTag tag, ParcelableSpannedBuilder out) {
+    public void onTagClose(MarkupContext context, MarkupTag tag, RichTextDocumentElement out) {
 
         //TODO handle Tweets
         Markers.Blockquote obj = out.getLastSpan(Markers.Blockquote.class);

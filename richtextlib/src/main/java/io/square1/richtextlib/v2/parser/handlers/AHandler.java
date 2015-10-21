@@ -2,10 +2,8 @@ package io.square1.richtextlib.v2.parser.handlers;
 
 import android.text.Spannable;
 
-import io.square1.richtextlib.EmbedUtils;
-import io.square1.richtextlib.ParcelableSpannedBuilder;
+import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 import io.square1.richtextlib.style.URLSpan;
-import io.square1.richtextlib.style.UnsupportedContentSpan;
 import io.square1.richtextlib.v2.parser.MarkupContext;
 import io.square1.richtextlib.v2.parser.MarkupTag;
 import io.square1.richtextlib.v2.parser.TagHandler;
@@ -16,7 +14,7 @@ import io.square1.richtextlib.v2.parser.TagHandler;
 public class AHandler extends TagHandler {
 
     @Override
-    public void onTagOpen(MarkupContext context, MarkupTag tag, ParcelableSpannedBuilder out) {
+    public void onTagOpen(MarkupContext context, MarkupTag tag, RichTextDocumentElement out) {
         String href = tag.attributes.getValue("", "href");
         int len = out.length();
         Markers.Href h = new Markers.Href(href);
@@ -24,7 +22,7 @@ public class AHandler extends TagHandler {
     }
 
     @Override
-    public void onTagClose(MarkupContext context, MarkupTag tag, ParcelableSpannedBuilder out) {
+    public void onTagClose(MarkupContext context, MarkupTag tag, RichTextDocumentElement out) {
 
         int len = out.length();
         Object obj = out.getLastSpan(Markers.Href.class);

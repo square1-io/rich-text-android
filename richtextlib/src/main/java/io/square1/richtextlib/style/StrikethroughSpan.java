@@ -6,12 +6,13 @@ import android.text.TextPaint;
 import android.text.style.CharacterStyle;
 import android.text.style.UpdateAppearance;
 
+import io.square1.parcelable.DynamicParcelableCreator;
 import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.UniqueId;
 
 public class StrikethroughSpan extends CharacterStyle implements UpdateAppearance , P2ParcelableSpan {
 
-    public static final Parcelable.Creator<RelativeSizeSpan> CREATOR  = P2ParcelableCreator.get(RelativeSizeSpan.class);
+    public static final Parcelable.Creator<RelativeSizeSpan> CREATOR  = DynamicParcelableCreator.getInstance(RelativeSizeSpan.class);
 
     public static final int TYPE = UniqueId.getType();
 

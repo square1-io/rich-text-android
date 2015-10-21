@@ -1,14 +1,13 @@
 package io.square1.richtextlib.v2.parser;
 
-import java.util.HashMap;
-import java.util.Stack;
+import android.nfc.Tag;
 
-import io.square1.richtextlib.ParcelableSpannedBuilder;
+import java.util.HashMap;
+
+import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 import io.square1.richtextlib.style.Style;
 import io.square1.richtextlib.v2.RichTextV2;
-import io.square1.richtextlib.v2.parser.handlers.BRHandler;
 import io.square1.richtextlib.v2.parser.handlers.DefaultHandler;
-import io.square1.richtextlib.v2.parser.handlers.PHandler;
 
 /**
  * Created by roberto on 19/08/15.
@@ -69,18 +68,24 @@ public class MarkupContext {
 
     }
 
-    public void onTagOpen(MarkupTag tag, ParcelableSpannedBuilder builder, boolean newOutput) {
+    public final MarkupContext onTagOpen(MarkupTag tag, RichTextDocumentElement builder, boolean newOutput) {
         TagHandler handler = getTagHandler(tag);
         if( (newOutput && handler.openWhenSplitting()) || !newOutput ) {
             handler.onTagOpen(this, tag, builder);
+            return handler.replaceContext(this);
         }
+
+        return this;
     }
 
-    public void onTagClose(MarkupTag tag, ParcelableSpannedBuilder builder, boolean newOutput) {
+    public final MarkupContext onTagClose(MarkupTag tag, RichTextDocumentElement builder, boolean newOutput) {
         TagHandler handler = getTagHandler(tag);
         if( (newOutput && handler.closeWhenSplitting()) || !newOutput ) {
             handler.onTagClose(this, tag, builder);
+            return handler.restoreContext(this);
         }
+
+        return this;
     }
 
     public void setValue(String key, Object value){
@@ -95,7 +100,7 @@ public class MarkupContext {
         return mValues.get(key);
     }
 
-    public MarkupTag getParent(MarkupTag child) {
-        return mRichTextV2.getParent(child);
+    public MarkupTag getParent(MarkupTag child, Class<? extends TagHandler> parentClass) {
+        return mRichTextV2.getParent(child, parentClass);
     }
 }

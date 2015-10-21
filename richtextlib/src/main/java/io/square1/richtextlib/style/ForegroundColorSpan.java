@@ -5,12 +5,13 @@ import android.text.TextPaint;
 import android.text.style.CharacterStyle;
 import android.text.style.UpdateAppearance;
 
+import io.square1.parcelable.DynamicParcelableCreator;
 import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.UniqueId;
 
 public class ForegroundColorSpan extends CharacterStyle implements UpdateAppearance, P2ParcelableSpan {
 
-    public static final Creator<ForegroundColorSpan> CREATOR  = P2ParcelableCreator.get(ForegroundColorSpan.class);
+    public static final Creator<ForegroundColorSpan> CREATOR  = DynamicParcelableCreator.getInstance(ForegroundColorSpan.class);
 
     public static final int TYPE = UniqueId.getType();
 

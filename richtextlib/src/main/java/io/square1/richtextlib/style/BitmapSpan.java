@@ -8,6 +8,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.style.ReplacementSpan;
 
+import io.square1.parcelable.DynamicParcelableCreator;
 import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.UniqueId;
 
@@ -18,7 +19,7 @@ public class BitmapSpan extends ReplacementSpan implements P2ParcelableSpan , Cl
 
 
 
-    public static final Parcelable.Creator<BitmapSpan> CREATOR  = P2ParcelableCreator.get(BitmapSpan.class);
+    public static final Parcelable.Creator<BitmapSpan> CREATOR  = DynamicParcelableCreator.getInstance(BitmapSpan.class);
     public static final int TYPE = UniqueId.getType();
 
     /**
@@ -152,7 +153,7 @@ public class BitmapSpan extends ReplacementSpan implements P2ParcelableSpan , Cl
 
 //    private void loadImage(){
 //        if(mAttachedToWindow == true && mBitmap == null){
-//            Glide.with(mViewRef.get().getContext()).load(mImageUri).asBitmap().into(mSimpleTarget);
+//            Glide.with(mViewRef.getInstance().getContext()).load(mImageUri).asBitmap().into(mSimpleTarget);
 //        }
 //    }
 

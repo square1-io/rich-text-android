@@ -2,10 +2,8 @@ package io.square1.richtextlib.v2.parser.handlers;
 
 import android.text.TextUtils;
 
-import java.util.HashMap;
-
 import io.square1.richtextlib.EmbedUtils;
-import io.square1.richtextlib.ParcelableSpannedBuilder;
+import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 import io.square1.richtextlib.v2.parser.MarkupContext;
 import io.square1.richtextlib.v2.parser.MarkupTag;
 import io.square1.richtextlib.v2.parser.TagHandler;
@@ -16,7 +14,7 @@ import io.square1.richtextlib.v2.parser.TagHandler;
 public class SOUNDCLOUDHandler extends TagHandler {
 
     @Override
-    public void onTagOpen(MarkupContext context, MarkupTag tag, ParcelableSpannedBuilder out) {
+    public void onTagOpen(MarkupContext context, MarkupTag tag, RichTextDocumentElement out) {
 
         String src = tag.attributes.getValue("", "url");
         src = EmbedUtils.getSoundCloudStream(src,"1f6456941b1176c22d44fb16ec2015a2");
@@ -28,7 +26,7 @@ public class SOUNDCLOUDHandler extends TagHandler {
     }
 
     @Override
-    public void onTagClose(MarkupContext context, MarkupTag tag, ParcelableSpannedBuilder out) {
+    public void onTagClose(MarkupContext context, MarkupTag tag, RichTextDocumentElement out) {
 
     }
 

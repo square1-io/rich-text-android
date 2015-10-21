@@ -6,12 +6,13 @@ import android.os.Parcelable;
 import android.text.TextPaint;
 import android.text.style.MetricAffectingSpan;
 
+import io.square1.parcelable.DynamicParcelableCreator;
 import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.UniqueId;
 
 public class SubscriptSpan extends MetricAffectingSpan implements P2ParcelableSpan {
 
-    public static final Parcelable.Creator<SubscriptSpan> CREATOR  = P2ParcelableCreator.get(SubscriptSpan.class);
+    public static final Parcelable.Creator<SubscriptSpan> CREATOR  = DynamicParcelableCreator.getInstance(SubscriptSpan.class);
 
     public static final int TYPE = UniqueId.getType();
 

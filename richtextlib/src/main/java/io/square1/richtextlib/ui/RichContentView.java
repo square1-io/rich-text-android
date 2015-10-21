@@ -9,20 +9,35 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
+import android.graphics.Rect;
+import android.graphics.SurfaceTexture;
 import android.graphics.Typeface;
+import android.graphics.drawable.Animatable;
+import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
-import android.text.DynamicLayout;
+import android.os.Looper;
 import android.text.Layout;
+import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Size;
 import android.util.TypedValue;
 import android.view.MotionEvent;
+import android.view.Surface;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import android.view.TextureView;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AbsoluteLayout;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
-import io.square1.richtextlib.ParcelableSpannedBuilder;
+import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 import io.square1.richtextlib.R;
 import io.square1.richtextlib.style.ClickableSpan;
 import io.square1.richtextlib.style.P2ParcelableSpan;
@@ -35,7 +50,8 @@ import io.square1.richtextlib.style.YouTubeSpan;
 /**
  * Created by roberto on 20/09/15.
  */
-public class RichContentView extends View implements RichContentViewDisplay {
+public class RichContentView extends FrameLayout implements RichContentViewDisplay {
+
 
 
     private Style mInternalStyle = new Style() {
@@ -102,7 +118,7 @@ public class RichContentView extends View implements RichContentViewDisplay {
 
     private UrlBitmapDownloader mBitmapManager;
 
-    private ParcelableSpannedBuilder mText;
+    private RichTextDocumentElement mText;
     private P2ParcelableSpan[] mSpans;
 
     private boolean mAttachedToWindow;
@@ -113,8 +129,9 @@ public class RichContentView extends View implements RichContentViewDisplay {
     private float mSpacingAdd = 0.0f;
 
     private int mLastMeasuredWidth;
-
     private float mDefaultPixelSize;
+
+    private Thread mThread;
 
     private OnSpanClickedObserver mOnSpanClickedObserver;
 
@@ -123,6 +140,7 @@ public class RichContentView extends View implements RichContentViewDisplay {
     public RichContentView(Context context) {
         super(context);
         init(context, null, -1, -1);
+
     }
 
     public RichContentView(Context context, AttributeSet attrs) {
@@ -135,7 +153,12 @@ public class RichContentView extends View implements RichContentViewDisplay {
         init(context, attrs, defStyleAttr, -1);
     }
 
-    public void setText(ParcelableSpannedBuilder builder){
+    @Override
+    public void addSubView(View view) {
+        addView(view);
+    }
+
+    public void setText(RichTextDocumentElement builder){
         if(mText != builder) {
             mText = builder;
             mSpans = mText.getSpans();
@@ -143,6 +166,7 @@ public class RichContentView extends View implements RichContentViewDisplay {
             for(P2ParcelableSpan span : mSpans){
                 span.onSpannedSetToView(this);
             }
+
             requestLayout();
         }
     }
@@ -189,7 +213,9 @@ public class RichContentView extends View implements RichContentViewDisplay {
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
 
-        mText = new ParcelableSpannedBuilder();
+        setWillNotDraw(false);
+
+        mText = new RichTextDocumentElement();
         mSpans = mText.getSpans();
 
         final Resources res = getResources();
@@ -204,7 +230,9 @@ public class RichContentView extends View implements RichContentViewDisplay {
 
         setRawTextSize(mDefaultPixelSize);
 
-        parseCustomAttributes(context,attrs);
+        parseCustomAttributes(context, attrs);
+
+
 
     }
 
@@ -233,7 +261,7 @@ public class RichContentView extends View implements RichContentViewDisplay {
 
     private Layout makeLayout(int width){
 
-        DynamicLayout result = new DynamicLayout(mText,
+        StaticLayout result = new StaticLayout(mText,
                 mTextPaint,
                 width,
                 Layout.Alignment.ALIGN_NORMAL,
@@ -243,9 +271,10 @@ public class RichContentView extends View implements RichContentViewDisplay {
 
         return result;
     }
+
+
     @Override
     public void onDraw(Canvas canvas){
-        super.onDraw(canvas);
         canvas.save();
         if (mLayout != null) {
             canvas.translate(getPaddingLeft(), getPaddingTop());
@@ -253,6 +282,7 @@ public class RichContentView extends View implements RichContentViewDisplay {
         }
         canvas.restore();
     }
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -275,6 +305,16 @@ public class RichContentView extends View implements RichContentViewDisplay {
             int line = mLayout.getLineForVertical(y);
             int off = mLayout.getOffsetForHorizontal(line, x);
 
+            Animatable[] animatables =  mText.getSpans(off, off, Animatable.class);
+            if(animatables.length > 0) return false;
+
+            if (animatables.length != 0 && action == MotionEvent.ACTION_UP) {
+                if(animatables[0].isRunning()){
+                    animatables[0].stop();
+                }else{
+                    animatables[0].start();
+                }
+            }
             // Find the URL that was pressed
             ClickableSpan[] link = mText.getSpans(off, off, ClickableSpan.class);
             // If we've found a URL
@@ -322,6 +362,15 @@ public class RichContentView extends View implements RichContentViewDisplay {
         }
     }
 
+
+    public LayoutParams generateDefaultLayoutParams(Point position,int width, int height ){
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(width,height);
+        params.leftMargin = position.x;
+        params.topMargin = position.y;
+
+        return params;
+    }
+
     public void onSpansClicked(ClickableSpan[] spans) {
 
         if(spans == null) return;
@@ -356,11 +405,11 @@ public class RichContentView extends View implements RichContentViewDisplay {
                 FallbackWebDialog dialog = new FallbackWebDialog(getContext(),url);
                 dialog.setCancelable(true);
                 dialog.show();
-
             }
         }
 
     }
+
 
     private void parseCustomAttributes(Context ctx, AttributeSet attrs) {
 
@@ -417,4 +466,55 @@ public class RichContentView extends View implements RichContentViewDisplay {
         return true;
     }
 
+    public Point getSpanOrigin(Object span) {
+
+        Rect parentTextViewRect = new Rect();
+
+
+        double startOffsetOfClickedText = mText.getSpanStart(span);
+        double endOffsetOfClickedText = mText.getSpanEnd(span);
+        double startXCoordinatesOfClickedText = mLayout.getPrimaryHorizontal((int) startOffsetOfClickedText);
+        double endXCoordinatesOfClickedText = mLayout.getPrimaryHorizontal((int) endOffsetOfClickedText);
+
+
+        // Get the rectangle of the clicked text
+        int currentLineStartOffset = mLayout.getLineForOffset((int) startOffsetOfClickedText);
+        int currentLineEndOffset = mLayout.getLineForOffset((int) endOffsetOfClickedText);
+        boolean keywordIsInMultiLine = currentLineStartOffset != currentLineEndOffset;
+        mLayout.getLineBounds(currentLineStartOffset, parentTextViewRect);
+
+
+        // Update the rectangle position to his real position on screen
+        int[] parentTextViewLocation = {0, 0};
+        getLocationOnScreen(parentTextViewLocation);
+
+        double parentTextViewTopAndBottomOffset = (
+                parentTextViewLocation[1] -
+                        getScrollY() +
+                        getPaddingTop()
+        );
+        parentTextViewRect.top += parentTextViewTopAndBottomOffset;
+        parentTextViewRect.bottom += parentTextViewTopAndBottomOffset;
+
+        parentTextViewRect.left += (
+                parentTextViewLocation[0] +
+                        startXCoordinatesOfClickedText +
+                        getPaddingLeft() -
+                        getScrollX()
+        );
+
+        parentTextViewRect.right = (int) (
+                parentTextViewRect.left +
+                        endXCoordinatesOfClickedText -
+                        startXCoordinatesOfClickedText
+        );
+
+        int x = (parentTextViewRect.left + parentTextViewRect.right) / 2;
+        int y = parentTextViewRect.bottom;
+        if (keywordIsInMultiLine) {
+            x = parentTextViewRect.left;
+        }
+
+        return  new Point(x,y);
+    }
 }
