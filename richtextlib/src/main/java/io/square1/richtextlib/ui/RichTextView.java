@@ -1,6 +1,7 @@
 package io.square1.richtextlib.ui;
 
 import android.annotation.TargetApi;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
@@ -202,9 +203,13 @@ public class RichTextView extends TextView implements RichTextLinkMovementMethod
             }
             else if(span instanceof URLSpan){
 
-                String url = ((URLSpan)span).getURL();
-                this.getContext().
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                try {
+                    String url = ((URLSpan) span).getURL();
+                    this.getContext().
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                }catch(ActivityNotFoundException e) {
+
+                }
 
             }else if (span instanceof UnsupportedContentSpan){
                 String url = ((UnsupportedContentSpan)span).getURL();
