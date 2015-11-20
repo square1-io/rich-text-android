@@ -96,12 +96,13 @@ public class QuoteSpan extends MetricAffectingSpan implements /*LineHeightSpan,*
     public void writeToParcel(Parcel dest, int flags) {
         P2ParcelUtils.writeType(dest,this);
         dest.writeInt(mColor);
-        dest.writeParcelable(mQuoteSign, 0);
+      //  mQuoteSign.writeToParcel(dest,flags);
+       // dest.writeParcelable(mQuoteSign, 0);
     }
 
     public void readFromParcel(Parcel src){
         mColor = src.readInt();
-        mQuoteSign = src.readParcelable(Bitmap.class.getClassLoader());
+      //  mQuoteSign = Bitmap.CREATOR.createFromParcel(src);
     }
 
 
@@ -208,6 +209,6 @@ public class QuoteSpan extends MetricAffectingSpan implements /*LineHeightSpan,*
 
     @Override
     public void onSpannedSetToView(RichTextView view){
-
+        mQuoteSign = view.getStyle().quoteBitmap();
     }
 }

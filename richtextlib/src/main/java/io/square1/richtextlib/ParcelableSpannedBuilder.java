@@ -18,8 +18,10 @@ import android.text.TextWatcher;
 
 import java.lang.reflect.Array;
 
+import io.square1.richtextlib.style.DummySpan;
 import io.square1.richtextlib.style.P2ParcelUtils;
 import io.square1.richtextlib.style.P2ParcelableSpan;
+import io.square1.richtextlib.ui.RichTextView;
 import io.square1.richtextlib.util.ArrayUtils;
 
 /**
@@ -1033,7 +1035,10 @@ public class ParcelableSpannedBuilder implements CharSequence, GetChars, Spannab
 
         for(int index = 0; index < mSpans.length; index ++){
             P2ParcelableSpan span = (P2ParcelableSpan)mSpans[index];
-            dest.writeParcelable(span,flags);
+            if(span == null){
+                span = new DummySpan();
+            }
+            dest.writeParcelable(span, flags);
         }
 
 
@@ -1043,5 +1048,6 @@ public class ParcelableSpannedBuilder implements CharSequence, GetChars, Spannab
         dest.writeIntArray(mSpanFlags);
         dest.writeInt(mSpanCount);
     }
+
 
 }

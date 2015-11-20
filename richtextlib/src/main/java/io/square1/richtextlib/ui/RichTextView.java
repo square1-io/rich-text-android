@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import io.square1.richtextlib.style.ClickableSpan;
 import io.square1.richtextlib.style.P2ParcelableSpan;
+import io.square1.richtextlib.style.Style;
 import io.square1.richtextlib.style.URLSpan;
 import io.square1.richtextlib.style.UnsupportedContentSpan;
 import io.square1.richtextlib.style.UrlBitmapDownloader;
@@ -30,6 +31,16 @@ import io.square1.richtextlib.R;
 public class RichTextView extends TextView implements RichTextLinkMovementMethod.Observer {
 
 
+    private Style mStyle;
+
+    public void setStyle(Style style) {
+        mStyle = style;
+    }
+
+    public Style getStyle(){
+        return mStyle;
+    }
+    
     public interface OnSpanClickedObserver {
          boolean onSpanClicked(ClickableSpan span);
     }
