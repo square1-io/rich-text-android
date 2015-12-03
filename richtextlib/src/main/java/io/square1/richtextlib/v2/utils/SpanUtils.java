@@ -1,6 +1,6 @@
 package io.square1.richtextlib.v2.utils;
 
-import io.square1.richtextlib.style.UrlBitmapDownloader;
+import io.square1.richtextlib.spans.UrlBitmapDownloader;
 import io.square1.richtextlib.ui.RichContentViewDisplay;
 
 /**

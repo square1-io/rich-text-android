@@ -7,9 +7,9 @@ import android.text.Spannable;
 import android.text.TextUtils;
 
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
-import io.square1.richtextlib.style.ForegroundColorSpan;
-import io.square1.richtextlib.style.TextAppearanceSpan;
-import io.square1.richtextlib.style.TypefaceSpan;
+import io.square1.richtextlib.spans.ForegroundColorSpan;
+import io.square1.richtextlib.spans.TextAppearanceSpan;
+import io.square1.richtextlib.spans.TypefaceSpan;
 import io.square1.richtextlib.v2.parser.MarkupContext;
 import io.square1.richtextlib.v2.parser.MarkupTag;
 import io.square1.richtextlib.v2.parser.TagHandler;

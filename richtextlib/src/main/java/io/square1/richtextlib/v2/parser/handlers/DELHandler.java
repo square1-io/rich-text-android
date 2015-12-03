@@ -1,6 +1,6 @@
 package io.square1.richtextlib.v2.parser.handlers;
 
-import io.square1.richtextlib.style.StrikethroughSpan;
+import io.square1.richtextlib.spans.StrikethroughSpan;
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 import io.square1.richtextlib.v2.parser.MarkupContext;
 import io.square1.richtextlib.v2.parser.MarkupTag;
@@ -19,8 +19,6 @@ public class DELHandler extends TagHandler {
 
     @Override
     public void onTagClose(MarkupContext context, MarkupTag tag, RichTextDocumentElement out) {
-        float smallText = context.getStyle().smallTextReduce();
         SpannedBuilderUtils.endSpan(out, Markers.Strike.class, new StrikethroughSpan());
-
     }
 }

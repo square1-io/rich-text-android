@@ -1,13 +1,10 @@
 package io.square1.richtextlib.v2.parser.handlers;
 
-import android.net.Uri;
 import android.text.Spannable;
 
 import org.xml.sax.Attributes;
 
-import io.square1.richtextlib.style.UrlBitmapSpan;
-import io.square1.richtextlib.style.VideoPlayerSpan;
-import io.square1.richtextlib.util.NumberUtils;
+import io.square1.richtextlib.spans.VideoPlayerSpan;
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 import io.square1.richtextlib.v2.parser.MarkupContext;
 import io.square1.richtextlib.v2.parser.MarkupTag;

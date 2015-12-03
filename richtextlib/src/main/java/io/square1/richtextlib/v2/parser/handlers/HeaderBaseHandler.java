@@ -4,9 +4,9 @@ import android.graphics.Typeface;
 import android.text.Spannable;
 
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
-import io.square1.richtextlib.style.ForegroundColorSpan;
-import io.square1.richtextlib.style.RelativeSizeSpan;
-import io.square1.richtextlib.style.StyleSpan;
+import io.square1.richtextlib.spans.ForegroundColorSpan;
+import io.square1.richtextlib.spans.RelativeSizeSpan;
+import io.square1.richtextlib.spans.StyleSpan;
 import io.square1.richtextlib.v2.parser.MarkupContext;
 import io.square1.richtextlib.v2.parser.MarkupTag;
 import io.square1.richtextlib.v2.parser.TagHandler;

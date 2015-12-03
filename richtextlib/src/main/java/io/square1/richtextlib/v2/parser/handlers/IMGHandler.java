@@ -6,7 +6,7 @@ import android.text.Spannable;
 import org.xml.sax.Attributes;
 
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
-import io.square1.richtextlib.style.UrlBitmapSpan;
+import io.square1.richtextlib.spans.UrlBitmapSpan;
 import io.square1.richtextlib.util.NumberUtils;
 import io.square1.richtextlib.v2.parser.MarkupContext;
 import io.square1.richtextlib.v2.parser.MarkupTag;

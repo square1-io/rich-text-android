@@ -3,22 +3,17 @@ package io.square1.richtextlib.ui.video;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.PixelFormat;
 import android.graphics.SurfaceTexture;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.Surface;
@@ -29,8 +24,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.MediaController;
-import android.widget.PopupWindow;
-import android.widget.VideoView;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -352,7 +345,7 @@ public class ScrollableVideoView extends FrameLayout implements FullScreenMediaC
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         if (isInPlaybackState() && mMediaController != null) {
-            toggleMediaControlsVisiblity();
+            toggleMediaControlsVisibility();
         }
         return false;
     }
@@ -360,12 +353,12 @@ public class ScrollableVideoView extends FrameLayout implements FullScreenMediaC
     @Override
     public boolean onTrackballEvent(MotionEvent ev) {
         if (isInPlaybackState() && mMediaController != null) {
-            toggleMediaControlsVisiblity();
+            toggleMediaControlsVisibility();
         }
         return false;
     }
 
-    private void toggleMediaControlsVisiblity() {
+    private void toggleMediaControlsVisibility() {
         if (mMediaController.isShowing()) {
             mMediaController.hide();
         } else {
@@ -408,7 +401,7 @@ public class ScrollableVideoView extends FrameLayout implements FullScreenMediaC
                 }
                 return true;
             } else {
-                toggleMediaControlsVisiblity();
+                toggleMediaControlsVisibility();
             }
         }
 
@@ -488,12 +481,27 @@ public class ScrollableVideoView extends FrameLayout implements FullScreenMediaC
             protected void onCreate(Bundle savedInstanceState) {
                 super.onCreate(savedInstanceState);
                 requestWindowFeature(Window.FEATURE_NO_TITLE);
+
                 getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
                 //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                 mFullScreenTextureView = new TextureView(getContext());
                 mFullScreenTextureView.setSurfaceTextureListener(mFullScreenTextureListener);
-
+                FullScreenMediaController controller = new FullScreenMediaController(getContext());
+                controller.setListener(ScrollableVideoView.this);
+                controller.setMediaPlayer(ScrollableVideoView.this);
+                controller.setAnchorView(mFullScreenTextureView);
                 setContentView(mFullScreenTextureView);
+
+            }
+
+            @Override
+            public void show(){
+                super.show();
+                WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                lp.copyFrom(getWindow().getAttributes());
+                lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+                lp.height = WindowManager.LayoutParams.MATCH_PARENT;
+                getWindow().setAttributes(lp);
             }
         };
 

@@ -1,7 +1,6 @@
 package io.square1.richtextlib.v2.parser.handlers;
 
-import io.square1.richtextlib.style.SubscriptSpan;
-import io.square1.richtextlib.style.SuperscriptSpan;
+import io.square1.richtextlib.spans.SubscriptSpan;
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 import io.square1.richtextlib.v2.parser.MarkupContext;
 import io.square1.richtextlib.v2.parser.MarkupTag;

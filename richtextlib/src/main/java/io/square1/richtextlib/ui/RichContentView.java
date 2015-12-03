@@ -10,40 +10,29 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.graphics.SurfaceTexture;
 import android.graphics.Typeface;
 import android.graphics.drawable.Animatable;
-import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Looper;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Size;
 import android.util.TypedValue;
 import android.view.MotionEvent;
-import android.view.Surface;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.view.TextureView;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AbsoluteLayout;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 import io.square1.richtextlib.R;
-import io.square1.richtextlib.style.ClickableSpan;
-import io.square1.richtextlib.style.P2ParcelableSpan;
-import io.square1.richtextlib.style.URLSpan;
-import io.square1.richtextlib.style.UnsupportedContentSpan;
-import io.square1.richtextlib.style.UrlBitmapDownloader;
-import io.square1.richtextlib.style.YouTubeSpan;
+import io.square1.richtextlib.spans.ClickableSpan;
+import io.square1.richtextlib.spans.RichTextSpan;
+import io.square1.richtextlib.spans.URLSpan;
+import io.square1.richtextlib.spans.UnsupportedContentSpan;
+import io.square1.richtextlib.spans.UrlBitmapDownloader;
+import io.square1.richtextlib.spans.YouTubeSpan;
 
 /**
  * Created by roberto on 20/09/15.
@@ -54,7 +43,7 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
     private UrlBitmapDownloader mBitmapManager;
 
     private RichTextDocumentElement mText;
-    private P2ParcelableSpan[] mSpans;
+    private RichTextSpan[] mSpans;
 
     private boolean mAttachedToWindow;
 
@@ -66,7 +55,6 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
     private int mLastMeasuredWidth;
     private float mDefaultPixelSize;
 
-    private Thread mThread;
 
     private OnSpanClickedObserver mOnSpanClickedObserver;
 
@@ -98,7 +86,7 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
             mText = builder;
             mSpans = mText.getSpans();
             mLayout = null;
-            for(P2ParcelableSpan span : mSpans){
+            for(RichTextSpan span : mSpans){
                 span.onSpannedSetToView(this);
             }
 
@@ -282,7 +270,7 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
 
         mAttachedToWindow = true;
 
-        for (P2ParcelableSpan span : mSpans) {
+        for (RichTextSpan span : mSpans) {
                 span.onAttachedToView(this);
         }
 
@@ -292,7 +280,7 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
     public void onDetachedFromWindow(){
         super.onDetachedFromWindow();
         mAttachedToWindow = false;
-        for(P2ParcelableSpan span : mSpans){
+        for(RichTextSpan span : mSpans){
             span.onDetachedFromView(this);
         }
     }

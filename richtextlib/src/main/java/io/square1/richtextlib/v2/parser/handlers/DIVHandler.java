@@ -8,8 +8,8 @@ import android.text.TextUtils;
 import org.xml.sax.Attributes;
 
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
-import io.square1.richtextlib.style.StyleSpan;
-import io.square1.richtextlib.style.UnsupportedContentSpan;
+import io.square1.richtextlib.spans.StyleSpan;
+import io.square1.richtextlib.spans.UnsupportedContentSpan;
 import io.square1.richtextlib.v2.parser.MarkupContext;
 import io.square1.richtextlib.v2.parser.MarkupTag;
 import io.square1.richtextlib.v2.parser.TagHandler;

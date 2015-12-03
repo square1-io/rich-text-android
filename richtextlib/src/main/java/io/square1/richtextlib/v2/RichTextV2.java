@@ -19,7 +19,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
 import java.io.StringReader;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Stack;
 import java.util.regex.Matcher;
@@ -34,7 +33,7 @@ import io.square1.richtextlib.v2.content.RichDocument;
 import io.square1.richtextlib.v2.parser.InternalContentHandler;
 import io.square1.richtextlib.v2.parser.MarkupContext;
 import io.square1.richtextlib.v2.parser.MarkupTag;
-import io.square1.richtextlib.style.*;
+import io.square1.richtextlib.spans.*;
 import io.square1.richtextlib.v2.parser.TagHandler;
 import io.square1.richtextlib.v2.utils.SpannedBuilderUtils;
 
@@ -46,7 +45,7 @@ public class RichTextV2 {
 
     public static final String TAG = "RICHTXT";
 
-    public static class V2DefaultStyle implements  Style {
+    public static class DefaultStyle implements  Style {
 
         private static final float[] HEADER_SIZES = {
                 1.5f, 1.4f, 1.3f, 1.2f, 1.1f, 1f,
@@ -56,7 +55,7 @@ public class RichTextV2 {
         private Bitmap mQuoteBitmap;
         private int mMaxImageWidth;
 
-        public V2DefaultStyle(Context context){
+        public DefaultStyle(Context context){
             mApplicationContext = context.getApplicationContext();
             Resources resources = context.getResources();
             mQuoteBitmap = BitmapFactory.decodeResource(resources, R.drawable.quote);
@@ -133,9 +132,20 @@ public class RichTextV2 {
     private MarkupContext mCurrentContext;
 
     private RichTextV2(Context context) {
-        mCurrentContext = new MarkupContext(this, new V2DefaultStyle(context));
-        mMarkupContextStack.push(mCurrentContext);
+        init();
+        setupContext(new MarkupContext(this, new DefaultStyle(context)));
+    }
+    private RichTextV2(MarkupContext markupContext) {
+        init();
+        setupContext(markupContext);
+    }
 
+    private void setupContext(MarkupContext markupContext){
+        mCurrentContext = markupContext;
+        mMarkupContextStack.push(mCurrentContext);
+    }
+
+    private void init(){
         mOutput = new RichTextDocumentElement();
         mResult = new ArrayList<>();
     }
@@ -163,13 +173,25 @@ public class RichTextV2 {
 
     public static RichDocument fromHtml(Context context, String source) {
 
-        final Style defaultStyle = new V2DefaultStyle(context);
-       return fromHtmlImpl(context, source, defaultStyle);
+        final Style defaultStyle = new DefaultStyle(context);
+       return fromHtmlImpl(context, source,null, defaultStyle );
 
     }
 
-    public static  RichDocument  fromHtml(Context context, String source, Style style) {
-       return fromHtmlImpl(context, source, style);
+    public static  RichDocument  fromHtml(Context context,
+                                          String source,
+                                          Style style) {
+
+       return fromHtmlImpl(context, source, null, style);
+
+    }
+
+    public static  RichDocument  fromHtml(Context context,
+                                          String source,
+                                          MarkupContext markupContext,
+                                          Style style) {
+
+        return fromHtmlImpl(context, source, markupContext, style);
 
     }
 
@@ -182,6 +204,7 @@ public class RichTextV2 {
 
     private static RichDocument fromHtmlImpl(Context context,
                                                          String source,
+                                             MarkupContext markupContext,
                                                          Style style)  {
 
 
@@ -211,7 +234,9 @@ public class RichTextV2 {
 
 
 
-            RichTextV2 richText = new RichTextV2(context);
+            RichTextV2 richText = markupContext == null ? new RichTextV2(context) :
+                    new RichTextV2(markupContext);
+
             reader.setContentHandler(new InternalContentHandler(richText));
             reader.parse(new InputSource(new StringReader(source)));
             richText.appendRemainder();

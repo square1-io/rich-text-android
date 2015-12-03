@@ -14,8 +14,8 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
-import io.square1.richtextlib.style.RemoteBitmapSpan;
-import io.square1.richtextlib.style.UrlBitmapDownloader;
+import io.square1.richtextlib.spans.RemoteBitmapSpan;
+import io.square1.richtextlib.spans.UrlBitmapDownloader;
 import io.square1.richtextlib.ui.RichContentView;
 import io.square1.richtextlib.v2.content.DocumentElement;
 import io.square1.richtextlib.v2.content.RichDocument;

@@ -1,7 +1,7 @@
 package io.square1.richtextlib.v2.parser.handlers;
 
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
-import io.square1.richtextlib.style.UnderlineSpan;
+import io.square1.richtextlib.spans.UnderlineSpan;
 import io.square1.richtextlib.v2.parser.MarkupContext;
 import io.square1.richtextlib.v2.parser.MarkupTag;
 import io.square1.richtextlib.v2.parser.TagHandler;

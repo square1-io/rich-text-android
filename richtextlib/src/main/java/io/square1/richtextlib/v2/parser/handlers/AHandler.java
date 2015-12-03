@@ -3,7 +3,7 @@ package io.square1.richtextlib.v2.parser.handlers;
 import android.text.Spannable;
 
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
-import io.square1.richtextlib.style.URLSpan;
+import io.square1.richtextlib.spans.URLSpan;
 import io.square1.richtextlib.v2.parser.MarkupContext;
 import io.square1.richtextlib.v2.parser.MarkupTag;
 import io.square1.richtextlib.v2.parser.TagHandler;

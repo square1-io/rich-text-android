@@ -5,9 +5,9 @@ import android.text.TextUtils;
 import android.text.style.ParagraphStyle;
 
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
-import io.square1.richtextlib.style.URLSpan;
-import io.square1.richtextlib.style.UnsupportedContentSpan;
-import io.square1.richtextlib.style.YouTubeSpan;
+import io.square1.richtextlib.spans.URLSpan;
+import io.square1.richtextlib.spans.UnsupportedContentSpan;
+import io.square1.richtextlib.spans.YouTubeSpan;
 
 /**
  * Created by roberto on 04/09/15.

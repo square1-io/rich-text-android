@@ -1,11 +1,9 @@
 package io.square1.richtextlib.v2.parser;
 
-import android.nfc.Tag;
-
 import java.util.HashMap;
 
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
-import io.square1.richtextlib.style.Style;
+import io.square1.richtextlib.spans.Style;
 import io.square1.richtextlib.v2.RichTextV2;
 import io.square1.richtextlib.v2.parser.handlers.DefaultHandler;
 
@@ -26,6 +24,10 @@ public class MarkupContext {
         mRichTextV2 = richText;
         mHandlersPackage = DefaultHandler.class.getPackage().getName();
         mHandlers = new HashMap<>();
+    }
+
+    void setmRichText(RichTextV2 richText){
+        mRichTextV2 = richText;
     }
 
     public RichTextV2 getRichText(){

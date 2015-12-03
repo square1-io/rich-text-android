@@ -28,8 +28,8 @@ import java.util.Map;
 
 import io.square1.richtextlib.v2.content.OembedElement;
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
-import io.square1.richtextlib.style.RemoteBitmapSpan;
-import io.square1.richtextlib.style.UrlBitmapDownloader;
+import io.square1.richtextlib.spans.RemoteBitmapSpan;
+import io.square1.richtextlib.spans.UrlBitmapDownloader;
 import io.square1.richtextlib.ui.RichContentView;
 
 

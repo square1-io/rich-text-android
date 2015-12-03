@@ -8,8 +8,8 @@ import android.view.View;
 
 
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
-import io.square1.richtextlib.style.ClickableSpan;
-import io.square1.richtextlib.style.UrlBitmapDownloader;
+import io.square1.richtextlib.spans.ClickableSpan;
+import io.square1.richtextlib.spans.UrlBitmapDownloader;
 
 /**
  * Created by roberto on 24/06/15.
