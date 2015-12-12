@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="richFontFamily" format="string"/>
+    <attr name="richTextSize" format="dimension"/>
+    <attr name="richTextColor" format="color"/>
+    <attr name="richTextColorLink" format="color"/>
+    <attr name="richTextColorQuote" format="color"/>
+    <attr name="richDrawableQuoteSign" format="reference"/>
+    <declare-styleable name="RichContentView">
+        <attr name="android:fontFamily"/>
+        <attr name="android:textSize" />
+        <attr name="android:textColor" />
+        <attr name="android:textColorLink"/>
+    </declare-styleable>
+</resources>

@@ -8,19 +8,19 @@ import io.square1.richtextlib.EmbedUtils;
 /**
  * Created by roberto on 10/09/15.
  */
-public class OembedElement extends DocumentElement {
+public class OembedDocumentElement extends DocumentElement {
 
-    public static final Creator<OembedElement> CREATOR  = DynamicParcelableCreator.getInstance(OembedElement.class);
+    public static final Creator<OembedDocumentElement> CREATOR  = DynamicParcelableCreator.getInstance(OembedDocumentElement.class);
 
     private String mBaseUrl;
     private String mId;
     private EmbedUtils.TEmbedType mType;
 
-    public OembedElement(){
+    public OembedDocumentElement(){
      super();
     }
 
-    public OembedElement(String url, String id, EmbedUtils.TEmbedType type){
+    public OembedDocumentElement(String url, String id, EmbedUtils.TEmbedType type){
         super();
         mBaseUrl = url;
         mId = id;
@@ -31,8 +31,8 @@ public class OembedElement extends DocumentElement {
         return mType;
     }
 
-    public static OembedElement newInstance(EmbedUtils.TEmbedType type, String content){
-       return new OembedElement(content, content, type);
+    public static OembedDocumentElement newInstance(EmbedUtils.TEmbedType type, String content){
+       return new OembedDocumentElement(content, content, type);
     }
 
     public String getContent() {

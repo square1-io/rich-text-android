@@ -28,7 +28,7 @@ import io.square1.richtextlib.EmbedUtils;
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 import io.square1.richtextlib.R;
 import io.square1.richtextlib.v2.content.DocumentElement;
-import io.square1.richtextlib.v2.content.OembedElement;
+import io.square1.richtextlib.v2.content.OembedDocumentElement;
 import io.square1.richtextlib.v2.content.RichDocument;
 import io.square1.richtextlib.v2.parser.InternalContentHandler;
 import io.square1.richtextlib.v2.parser.MarkupContext;
@@ -350,7 +350,7 @@ public class RichTextV2 {
             mOutput = newOut;
         }
 
-        mResult.add(OembedElement.newInstance(type, content));
+        mResult.add(OembedDocumentElement.newInstance(type, content));
 
     }
 
