@@ -100,7 +100,7 @@ public class ScrollableVideoView extends FrameLayout implements FullScreenMediaC
         mFullScreen = false;
         mTextureView = new TextureView(context);
 
-        setBackgroundColor(Color.RED);
+        //setBackgroundColor(Color.RED);
 
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
