@@ -18,6 +18,8 @@ public class IFRAMEHandler extends TagHandler  {
 
         String href = tag.attributes.getValue("", "src");
 
+        SpannedBuilderUtils.trimTrailNewlines(out, 0);
+
         if( EmbedUtils.parseLink(context, href, new EmbedUtils.ParseLinkCallback() {
 
             @Override
@@ -27,6 +29,7 @@ public class IFRAMEHandler extends TagHandler  {
                     SpannedBuilderUtils.makeYoutube(result,context.getStyle().maxImageWidth(), out);
                     return;
                 }
+                //remove new lines here as we are splitting content
                 context.getRichText().onEmbedFound(type,result);
                 //we have to remove embeds from quotes tags
                // context.buildNewSpannable();
@@ -37,6 +40,7 @@ public class IFRAMEHandler extends TagHandler  {
             }
 
         }) == false) {
+            //
             SpannedBuilderUtils.makeUnsupported(href, null, out);
         }
 

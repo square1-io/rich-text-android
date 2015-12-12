@@ -2,9 +2,11 @@ package io.square1.richtext;
 
 import android.content.Context;
 import android.database.DataSetObserver;
+import android.graphics.Color;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -114,7 +116,7 @@ public class MainActivity extends ActionBarActivity implements UrlBitmapDownload
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        String html = ReadFromfile("html5.html");
+        String html = ReadFromfile("joe.html");
         final RichDocument document =  RichTextV2.fromHtml(this, html);
 
         adapter = new BaseAdapter() {
@@ -174,7 +176,7 @@ public class MainActivity extends ActionBarActivity implements UrlBitmapDownload
 
                     RichContentView view = (RichContentView)convertView;
                     if(convertView == null){
-                        view = new RichContentView(MainActivity.this);
+                        view = (RichContentView)LayoutInflater.from(MainActivity.this).inflate(R.layout.text_view,parent,false);
                         view.setUrlBitmapDownloader(MainActivity.this);
                         convertView = view;
                     }
@@ -184,6 +186,7 @@ public class MainActivity extends ActionBarActivity implements UrlBitmapDownload
 
                     if(convertView == null){
                         TextView text = new TextView(MainActivity.this);
+                        text.setBackgroundColor(Color.RED);
                         convertView = text;
                     }
                     OembedDocumentElement oembedElement = (OembedDocumentElement)item;

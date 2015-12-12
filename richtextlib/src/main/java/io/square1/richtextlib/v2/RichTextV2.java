@@ -269,8 +269,6 @@ public class RichTextV2 {
             processAccumulatedTextContent(textContent);
         }
 
-
-
         if(tag.tag.equalsIgnoreCase(localName) == true) {
             mCurrentContext.onTagClose(tag, mOutput, false);
         }

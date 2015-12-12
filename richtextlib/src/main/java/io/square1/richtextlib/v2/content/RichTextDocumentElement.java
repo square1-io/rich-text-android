@@ -148,6 +148,10 @@ public class RichTextDocumentElement extends DocumentElement implements CharSequ
         return mSpannableString.charAt(index);
     }
 
+    public void replaceAt(int index, String replacement){
+        mSpannableString.replace(index,index + replacement.length(),replacement);
+    }
+
     @Override
     public CharSequence subSequence(int start, int end) {
         return mSpannableString.subSequence(start, end);

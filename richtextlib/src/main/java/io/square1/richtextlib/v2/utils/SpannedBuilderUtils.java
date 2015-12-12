@@ -20,6 +20,33 @@ public class SpannedBuilderUtils {
     public static final String SPACE = " ";
 
 
+    public static void trimTrailNewlines(RichTextDocumentElement text, int newLinesCountAfter){
+
+        int len = text.length();
+
+        int currentNewLines = 0;
+
+        while(len > 0){
+            if( text.charAt(len - 1) == '\n'){
+                currentNewLines ++;
+            }else{
+                break;
+            }
+            len --;
+        }
+
+        ///at the end of the process the string must end with
+        //at max newLinesCount
+        // if there are more new lines than what we want
+        if(newLinesCountAfter < currentNewLines){
+            int start = len - (currentNewLines - newLinesCountAfter) - 1;
+            for(int index = start; index < len; index ++){
+                text.replaceAt(index,"");
+            }
+
+        }
+
+    }
 
     public static void ensureAtLeastThoseNewLines(RichTextDocumentElement text, int newLines){
 

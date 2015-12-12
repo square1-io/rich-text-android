@@ -13,7 +13,7 @@ public class PHandler extends TagHandler {
 
     @Override
     public void onTagOpen(MarkupContext context, MarkupTag tag, RichTextDocumentElement out) {
-        //spare the new lines if starting at top
+    //    spare the new lines if starting at top
         if(out.length() > 0) {
             SpannedBuilderUtils.ensureAtLeastThoseNewLines(out, 2);
         }else {
@@ -24,11 +24,15 @@ public class PHandler extends TagHandler {
 
     @Override
     public void onTagClose(MarkupContext context, MarkupTag tag, RichTextDocumentElement out) {
-        SpannedBuilderUtils.ensureAtLeastThoseNewLines(out,2);
+        SpannedBuilderUtils.ensureAtLeastThoseNewLines(out,1);
     }
 
     //don't add extra new lines when an OEMbed was found and the page continues
     public boolean openWhenSplitting(){
+        return false;
+    }
+
+    public boolean closeWhenSplitting(){
         return false;
     }
 

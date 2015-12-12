@@ -119,7 +119,7 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
     private TextPaint mTextPaint;
     private Layout mLayout;
     private float mSpacingMult = 1.0f;
-    private float mSpacingAdd = 0.0f;
+    private float mSpacingAdd = 1.0f;
 
     private int mLastMeasuredWidth;
     private float mDefaultPixelSize;
@@ -159,7 +159,9 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
                 span.onSpannedSetToView(this);
             }
 
+
             requestLayout();
+            invalidate();
         }
     }
 
@@ -230,7 +232,7 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+
 
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
 
@@ -241,11 +243,13 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
         }
 
         if (mLayout != null) {
-            setMeasuredDimension(getPaddingLeft() +
-                            getPaddingRight() + mLayout.getWidth(),
+
+            setMeasuredDimension(widthSize,
                     getPaddingTop() + getPaddingBottom() + mLayout.getHeight());
 
-            setMeasuredDimension(widthSize, mLayout.getHeight());
+           // setMeasuredDimension(widthSize, mLayout.getHeight());
+        }else {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         }
 
     }
@@ -259,7 +263,7 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
                 Layout.Alignment.ALIGN_NORMAL,
                 mSpacingMult,
                 mSpacingAdd,
-                true);
+                false);
 
         return result;
     }
