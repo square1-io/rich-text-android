@@ -275,7 +275,9 @@ public class RichTextV2 {
         }
 
         if(tag.tag.equalsIgnoreCase(localName) == true) {
-            mCurrentContext.onTagClose(tag, mOutput, false);
+            if(tag.discardOnClosing == false) {
+                mCurrentContext.onTagClose(tag, mOutput, false);
+            }
         }
         mCurrentContext = mMarkupContextStack.pop();
     }
@@ -335,7 +337,9 @@ public class RichTextV2 {
                 mOutput.length() > 0){
 
             for(int index = (mStack.size() - 1); index >= 0 ; index --){
-               mCurrentContext.onTagClose(mStack.get(index), mOutput, true);
+                MarkupTag tag = mStack.get(index);
+                mCurrentContext.onTagClose(tag, mOutput, true);
+                tag.discardOnClosing = true;
             }
 
             SpannedBuilderUtils.fixFlags(mOutput);

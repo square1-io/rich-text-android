@@ -26,21 +26,13 @@ import io.square1.richtextlib.util.UniqueId;
 /**
  * Created by roberto on 23/06/15.
  */
-public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, ClickableSpan, UpdateAppearance, RichTextSpan {
+public class YouTubeSpan extends UrlBitmapSpan {
 
     public static final Creator<YouTubeSpan> CREATOR  = DynamicParcelableCreator.getInstance(YouTubeSpan.class);
     public static final int TYPE = UniqueId.getType();
 
-
-    private Uri mImage;
-    private Drawable mBitmap;
     private Bitmap mYoutubeIcon;
-    private int mImageHeight;
-    private int mImageWidth;
-    private int mMaxImageWidth;
-
     private String mYoutubeId;
-
 
     public String getYoutubeId(){
         return mYoutubeId;
@@ -49,56 +41,10 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
     public YouTubeSpan(){}
 
     public YouTubeSpan(String youtubeId, int maxWidth){
-        super();
+        super(Uri.parse(EmbedUtils.getYoutubeThumbnailUrl(youtubeId)),480,360,maxWidth);
         mYoutubeId = youtubeId;
-        mImageWidth = mImageHeight = NumberUtils.INVALID;
-        mMaxImageWidth = maxWidth;
-
-        mImage = Uri.parse(EmbedUtils.getYoutubeThumbnailUrl(youtubeId));
-
     }
 
-
-    private boolean imageSizeKnown(){
-        return (mImageWidth != NumberUtils.INVALID );
-    }
-
-    private void ensureNotNullPlaceHolder(){
-        if(mBitmap == null){
-
-            Rect size = getBitmapSize();
-
-            mBitmap = new BitmapDrawable( Bitmap.createBitmap(size.width(),
-                    size.height(),
-                    Bitmap.Config.ALPHA_8));
-            mBitmap.setBounds(getBitmapSize());
-        }
-    }
-
-    public Rect getBitmapSize(){
-
-       // mRef.getInstance().getPaddingLeft()
-//        if(mBitmap != null){
-//         int measured = mMaxImageWidth;
-//         double rate = (double)measured / (double)mBitmap.getIntrinsicWidth();
-//         return new Rect(0, 0, measured, (int)(mBitmap.getIntrinsicHeight() * rate));
-//        }
-
-        if(mRef != null &&
-                mRef.get() != null &&
-                mRef.get().getMeasuredWidth() != 0){
-
-            final RichContentViewDisplay view = mRef.get();
-            double availableWidth =  (double)(view.getMeasuredWidth());
-
-            double availableHeight = availableWidth / 16 * 9;
-            return new Rect(0,0,(int)availableWidth, (int)availableHeight);
-        }
-
-        double measure =  mMaxImageWidth;
-        double height = measure / 16 * 9;
-        return new Rect(0,0,(int)measure,(int)height);
-    }
 
 
     @Override
@@ -108,11 +54,9 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
 
     @Override
     public void readFromParcel(Parcel src) {
-        mImage = src.readParcelable(Uri.class.getClassLoader());
+        super.readFromParcel(src);
         mYoutubeId = src.readString();
-        mImageWidth = src.readInt();
-        mImageHeight = src.readInt();
-        mMaxImageWidth = src.readInt();
+
     }
 
     WeakReference<RichContentViewDisplay> mRef;
@@ -124,22 +68,10 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
             mYoutubeIcon = BitmapFactory.decodeResource(view.getContext().getResources(),
                     R.drawable.youtube_play);; //view.getContext().getResources().getDrawable(R.drawable.youtube_play);
         }
-
-        mAttachedToWindow = view.viewAttachedToWindow();
-        mRef = new WeakReference(view);
-        loadImage();
+        super.onSpannedSetToView(view);
     }
 
-    @Override
-    public void onAttachedToView(RichContentViewDisplay view) {
-        mAttachedToWindow = true;
-        loadImage();
-    }
 
-    @Override
-    public void onDetachedFromView(RichContentViewDisplay view) {
-        mAttachedToWindow  = false;
-    }
 
     @Override
     public int describeContents() {
@@ -157,67 +89,20 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
     }
 
 
-    @Override
-    public int getSize(Paint paint, CharSequence text,
-                       int start, int end,
-                       Paint.FontMetricsInt fm) {
 
-        Rect rect = getBitmapSize();
-
-        if (fm != null) {
-            fm.ascent = -rect.bottom;
-            fm.descent = 0;
-
-            fm.top = fm.ascent;
-            fm.bottom = 0;
-        }
-
-        return rect.right;
-    }
 
 
 
     @Override
     public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
-
-        mRect = getBitmapSize();
-
-        //drawIcon(x,canvas);
-
-        if(mBitmap != null){
-
-            if(mBitmap instanceof BitmapDrawable){
-                Bitmap bmp = ((BitmapDrawable)mBitmap).getBitmap();
-                drawBitmap(canvas,bmp,mRect,start,end,x,top,y,bottom,paint);
-            }else{
-                int transY = bottom - mRect.bottom;
-                transY -= paint.getFontMetricsInt().descent;
-                canvas.save();
-                canvas.translate(x, transY);
-                mBitmap.setBounds(mRect);
-                mBitmap.draw(canvas);
-                canvas.restore();
-            }
-
-        }
-
-        drawBitmap(canvas, mYoutubeIcon, mRect, start, end, x, top, y, bottom, paint);
+        super.draw(canvas,text,start,end,x,top,y,bottom,paint);
+        if(mBitmap == null) return;
+        final Rect bitmapBounds = mBitmap.getBounds();
+        drawBitmap(canvas, mYoutubeIcon, bitmapBounds, start, end, x, top, y, bottom, paint);
     }
 
-//    private void drawIcon(float offset , Canvas c){
-//        c.save();
-//
-//        Rect rect = mYoutubeIcon.copyBounds();
-//        float x = (mRef.getInstance().getMeasuredWidth() - rect.width()) / 2 + offset;
-//        c.translate(x, (mRef.getInstance().getMeasuredHeight() - rect.height()) / 2);
-//        mYoutubeIcon.draw(c);
-//        c.restore();
-//    }
 
-    private Rect mRect = null;
 
-    private boolean mLoading = false;
-    private boolean mAttachedToWindow = false;
 
     private static void drawBitmap(Canvas canvas,
                                    Bitmap bitmap,
@@ -244,45 +129,7 @@ public class YouTubeSpan extends ReplacementSpan implements RemoteBitmapSpan, Cl
         canvas.restore();
     }
 
-    @Override
-    public void updateBitmap(Context context, Drawable bitmap){
-        mBitmap = bitmap;
-        boolean needsLayout = false;
-        if(imageSizeKnown() == false) {
-            needsLayout = true;
-            mImageWidth = bitmap.getIntrinsicWidth();
-            mImageHeight = bitmap.getIntrinsicHeight();
-        }
-        mBitmap.setBounds(getBitmapSize());
-        final RichContentViewDisplay view = mRef.get();
 
-        if(view != null && mAttachedToWindow){
-            mBitmap.setCallback(view);
-            mBitmap.invalidateSelf();
-
-            if(needsLayout == true){
-                view.requestLayout();
-            }
-            view.invalidate();
-        }
-    }
-
-    @Override
-    public Rect getPossibleSize() {
-        return getBitmapSize();
-    }
-
-
-
-    private void loadImage(){
-        if(mAttachedToWindow == true && mLoading == false && mRef != null){
-            mLoading = true;
-            UrlBitmapDownloader downloader = SpanUtil.get(mRef);
-            if(downloader != null){
-                downloader.downloadImage(this,mImage);
-            }
-        }
-    }
 
 
 

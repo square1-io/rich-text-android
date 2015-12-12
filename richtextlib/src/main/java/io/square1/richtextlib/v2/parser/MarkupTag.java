@@ -16,11 +16,13 @@ public class MarkupTag {
          public  boolean duplicateOnStart;
          public final Attributes attributes;
          public final List<String> elementClasses;
+         public boolean discardOnClosing;
 
     private TagHandler mTagHandler;
 
          public MarkupTag(String tag, Attributes attributes){
              this.tag = tag;
+             this.discardOnClosing = false;
              this.closeOnEnd = true;
              this.duplicateOnStart = true;
              this.attributes = new AttributesImpl(attributes);

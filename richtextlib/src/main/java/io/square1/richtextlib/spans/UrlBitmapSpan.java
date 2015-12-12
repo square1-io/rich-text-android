@@ -46,13 +46,13 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
 
     protected final int mVerticalAlignment;
 
-    private int mMaxImageWidth;
-    private int mImageWidth;
-    private int mImageHeight;
+     int mMaxImageWidth;
+     int mImageWidth;
+     int mImageHeight;
 
-    private Uri mImage;
+     Uri mImage;
 
-    private Drawable mBitmap;
+     Drawable mBitmap;
 
     public UrlBitmapSpan(){
         mVerticalAlignment = ALIGN_BASELINE;
@@ -231,6 +231,9 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
         return rect.right;
     }
 
+    Drawable getBitmap(){
+        return mBitmap;
+    }
 
     @Override
     public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
