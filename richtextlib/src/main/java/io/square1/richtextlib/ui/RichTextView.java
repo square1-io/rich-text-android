@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 
+import android.graphics.Movie;
 import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -43,10 +44,10 @@ public class RichTextView extends TextView  {
 
 
     private void parseCustomAttributes(Context ctx, AttributeSet attrs) {
-       // TypedArray a = ctx.obtainStyledAttributes(attrs,R.sty);
-       // String customFont = a.getString(R.styleable.io_square1_richtextlib_ui_RichTextView_);
-       // setCustomFont(ctx, customFont);
-       // a.recycle();
+        TypedArray a = ctx.obtainStyledAttributes(attrs, R.styleable.io_square1_richtextlib_ui_RichTextView);
+        String customFont = a.getString(R.styleable.io_square1_richtextlib_ui_RichTextView_fontName);
+        setCustomFont(ctx, customFont);
+        a.recycle();
     }
 
     public boolean setCustomFont(Context ctx, String asset) {
@@ -65,7 +66,8 @@ public class RichTextView extends TextView  {
             return false;
 
         }
-
+        Movie
         return true;
     }
+
 }
