@@ -22,7 +22,7 @@ public class IMGHandler extends TagHandler {
     public void onTagOpen(MarkupContext context, MarkupTag tag, RichTextDocumentElement out) {
 
         //buildNewSpannable();
-        SpannedBuilderUtils.ensureAtLeastThoseNewLines(out,1);
+        //SpannedBuilderUtils.ensureAtLeastThoseNewLines(out,1);
 
         Attributes attributes = tag.attributes;
         String src = attributes.getValue("", "src");

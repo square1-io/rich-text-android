@@ -1,6 +1,7 @@
 package io.square1.richtextlib.ui;
 
 import android.annotation.TargetApi;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -27,9 +28,9 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import io.square1.richtextlib.spans.Style;
-import io.square1.richtextlib.v2.RichTextV2;
-import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 import io.square1.richtextlib.R;
+import io.square1.richtextlib.v2.content.RichTextDocumentElement;
+
 
 import io.square1.richtextlib.spans.ClickableSpan;
 import io.square1.richtextlib.spans.RichTextSpan;
@@ -505,5 +506,16 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
         }
 
         return  new Point(x,y);
+    }
+
+    @Override
+    public int getPaddingLeft() {
+        return super.getPaddingLeft();
+    }
+
+    @Override
+    public int getPaddingRight() {
+        return super.getPaddingRight();
+
     }
 }

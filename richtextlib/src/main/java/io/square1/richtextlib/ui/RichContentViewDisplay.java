@@ -41,5 +41,8 @@ public interface RichContentViewDisplay extends Drawable.Callback {
      void performLayout();
     Context getContext();
 
+    public int getPaddingLeft();
+    public int getPaddingRight();
+
 
 }

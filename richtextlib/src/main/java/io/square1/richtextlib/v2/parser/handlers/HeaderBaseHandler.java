@@ -21,7 +21,10 @@ public abstract class HeaderBaseHandler extends TagHandler {
     public void onTagOpen(MarkupContext context, MarkupTag tag, RichTextDocumentElement out) {
 
         String tagName = tag.tag;
-        SpannedBuilderUtils.ensureAtLeastThoseNewLines(out, 2);
+        //don't add new lines if we are at the top of the document
+        if(out.length() > 0) {
+            SpannedBuilderUtils.ensureAtLeastThoseNewLines(out, 2);
+        }
         char value =  tagName.charAt(1);
         SpannedBuilderUtils.startSpan(out, new Markers.Header( value - '1'));
 

@@ -59,7 +59,7 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
     }
 
     public UrlBitmapSpan(Uri image,  int imageWidth, int imageHeight, int maxImageWidth){
-        this(null,image, imageWidth,imageHeight,maxImageWidth,ALIGN_BOTTOM);
+        this(null,image, imageWidth,imageHeight,maxImageWidth,ALIGN_BASELINE);
 
     }
     public UrlBitmapSpan(Bitmap bitmap,
@@ -147,7 +147,12 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
 
     private int containerViewHasMeasure(){
         if(mRef != null && mRef.get() != null){
-            int measured = mRef.get().getMeasuredWidth();
+            RichContentViewDisplay display = mRef.get();
+
+            int measured = display.getMeasuredWidth() -
+                    display.getPaddingLeft() -
+                    display.getPaddingRight();
+
             if(measured > 0) return measured;
         }
 
@@ -251,6 +256,7 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
 
         //center
         x = x + (mRef.get().getMeasuredWidth() - bitmapBounds.width()) / 2;
+        x = x - mRef.get().getPaddingLeft();
         canvas.translate(x, transY);
 
 
