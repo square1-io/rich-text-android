@@ -26,7 +26,8 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.square1.richtextlib.v2.content.OembedElement;
+
+import io.square1.richtextlib.v2.content.OembedDocumentElement;
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 import io.square1.richtextlib.spans.RemoteBitmapSpan;
 import io.square1.richtextlib.spans.UrlBitmapDownloader;
@@ -179,13 +180,13 @@ public class MainActivity extends ActionBarActivity implements UrlBitmapDownload
                     }
                     view.setText( (RichTextDocumentElement) item);
                 }
-                else if(item instanceof OembedElement){
+                else if(item instanceof OembedDocumentElement){
 
                     if(convertView == null){
                         TextView text = new TextView(MainActivity.this);
                         convertView = text;
                     }
-                    OembedElement oembedElement = (OembedElement)item;
+                    OembedDocumentElement oembedElement = (OembedDocumentElement)item;
                     ((TextView)convertView).setText(oembedElement.getType() + " " + oembedElement.getContent());
                 }
 

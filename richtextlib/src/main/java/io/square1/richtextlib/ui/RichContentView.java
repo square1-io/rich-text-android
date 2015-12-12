@@ -412,33 +412,27 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
                 attrs,
                 R.styleable.RichContentView,
                 0, 0);
-//
-//        TypedArray a = ctx.obtainStyledAttributes(attrs, R.styleable.io_square1_richtextlib_ui_RichContentView);
-//
-//        String customFont = a.getString(RichTextV2.styleable.io_square1_richtextlib_ui_RichContentView_fontFamily);
-//        setFontFamily(customFont);
-//
-//        if(a.hasValue(R.styleable.io_square1_richtextlib_ui_RichContentView_textSize)) {
-//           int textSize =  a.getDimensionPixelSize(R.styleable.io_square1_richtextlib_ui_RichContentView_textSize, (int)mDefaultPixelSize);
-//           setRawTextSize(textSize);
-//        }
-//
-//        if(a.hasValue(R.styleable.io_square1_richtextlib_ui_RichContentView_textColor)) {
-//            int color =  a.getColor(R.styleable.io_square1_richtextlib_ui_RichContentView_textColor, Color.BLACK);
-//            mTextPaint.setColor(color);
-//        }
-//
-//
-//        if(a.hasValue(R.styleable.io_square1_richtextlib_ui_RichContentView_textColorLink)) {
-//            int color =  a.getColor(R.styleable.io_square1_richtextlib_ui_RichContentView_textColorLink,Color.BLUE);
-//            mTextPaint.linkColor = color;
-//        }
-//
-//       // a.getColor(R.stryleable)
-//
-//
+        try {
+            String customFont = a.getString(R.styleable.RichContentView_android_fontFamily);
+            setFontFamily(customFont);
 
-      //  a.recycle();
+            if (a.hasValue(R.styleable.RichContentView_android_textSize)) {
+                int textSize = a.getDimensionPixelSize(R.styleable.RichContentView_android_textSize, (int) mDefaultPixelSize);
+                setRawTextSize(textSize);
+            }
+
+            if (a.hasValue(R.styleable.RichContentView_android_textColor)) {
+                int color = a.getColor(R.styleable.RichContentView_android_textColor, Color.BLACK);
+                mTextPaint.setColor(color);
+            }
+
+            if (a.hasValue(R.styleable.RichContentView_android_textColorLink)) {
+                int color = a.getColor(R.styleable.RichContentView_android_textColorLink, Color.BLUE);
+                mTextPaint.linkColor = color;
+            }
+        }finally {
+            a.recycle();
+        }
     }
 
     public boolean setFontFamily(String customFont) {
