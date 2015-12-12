@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.Browser;
+import android.text.Html;
 import android.text.TextUtils;
 import android.text.style.ClickableSpan;
 import android.view.View;
@@ -32,6 +33,7 @@ public class URLSpan extends ClickableSpan implements io.square1.richtextlib.spa
     public URLSpan(){}
 
     public URLSpan(String url) {
+        Html.fromHtml()
         mURL = url;
         if(TextUtils.isEmpty(mURL) == true){
             mURL = Uri.EMPTY.toString();

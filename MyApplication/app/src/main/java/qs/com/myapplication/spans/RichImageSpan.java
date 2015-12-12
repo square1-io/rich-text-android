@@ -43,7 +43,7 @@ public class RichImageSpan extends android.text.style.ImageSpan implements RichS
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        mBitmap.
+
 
 
     }
