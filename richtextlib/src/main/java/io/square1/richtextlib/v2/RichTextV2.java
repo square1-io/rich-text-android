@@ -127,9 +127,12 @@ public class RichTextV2 {
 
     private ArrayList<DocumentElement> mResult = new ArrayList<>();
     private Stack<MarkupTag> mStack = new Stack<>();
+    private ArrayList<MarkupTag> mHistory = new ArrayList<>();
     private Stack<MarkupContext> mMarkupContextStack = new Stack<>();
     private RichTextDocumentElement mOutput;
     private MarkupContext mCurrentContext;
+
+
 
     private RichTextV2(Context context) {
         init();
@@ -255,9 +258,11 @@ public class RichTextV2 {
     public void startElement(String uri, String localName, Attributes atts, String textContent) {
 
         processAccumulatedTextContent(textContent);
+        //MarkupTag last = mStack.peek();
         MarkupTag tag = new MarkupTag(localName,atts);
         mStack.push(tag);
         mCurrentContext = mCurrentContext.onTagOpen(tag, mOutput, false);
+        mHistory.add(tag);
         mMarkupContextStack.push( mCurrentContext );
     }
 
@@ -294,8 +299,8 @@ public class RichTextV2 {
             m.appendReplacement(buffer, "");
             mOutput.append(buffer);
 
-            CharSequence link = accumulatedText.subSequence( matchStart, matchEnd);
-            // if( EmbedUtils.parseLink(mAccumulatedText, String.valueOf(link), this) == false){
+            CharSequence link = accumulatedText.subSequence(matchStart, matchEnd);
+
             if( EmbedUtils.parseLink(accumulatedText, String.valueOf(link), new EmbedUtils.ParseLinkCallback() {
                 @Override
                 public void onLinkParsed(Object callingObject, String result, EmbedUtils.TEmbedType type) {
@@ -309,11 +314,7 @@ public class RichTextV2 {
 
                 if(TextUtils.isEmpty(link) == false) {
                     SpannedBuilderUtils.makeLink(link.toString(), null, mOutput);
-                    //int where = mSpannableStringBuilder.length();
-                    // mSpannableStringBuilder.append(link);
-                    // mSpannableStringBuilder.setSpan(new URLSpan(link.toString()), where, where + link.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
-                // }
 
             }
 
@@ -338,6 +339,7 @@ public class RichTextV2 {
             }
 
             SpannedBuilderUtils.fixFlags(mOutput);
+            SpannedBuilderUtils.trimTrailNewlines(mOutput,0);
             mResult.add(mOutput);
 
             //create new Output
@@ -368,23 +370,23 @@ public class RichTextV2 {
                     return current;
                 }
             }
-
-
-
-//            //while walking back on the stack first we find the child
-//            // then look at the next element in the stack which will be the parent
-//
-//            if(childFound == true) {
-//                if (parent != child) return parent;
-//            }else {
-//                childFound = (parent != child);
-//            }
         }
 
         return null;
     }
 
 
+    public final Stack<MarkupTag> getStack(){
+        return mStack;
+    }
+
+    public final MarkupTag getPrevious(){
+
+        if(mHistory.size() > 0) {
+            return mHistory.get(mHistory.size() - 1);
+        }
+        return null;
+    }
 
     private void appendRemainder(){
         if(mOutput != null &&

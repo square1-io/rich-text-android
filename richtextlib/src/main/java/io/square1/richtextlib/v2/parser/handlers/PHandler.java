@@ -14,6 +14,14 @@ public class PHandler extends TagHandler {
     @Override
     public void onTagOpen(MarkupContext context, MarkupTag tag, RichTextDocumentElement out) {
     //    spare the new lines if starting at top
+
+        MarkupTag previous = context.getRichText().getPrevious();
+
+        if(previous != null && previous.tag.equalsIgnoreCase(tag.tag)){
+            SpannedBuilderUtils.ensureAtLeastThoseNewLines(out, 1);
+            return;
+        }
+
         if(out.length() > 0) {
             SpannedBuilderUtils.ensureAtLeastThoseNewLines(out, 2);
         }else {

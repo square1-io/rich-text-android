@@ -119,6 +119,11 @@ public class MainActivity extends ActionBarActivity implements UrlBitmapDownload
         String html = ReadFromfile("joe.html");
         final RichDocument document =  RichTextV2.fromHtml(this, html);
 
+        RichTextDocumentElement element = (RichTextDocumentElement) document.getElements().get(0);
+        char c = element.charAt(element.length() - 1);
+        element.trim(1);
+        ((RichContentView)findViewById(R.id.fixed)).setText(element);
+
         adapter = new BaseAdapter() {
 
             @Override
@@ -211,9 +216,6 @@ public class MainActivity extends ActionBarActivity implements UrlBitmapDownload
                 return false;
             }
         };
-
-
-
 
         ((ListView) findViewById(R.id.list)).setAdapter(adapter);
 

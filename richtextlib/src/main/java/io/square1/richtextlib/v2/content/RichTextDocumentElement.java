@@ -174,4 +174,12 @@ public class RichTextDocumentElement extends DocumentElement implements CharSequ
             return objs[objs.length - 1];
         }
     }
+
+    public void trim(int count) {
+        if(count > 0) {
+            int start = length() - count;
+            int end = start + count - 1;
+            mSpannableString.delete(start, end);
+        }
+    }
 }

@@ -70,10 +70,10 @@ public class MarkupContext {
 
     }
 
-    public final MarkupContext onTagOpen(MarkupTag tag, RichTextDocumentElement builder, boolean newOutput) {
-        TagHandler handler = getTagHandler(tag);
+    public final MarkupContext onTagOpen(MarkupTag current, RichTextDocumentElement builder, boolean newOutput) {
+        TagHandler handler = getTagHandler(current);
         if( (newOutput && handler.openWhenSplitting()) || !newOutput ) {
-            handler.onTagOpen(this, tag, builder);
+            handler.onTagOpen(this, current, builder);
             return handler.replaceContext(this);
         }
 

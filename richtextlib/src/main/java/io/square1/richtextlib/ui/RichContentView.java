@@ -118,8 +118,8 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
 
     private TextPaint mTextPaint;
     private Layout mLayout;
-    private float mSpacingMult = 1.0f;
-    private float mSpacingAdd = 1.0f;
+    private float mSpacingMult = 0.99f;
+    private float mSpacingAdd = 0.0f;
 
     private int mLastMeasuredWidth;
     private float mDefaultPixelSize;

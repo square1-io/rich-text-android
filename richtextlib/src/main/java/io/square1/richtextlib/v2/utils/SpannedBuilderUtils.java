@@ -1,9 +1,11 @@
 package io.square1.richtextlib.v2.utils;
 
 import android.text.Spannable;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ParagraphStyle;
 
+import io.square1.richtextlib.spans.RelativeSizeSpan;
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 import io.square1.richtextlib.spans.URLSpan;
 import io.square1.richtextlib.spans.UnsupportedContentSpan;
@@ -39,11 +41,7 @@ public class SpannedBuilderUtils {
         //at max newLinesCount
         // if there are more new lines than what we want
         if(newLinesCountAfter < currentNewLines){
-            int start = len - (currentNewLines - newLinesCountAfter) - 1;
-            for(int index = start; index < len; index ++){
-                text.replaceAt(index,"");
-            }
-
+            text.trim(currentNewLines - newLinesCountAfter);
         }
 
     }
@@ -131,7 +129,7 @@ public class SpannedBuilderUtils {
     public static void fixFlags(RichTextDocumentElement builder){
 
         // Fix flags and range for paragraph-type markup.
-        Object[] obj = builder.getSpans(0, builder.length(), ParagraphStyle.class);
+        ParagraphStyle[] obj = builder.getSpans(0, builder.length(), ParagraphStyle.class);
         for (int i = 0; i < obj.length; i++) {
             int start = builder.getSpanStart(obj[i]);
             int end = builder.getSpanEnd(obj[i]);
