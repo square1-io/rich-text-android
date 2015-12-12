@@ -33,7 +33,7 @@ public class URLSpan extends ClickableSpan implements io.square1.richtextlib.spa
     public URLSpan(){}
 
     public URLSpan(String url) {
-        Html.fromHtml()
+
         mURL = url;
         if(TextUtils.isEmpty(mURL) == true){
             mURL = Uri.EMPTY.toString();
