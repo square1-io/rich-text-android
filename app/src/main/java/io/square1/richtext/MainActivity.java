@@ -117,7 +117,7 @@ public class MainActivity extends ActionBarActivity implements UrlBitmapDownload
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        String html = ReadFromfile("joe.html");
+        String html = ReadFromfile("instagram.html");
         AdvancedMarkupContext markupContext = new AdvancedMarkupContext();
         final RichDocument document =  RichTextV2.fromHtml(this, html, markupContext , null);
 
@@ -205,12 +205,14 @@ public class MainActivity extends ActionBarActivity implements UrlBitmapDownload
 
             @Override
             public int getItemViewType(int position) {
-                return 0;
+                Object item = getItem(position);
+                if(item instanceof RichTextDocumentElement) return 0;
+                return 1;
             }
 
             @Override
             public int getViewTypeCount() {
-                return 1;
+                return 2;
             }
 
             @Override

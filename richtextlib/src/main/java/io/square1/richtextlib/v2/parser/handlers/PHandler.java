@@ -25,6 +25,7 @@ public class PHandler extends TagHandler {
 //       // }
 
         String current = out.contentString();
+
         if(TextUtils.getTrimmedLength(current) > 0 ) {
             SpannedBuilderUtils.ensureAtLeastThoseNewLines(out, 2);
         }else {

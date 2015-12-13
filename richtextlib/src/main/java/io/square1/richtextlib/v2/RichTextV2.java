@@ -134,6 +134,7 @@ public class RichTextV2 {
 
 
 
+
     private RichTextV2(Context context) {
         init();
         setupContext(new MarkupContext());
@@ -270,6 +271,9 @@ public class RichTextV2 {
         }
         //MarkupTag last = mStack.peek();
         MarkupTag tag = new MarkupTag(localName,atts);
+        if(previous != null){
+            previous.addChild(tag);
+        }
         mStack.push(tag);
         mCurrentContext = mCurrentContext.onTagOpen(tag, mOutput, false);
         mHistory.add(tag);
