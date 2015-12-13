@@ -1,5 +1,7 @@
 package io.square1.richtextlib.v2.parser.handlers;
 
+import android.text.TextUtils;
+
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 import io.square1.richtextlib.v2.parser.MarkupContext;
 import io.square1.richtextlib.v2.parser.MarkupTag;
@@ -15,14 +17,15 @@ public class PHandler extends TagHandler {
     public void onTagOpen(MarkupContext context, MarkupTag tag, RichTextDocumentElement out) {
     //    spare the new lines if starting at top
 
-        MarkupTag previous = context.getRichText().getPrevious();
+//        MarkupTag previous = context.getRichText().getPrevious();
+//
+//       // if(previous != null && previous.tag.equalsIgnoreCase(tag.tag)){
+//       //     SpannedBuilderUtils.ensureAtLeastThoseNewLines(out, 1);
+//       //     return;
+//       // }
 
-       // if(previous != null && previous.tag.equalsIgnoreCase(tag.tag)){
-       //     SpannedBuilderUtils.ensureAtLeastThoseNewLines(out, 1);
-       //     return;
-       // }
-
-        if(out.length() > 0) {
+        String current = out.contentString();
+        if(TextUtils.getTrimmedLength(current) > 0 ) {
             SpannedBuilderUtils.ensureAtLeastThoseNewLines(out, 2);
         }else {
             ///just start with a new line should be fine

@@ -191,4 +191,9 @@ public class RichTextDocumentElement extends DocumentElement implements CharSequ
         return mSpannableString.subSequence(0,30).toString()
                 + mSpannableString.subSequence(len-30, len - 1).toString();
     }
+
+    public String contentString() {
+        return mSpannableString != null ? "" : mSpannableString.toString();
+    }
+
 }
