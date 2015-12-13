@@ -21,7 +21,24 @@ public class SpannedBuilderUtils {
     public static final String BULLET = "•";
     public static final String SPACE = " ";
 
+    public static void trimLeadingNewlines(RichTextDocumentElement text){
 
+        int len = text.length();
+        int index = 0;
+        boolean found = false;
+        for(index = 0; index < len; index ++){
+
+            if( text.charAt(index) != '\n'){
+                break;
+            }
+            found = true;
+        }
+
+        if(found == true){
+            text.delete(0,index);
+        }
+
+    }
     public static void trimTrailNewlines(RichTextDocumentElement text, int newLinesCountAfter){
 
         int len = text.length();

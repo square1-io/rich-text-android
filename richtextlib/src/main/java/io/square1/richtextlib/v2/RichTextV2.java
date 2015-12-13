@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.util.Patterns;
 
@@ -132,7 +133,7 @@ public class RichTextV2 {
     private RichTextDocumentElement mOutput;
     private MarkupContext mCurrentContext;
 
-
+    private int mOembedCount;
 
 
     private RichTextV2(Context context) {
@@ -151,6 +152,7 @@ public class RichTextV2 {
     }
 
     private void init(){
+        mOembedCount = 0;
         mOutput = new RichTextDocumentElement();
         mResult = new ArrayList<>();
     }
@@ -346,6 +348,8 @@ public class RichTextV2 {
 
     public void onEmbedFound(EmbedUtils.TEmbedType type, String content){
 
+        mOembedCount ++;
+
         RichTextDocumentElement newOut = new RichTextDocumentElement();
         /// close output
         if(mOutput != null &&
@@ -360,6 +364,9 @@ public class RichTextV2 {
             String text = mOutput.contentString();
             if(TextUtils.getTrimmedLength(text) > 0) {
                 SpannedBuilderUtils.fixFlags(mOutput);
+                if(mOembedCount > 1) {
+                    SpannedBuilderUtils.trimLeadingNewlines(mOutput);
+                }
                 SpannedBuilderUtils.trimTrailNewlines(mOutput, 0);
                 mResult.add(mOutput);
             }

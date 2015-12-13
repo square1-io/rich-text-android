@@ -115,7 +115,7 @@ public class RichTextDocumentElement extends DocumentElement implements CharSequ
 
     @Override
     public <T> T[] getSpans(int start, int end, Class<T> type) {
-        return mSpannableString.getSpans(start,end,type);
+        return mSpannableString.getSpans(start, end, type);
     }
 
     @Override
@@ -178,8 +178,10 @@ public class RichTextDocumentElement extends DocumentElement implements CharSequ
     public void trim(int count) {
         if(count > 0) {
             int start = length() - count;
-            int end = start + count - 1;
-            mSpannableString.delete(start, end);
+            int end = start + count;
+            try {
+                mSpannableString.delete(start, end);
+            }catch (Exception exc){}
         }
     }
 
