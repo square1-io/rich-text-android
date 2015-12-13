@@ -19,6 +19,8 @@ import io.square1.richtextlib.v2.parser.TagHandler;
  */
 public class DIVHandler extends TagHandler {
 
+    private boolean mProcessContent = true;
+
     @Override
     public void onTagOpen(MarkupContext context, MarkupTag tag, RichTextDocumentElement out) {
 
@@ -26,6 +28,7 @@ public class DIVHandler extends TagHandler {
         String elementClass = attributes.getValue("", "class");
 
         if("pb_feed".equalsIgnoreCase(elementClass)){
+            mProcessContent = false;
             String dataGame  = attributes.getValue("", "data-game");
 
             if(TextUtils.isEmpty(dataGame) == true) return;
@@ -47,6 +50,7 @@ public class DIVHandler extends TagHandler {
 
         }
         else if("fb-video".equalsIgnoreCase(elementClass)){
+            mProcessContent = false;
             String url = attributes.getValue("","data-href");
             if(TextUtils.isEmpty(url) == false){
 
@@ -60,6 +64,10 @@ public class DIVHandler extends TagHandler {
             }
         }
 
+    }
+
+    public boolean processContent() {
+        return mProcessContent;
     }
 
     @Override
