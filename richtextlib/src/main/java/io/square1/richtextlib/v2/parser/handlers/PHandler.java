@@ -17,10 +17,10 @@ public class PHandler extends TagHandler {
 
         MarkupTag previous = context.getRichText().getPrevious();
 
-        if(previous != null && previous.tag.equalsIgnoreCase(tag.tag)){
-            SpannedBuilderUtils.ensureAtLeastThoseNewLines(out, 1);
-            return;
-        }
+       // if(previous != null && previous.tag.equalsIgnoreCase(tag.tag)){
+       //     SpannedBuilderUtils.ensureAtLeastThoseNewLines(out, 1);
+       //     return;
+       // }
 
         if(out.length() > 0) {
             SpannedBuilderUtils.ensureAtLeastThoseNewLines(out, 2);

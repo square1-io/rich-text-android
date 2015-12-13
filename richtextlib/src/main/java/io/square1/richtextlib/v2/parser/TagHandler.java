@@ -8,6 +8,9 @@ import io.square1.richtextlib.v2.content.RichTextDocumentElement;
  */
 public abstract class TagHandler {
 
+    private MarkupContext mInitialContext;
+
+
 
     public TagHandler(){
 
@@ -36,13 +39,21 @@ public abstract class TagHandler {
     public abstract void onTagOpen(MarkupContext context, MarkupTag tag , RichTextDocumentElement out);
     public abstract void onTagClose(MarkupContext context, MarkupTag tag , RichTextDocumentElement out);
 
-    public MarkupContext replaceContext(MarkupContext context){
-        return context;
+    public final MarkupContext replaceContext(MarkupContext context){
+        mInitialContext = context;
+        return getReplacementContext();
     }
 
-    public MarkupContext restoreContext(MarkupContext context){
-        return context;
+    //return the initial context this handler was created in
+    public  MarkupContext getInitialContext(){
+        return mInitialContext;
     }
+
+
+    public  MarkupContext getReplacementContext(){
+        return mInitialContext;
+    }
+
 
     public boolean processContent() {
         return true;

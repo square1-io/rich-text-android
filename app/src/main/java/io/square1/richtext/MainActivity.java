@@ -38,6 +38,7 @@ import io.square1.richtextlib.ui.RichContentView;
 
 import io.square1.richtextlib.v2.RichTextV2;
 import io.square1.richtextlib.v2.content.RichDocument;
+import io.square1.richtextlib.v2.parser.advanced.AdvancedMarkupContext;
 
 
 public class MainActivity extends ActionBarActivity implements UrlBitmapDownloader {
@@ -117,12 +118,13 @@ public class MainActivity extends ActionBarActivity implements UrlBitmapDownload
         setContentView(R.layout.activity_main);
 
         String html = ReadFromfile("joe.html");
-        final RichDocument document =  RichTextV2.fromHtml(this, html);
+        AdvancedMarkupContext markupContext = new AdvancedMarkupContext();
+        final RichDocument document =  RichTextV2.fromHtml(this, html, markupContext , null);
 
-        RichTextDocumentElement element = (RichTextDocumentElement) document.getElements().get(0);
-        char c = element.charAt(element.length() - 1);
-        element.trim(1);
-        ((RichContentView)findViewById(R.id.fixed)).setText(element);
+       // RichTextDocumentElement element = (RichTextDocumentElement) document.getElements().get(0);
+       // char c = element.charAt(element.length() - 1);
+       // element.trim(1);
+       // ((RichContentView)findViewById(R.id.fixed)).setText(element);
 
         adapter = new BaseAdapter() {
 

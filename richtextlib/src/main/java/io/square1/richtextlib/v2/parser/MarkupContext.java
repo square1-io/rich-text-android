@@ -19,19 +19,23 @@ public class MarkupContext {
     private Style mStyle;
     private RichTextV2 mRichTextV2;
 
-    public MarkupContext(RichTextV2 richText, Style style){
-        mStyle = style;
-        mRichTextV2 = richText;
+
+    public MarkupContext(){
         mHandlersPackage = DefaultHandler.class.getPackage().getName();
         mHandlers = new HashMap<>();
     }
 
-    void setmRichText(RichTextV2 richText){
+    public final  void setRichText(RichTextV2 richText){
         mRichTextV2 = richText;
     }
 
-    public RichTextV2 getRichText(){
+
+    public final RichTextV2 getRichText(){
         return mRichTextV2;
+    }
+
+    public void setStyle(Style style){
+        mStyle = style;
     }
 
     public Style getStyle(){
@@ -58,6 +62,7 @@ public class MarkupContext {
         try {
 
             TagHandler handler =  tagHandlerClass.newInstance();
+            handler.replaceContext(this);
             tag.setTagHandler(handler);
             return handler;
 
@@ -68,6 +73,15 @@ public class MarkupContext {
             return defaultHandler;
         }
 
+    }
+
+    public TagHandler tagHandlerInstance(MarkupTag tag){
+
+        if(tag.getTagHandler() == null){
+
+        }
+
+        return tag.getTagHandler();
     }
 
     public final MarkupContext onTagOpen(MarkupTag current, RichTextDocumentElement builder, boolean newOutput) {
@@ -81,10 +95,11 @@ public class MarkupContext {
     }
 
     public final MarkupContext onTagClose(MarkupTag tag, RichTextDocumentElement builder, boolean newOutput) {
-        TagHandler handler = getTagHandler(tag);
+        TagHandler handler = tag.getTagHandler();
+        //getTagHandler(tag);
         if( (newOutput && handler.closeWhenSplitting()) || !newOutput ) {
             handler.onTagClose(this, tag, builder);
-            return handler.restoreContext(this);
+            return handler.getInitialContext();
         }
 
         return this;

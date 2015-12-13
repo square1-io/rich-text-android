@@ -182,4 +182,13 @@ public class RichTextDocumentElement extends DocumentElement implements CharSequ
             mSpannableString.delete(start, end);
         }
     }
+
+    @Override
+    public String toString(){
+        int len = mSpannableString.length();
+        if(len == 0) return "<EMPTY>";
+        if(len < 70) return mSpannableString.toString();
+        return mSpannableString.subSequence(0,30).toString()
+                + mSpannableString.subSequence(len-30, len - 1).toString();
+    }
 }

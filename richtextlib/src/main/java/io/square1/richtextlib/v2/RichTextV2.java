@@ -136,7 +136,7 @@ public class RichTextV2 {
 
     private RichTextV2(Context context) {
         init();
-        setupContext(new MarkupContext(this, new DefaultStyle(context)));
+        setupContext(new MarkupContext());
     }
     private RichTextV2(MarkupContext markupContext) {
         init();
@@ -145,6 +145,7 @@ public class RichTextV2 {
 
     private void setupContext(MarkupContext markupContext){
         mCurrentContext = markupContext;
+        mCurrentContext.setRichText(this);
         mMarkupContextStack.push(mCurrentContext);
     }
 
@@ -176,8 +177,7 @@ public class RichTextV2 {
 
     public static RichDocument fromHtml(Context context, String source) {
 
-        final Style defaultStyle = new DefaultStyle(context);
-       return fromHtmlImpl(context, source,null, defaultStyle );
+       return fromHtmlImpl(context, source, null, null );
 
     }
 
@@ -211,6 +211,9 @@ public class RichTextV2 {
                                                          Style style)  {
 
 
+        if(style == null){
+            style = new DefaultStyle(context);
+        }
 
 
         try {
@@ -237,8 +240,11 @@ public class RichTextV2 {
 
 
 
-            RichTextV2 richText = markupContext == null ? new RichTextV2(context) :
+            RichTextV2 richText = markupContext == null ?
+                    new RichTextV2(context) :
                     new RichTextV2(markupContext);
+
+            richText.mCurrentContext.setStyle(style);
 
             reader.setContentHandler(new InternalContentHandler(richText));
             reader.parse(new InputSource(new StringReader(source)));
@@ -257,7 +263,11 @@ public class RichTextV2 {
 
     public void startElement(String uri, String localName, Attributes atts, String textContent) {
 
-        processAccumulatedTextContent(textContent);
+        //a new tag is starting here , this is text from previous tag should we process ?
+        MarkupTag previous = getPrevious();
+        if( previous == null || previous.getTagHandler().processContent()) {
+            processAccumulatedTextContent(textContent);
+        }
         //MarkupTag last = mStack.peek();
         MarkupTag tag = new MarkupTag(localName,atts);
         mStack.push(tag);
@@ -276,10 +286,11 @@ public class RichTextV2 {
 
         if(tag.tag.equalsIgnoreCase(localName) == true) {
             if(tag.discardOnClosing == false) {
-                mCurrentContext.onTagClose(tag, mOutput, false);
+                mCurrentContext =  mCurrentContext.onTagClose(tag, mOutput, false);
             }
         }
-        mCurrentContext = mMarkupContextStack.pop();
+
+        //mCurrentContext = mMarkupContextStack.pop();
     }
 
 
@@ -383,6 +394,8 @@ public class RichTextV2 {
     public final Stack<MarkupTag> getStack(){
         return mStack;
     }
+
+
 
     public final MarkupTag getPrevious(){
 
