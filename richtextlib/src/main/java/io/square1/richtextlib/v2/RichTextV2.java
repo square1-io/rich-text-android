@@ -357,9 +357,12 @@ public class RichTextV2 {
                 tag.discardOnClosing = true;
             }
 
-            SpannedBuilderUtils.fixFlags(mOutput);
-            SpannedBuilderUtils.trimTrailNewlines(mOutput,0);
-            mResult.add(mOutput);
+            String text = mOutput.contentString();
+            if(TextUtils.getTrimmedLength(text) > 0) {
+                SpannedBuilderUtils.fixFlags(mOutput);
+                SpannedBuilderUtils.trimTrailNewlines(mOutput, 0);
+                mResult.add(mOutput);
+            }
 
             //create new Output
         for(int index = 0; index < mStack.size(); index ++){
@@ -411,7 +414,7 @@ public class RichTextV2 {
 
     private void appendRemainder(){
         if(mOutput != null &&
-                mOutput.length() > 0){
+                TextUtils.getTrimmedLength(mOutput.contentString()) > 0){
             SpannedBuilderUtils.fixFlags(mOutput);
             mResult.add(mOutput);
         }

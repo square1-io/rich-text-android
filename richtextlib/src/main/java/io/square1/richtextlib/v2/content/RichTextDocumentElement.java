@@ -188,12 +188,13 @@ public class RichTextDocumentElement extends DocumentElement implements CharSequ
         int len = mSpannableString.length();
         if(len == 0) return "<EMPTY>";
         if(len < 70) return mSpannableString.toString();
-        return mSpannableString.subSequence(0,30).toString()
-                + mSpannableString.subSequence(len-30, len - 1).toString();
+        return mSpannableString.subSequence(0,30).toString() +
+                " ~...~ " +
+                mSpannableString.subSequence(len-30, len - 1).toString();
     }
 
     public String contentString() {
-        return mSpannableString != null ? "" : mSpannableString.toString();
+        return mSpannableString == null ? "" : mSpannableString.toString();
     }
 
 }

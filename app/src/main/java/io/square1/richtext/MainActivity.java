@@ -117,7 +117,7 @@ public class MainActivity extends ActionBarActivity implements UrlBitmapDownload
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        String html = ReadFromfile("instagram.html");
+        String html = ReadFromfile("white_space.html");
         AdvancedMarkupContext markupContext = new AdvancedMarkupContext();
         final RichDocument document =  RichTextV2.fromHtml(this, html, markupContext , null);
 
