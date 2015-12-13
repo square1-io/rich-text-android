@@ -183,6 +183,15 @@ public class RichTextDocumentElement extends DocumentElement implements CharSequ
         }
     }
 
+    public void delete(int start, int end) {
+        try {
+           // mSpannableString.replace(start, end, " ", 0, 0);
+            mSpannableString = mSpannableString.delete(start, end);
+        }catch (Exception e){
+
+        }
+    }
+
     @Override
     public String toString(){
         int len = mSpannableString.length();

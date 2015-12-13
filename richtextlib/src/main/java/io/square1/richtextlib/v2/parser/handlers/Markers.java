@@ -23,6 +23,7 @@ public interface Markers {
       class Bullet { }
       class Code {}
       class Sup {}
+
       class Blockquote {
 
         public static final String CLASS_TWEET = "twitter-tweet";
@@ -76,6 +77,10 @@ public interface Markers {
                 type = EmbedUtils.TEmbedType.EUnsupported;
             }
         }
+    }
+
+    class P{
+        int newLinesAtStart;
     }
 
       class Header {

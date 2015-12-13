@@ -46,7 +46,7 @@ public class SpannedBuilderUtils {
 
     }
 
-    public static void ensureAtLeastThoseNewLines(RichTextDocumentElement text, int newLines){
+    public static int ensureAtLeastThoseNewLines(RichTextDocumentElement text, int newLines){
 
         int len = text.length();
 
@@ -68,6 +68,7 @@ public class SpannedBuilderUtils {
             text.append('\n');
         }
 
+        return newLines;
     }
 
     public static void makeYoutube(String youtubeId, int maxImageWidth, RichTextDocumentElement builder){

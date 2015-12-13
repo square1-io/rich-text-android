@@ -1,5 +1,6 @@
 package io.square1.richtextlib.v2.parser.handlers;
 
+import android.text.Spannable;
 import android.text.TextUtils;
 
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
@@ -26,9 +27,15 @@ public class PHandler extends TagHandler {
 
         String current = out.contentString();
 
+
+        Markers.P marker = new Markers.P();
+        SpannedBuilderUtils.startSpan(out, marker);
+
+
         if(TextUtils.getTrimmedLength(current) > 0 ) {
-            SpannedBuilderUtils.ensureAtLeastThoseNewLines(out, 2);
+          marker.newLinesAtStart = SpannedBuilderUtils.ensureAtLeastThoseNewLines(out, 2);
         }else {
+            marker.newLinesAtStart = 1;
             ///just start with a new line should be fine
             out.append('\n');
         }
@@ -36,7 +43,20 @@ public class PHandler extends TagHandler {
 
     @Override
     public void onTagClose(MarkupContext context, MarkupTag tag, RichTextDocumentElement out) {
-        SpannedBuilderUtils.ensureAtLeastThoseNewLines(out,1);
+
+        int len = out.length();
+        Markers.P obj = out.getLastSpan(Markers.P.class);
+        int where = out.getSpanStart(obj);
+
+        out.removeSpan(obj);
+
+        if (len > obj.newLinesAtStart) {
+            SpannedBuilderUtils.ensureAtLeastThoseNewLines(out,1);
+           // text.setSpan(repl, where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }else if(obj.newLinesAtStart > 0) {
+            out.delete(where,where + obj.newLinesAtStart );
+        }
+
     }
 
     //don't add extra new lines when an OEMbed was found and the page continues
