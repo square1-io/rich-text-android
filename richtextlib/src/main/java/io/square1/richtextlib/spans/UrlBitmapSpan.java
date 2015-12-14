@@ -55,11 +55,11 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
      Drawable mBitmap;
 
     public UrlBitmapSpan(){
-        mVerticalAlignment = ALIGN_BASELINE;
+        mVerticalAlignment = ALIGN_BOTTOM;
     }
 
     public UrlBitmapSpan(Uri image,  int imageWidth, int imageHeight, int maxImageWidth){
-        this(null,image, imageWidth,imageHeight,maxImageWidth,ALIGN_BASELINE);
+        this(null,image, imageWidth,imageHeight,maxImageWidth,ALIGN_BOTTOM);
 
     }
     public UrlBitmapSpan(Bitmap bitmap,
