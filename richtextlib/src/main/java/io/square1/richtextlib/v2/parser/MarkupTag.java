@@ -43,6 +43,10 @@ public class MarkupTag {
         mChildren.add(tag);
     }
 
+    public final String getElementClass(){
+        return attributes.getValue("class");
+    }
+
     public void setTagHandler(TagHandler handler) {
         mTagHandler = handler;
     }

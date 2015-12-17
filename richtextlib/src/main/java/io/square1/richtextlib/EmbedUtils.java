@@ -46,6 +46,7 @@ public class EmbedUtils {
         EVimeo,
         EVine,
         EInstagram,
+       EFacebook,
        EUnsupported
     }
 

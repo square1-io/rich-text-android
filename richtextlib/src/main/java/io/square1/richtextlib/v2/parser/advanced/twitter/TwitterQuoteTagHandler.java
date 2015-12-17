@@ -26,7 +26,6 @@ public  class TwitterQuoteTagHandler extends TagHandler {
             }
         }
 
-
         @Override
         public MarkupContext getReplacementContext(){
 

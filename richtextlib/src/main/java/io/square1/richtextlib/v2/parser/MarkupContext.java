@@ -85,6 +85,7 @@ public class MarkupContext {
     }
 
     public final MarkupContext onTagOpen(MarkupTag current, RichTextDocumentElement builder, boolean newOutput) {
+        builder = replaceBuilder(builder);
         TagHandler handler = getTagHandler(current);
         if( (newOutput && handler.openWhenSplitting()) || !newOutput ) {
             handler.onTagOpen(this, current, builder);
@@ -95,6 +96,7 @@ public class MarkupContext {
     }
 
     public final MarkupContext onTagClose(MarkupTag tag, RichTextDocumentElement builder, boolean newOutput) {
+        builder = replaceBuilder(builder);
         TagHandler handler = tag.getTagHandler();
         //getTagHandler(tag);
         if( (newOutput && handler.closeWhenSplitting()) || !newOutput ) {
@@ -103,6 +105,10 @@ public class MarkupContext {
         }
 
         return this;
+    }
+
+    public RichTextDocumentElement replaceBuilder(RichTextDocumentElement in){
+        return in;
     }
 
     public void setValue(String key, Object value){

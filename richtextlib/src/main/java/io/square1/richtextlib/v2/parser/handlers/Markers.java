@@ -12,11 +12,11 @@ import io.square1.richtextlib.EmbedUtils;
 public interface Markers {
 
     //those are just markers classes to tag specific index in the string
-      class LeadingMargin {}
-      class Strike {}
-      class Bold { }
-      class Italic { }
-      class Underline { }
+    public static class LeadingMargin {}
+    public static  class Strike {}
+    public static  class Bold { }
+    public static  class Italic { }
+    public static class Underline { }
       class Big { }
       class Small { }
       class Monospace { }
@@ -24,13 +24,13 @@ public interface Markers {
       class Code {}
       class Sup {}
 
-      class Blockquote {
+    public static class Blockquote {
 
         public static final String CLASS_TWEET = "twitter-tweet";
 
         private List<String> mClasses;
 
-        Blockquote(List<String> elementClass){
+        public Blockquote(List<String> elementClass){
             mClasses = elementClass;
         }
 
@@ -92,4 +92,6 @@ public interface Markers {
         }
     }
 
+    public class Alignment {
+    }
 }
