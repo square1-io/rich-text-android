@@ -14,7 +14,7 @@ public class EmbedUtils {
 
 
     public final static String SOUND_CLOUD_CLIENT_ID = "1f6456941b1176c22d44fb16ec2015a2";
-    public static final String OEMBED_API_INSTAGRAM = "http://api.instagram.com/oembed";
+    public static final String OEMBED_API_INSTAGRAM = "https://api.instagram.com/oembed";
     public static final String OEMBED_API_VINE = "https://vine.co/oembed.json";
     public static final String OEMBED_API_VIMEO = "https://vimeo.com/api/oembed.json";
 
