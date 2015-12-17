@@ -26,32 +26,21 @@ public class FacebookDivTagHandler extends TagHandler {
     @Override
     public void onTagClose(MarkupContext context, MarkupTag tag, RichTextDocumentElement out) {
 
-        if (TextUtils.isEmpty(mFacebookContext.getFacebookPostUrl()) == false) {
-
-            String message = "see Facebook post here";
-            if(mFacebookContext.getType() == FacebookContext.FBPostType.EVideo){
-                message = "see Facebook video here";
-            }
-            SpannedBuilderUtils.ensureAtLeastThoseNewLines(out, 1);
-            SpannedBuilderUtils.startSpan(out, new Markers.Bold());
-
-            SpannedBuilderUtils.startSpan(out, new Markers.Alignment());
-            SpannedBuilderUtils.makeLink(mFacebookContext.getFacebookPostUrl(), message, out);
-
-            SpannedBuilderUtils.endSpan(out, Markers.Bold.class, new StyleSpan(Typeface.BOLD));
-            SpannedBuilderUtils.ensureAtLeastThoseNewLines(out, 1);
-            SpannedBuilderUtils.endSpan(out, Markers.Alignment.class, new RichAlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER));
 
             Style style = mFacebookContext.getStyle();
-
             SpannedBuilderUtils.ensureAtLeastThoseNewLines(out, 2);
             QuoteSpan quoteSpan = new QuoteSpan(style.getQuoteBackgroundColor(), style.quoteBitmap());
             SpannedBuilderUtils.endSpan(out, Markers.Blockquote.class, quoteSpan);
-           // SpannedBuilderUtils.endSpan(out, Markers.Blockquote.class, quoteSpan);
 
-//                context.getRichText()
-//                        .onEmbedFound(EmbedUtils.TEmbedType.EFacebook,
-//                                mFacebookContext.getFacebookPostUrl());
+        if (TextUtils.isEmpty(mFacebookContext.getFacebookPostUrl()) == false) {
+
+            String message = "full post on Facebook here";
+            if(mFacebookContext.getType() == FacebookContext.FBPostType.EVideo){
+                message = "see video on Facebook here";
+            }
+
+            SpannedBuilderUtils.ensureAtLeastThoseNewLines(out, 2);
+            SpannedBuilderUtils.makeUnsupported(mFacebookContext.getFacebookPostUrl(), message, out);
 
         }
     }
