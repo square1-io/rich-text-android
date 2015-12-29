@@ -226,8 +226,6 @@ public class RichTextV2 {
 
             if(style.parseWordPressTags() == true) {
 
-                //soundcloud
-                //source = source.replaceAll("\\[/soundcloud\\]","");
 
                 source = source.replaceAll(SOUND_CLOUD,
                         SOUND_CLOUD_REPLACEMENT);
@@ -235,10 +233,6 @@ public class RichTextV2 {
                 source = source.replaceAll(INTERACTION,
                         INTERACTION_REPLACEMENT);
 
-               // Matcher m = pattern.matcher(source);
-              //  while (m.find() == true) {
-              //      m.groupCount();
-              //  }
             }
 
 

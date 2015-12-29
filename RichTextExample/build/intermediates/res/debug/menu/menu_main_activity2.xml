@@ -5,4 +5,4 @@
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="100" app:showAsAction="never" />
 </menu>
-<!-- From: file:/projects/Android/RichText/app/src/main/res/menu/menu_main_activity2.xml -->
+<!-- From: file:/projects/Android/RichText/RichTextExample/src/main/res/menu/menu_main_activity2.xml -->
