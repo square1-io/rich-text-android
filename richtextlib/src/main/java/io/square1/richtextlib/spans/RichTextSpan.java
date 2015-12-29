@@ -53,7 +53,7 @@ public interface RichTextSpan extends DynamicParcelable {
 
 
     void onSpannedSetToView(RichContentViewDisplay view);
-    void onAttachedToView(RichContentViewDisplay view);
-    void onDetachedFromView(RichContentViewDisplay view);
+    void onAttachedToWindow(RichContentViewDisplay view);
+    void onDetachedFromWindow(RichContentViewDisplay view);
 
 }

@@ -25,7 +25,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -33,6 +32,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Animatable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.text.Layout;
@@ -44,9 +44,9 @@ import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.Toast;
 
-import io.square1.richtextlib.spans.Style;
 import io.square1.richtextlib.R;
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 
@@ -64,12 +64,15 @@ import io.square1.richtextlib.spans.YouTubeSpan;
  */
 public class RichContentView extends FrameLayout implements RichContentViewDisplay {
 
+
     private UrlBitmapDownloader mBitmapManager;
 
     private RichTextDocumentElement mText;
     private RichTextSpan[] mSpans;
 
     private boolean mAttachedToWindow;
+
+
 
     private TextPaint mTextPaint;
     private Layout mLayout;
@@ -149,6 +152,8 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
 
     }
 
+
+
     public void setOnSpanClickedObserver( OnSpanClickedObserver observer){
         mOnSpanClickedObserver = observer;
     }
@@ -163,6 +168,7 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
     private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
 
         setWillNotDraw(false);
+
 
         mText = new RichTextDocumentElement();
         mSpans = mText.getSpans();
@@ -299,7 +305,7 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
         mAttachedToWindow = true;
 
         for (RichTextSpan span : mSpans) {
-                span.onAttachedToView(this);
+                span.onAttachedToWindow(this);
         }
 
     }
@@ -309,7 +315,7 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
         super.onDetachedFromWindow();
         mAttachedToWindow = false;
         for(RichTextSpan span : mSpans){
-            span.onDetachedFromView(this);
+            span.onDetachedFromWindow(this);
         }
     }
 
@@ -476,5 +482,24 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
     public int getPaddingRight() {
         return super.getPaddingRight();
 
+    }
+
+    @Override
+    public void invalidateDrawable(Drawable who) {
+        super.invalidateDrawable(who);
+        this.invalidate();
+    }
+
+
+    @Override
+    public void scheduleDrawable(Drawable who, Runnable what, long when) {
+        super.scheduleDrawable(who,what,when);
+
+    }
+
+
+    @Override
+    public void unscheduleDrawable(Drawable who, Runnable what) {
+        super.unscheduleDrawable(who, what);
     }
 }

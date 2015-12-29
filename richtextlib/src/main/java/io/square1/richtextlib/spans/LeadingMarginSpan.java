@@ -79,12 +79,12 @@ public class LeadingMarginSpan implements RichTextSpan, android.text.style.Leadi
     }
 
     @Override
-    public void onAttachedToView(RichContentViewDisplay view) {
+    public void onAttachedToWindow(RichContentViewDisplay view) {
 
     }
 
     @Override
-    public void onDetachedFromView(RichContentViewDisplay view) {
+    public void onDetachedFromWindow(RichContentViewDisplay view) {
 
     }
 

@@ -35,6 +35,7 @@ import com.bumptech.glide.Glide;
 import io.square1.richtext.R;
 import io.square1.richtextlib.spans.RemoteBitmapSpan;
 import io.square1.richtextlib.spans.UrlBitmapDownloader;
+import io.square1.richtextlib.ui.RichContentView;
 import io.square1.richtextlib.v2.RichTextV2;
 import io.square1.richtextlib.v2.content.RichDocument;
 
@@ -74,7 +75,8 @@ public  class ContentFragment extends Fragment implements UrlBitmapDownloader {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mListView = (ListView)rootView.findViewById(R.id.list);
         mListView.setAdapter(mContentAdapter);
-
+        mListView.setScrollingCacheEnabled(false);
+        mListView.setDrawingCacheEnabled(false);
         return rootView;
     }
 

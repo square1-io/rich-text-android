@@ -46,9 +46,11 @@ public class ContentAdapter extends BaseAdapter  {
     private RichDocument mDocument;
     private UrlBitmapDownloader mDownloader;
 
-    public ContentAdapter(UrlBitmapDownloader downloader){
+
+    public ContentAdapter( UrlBitmapDownloader downloader){
         super();
         mDownloader = downloader;
+
     }
 
 
@@ -91,6 +93,7 @@ public class ContentAdapter extends BaseAdapter  {
             if(convertView == null){
                 view = (RichContentView) LayoutInflater.from(parent.getContext()).inflate(R.layout.text_view,parent,false);
                 view.setUrlBitmapDownloader(mDownloader);
+
                 convertView = view;
             }
             view.setText( (RichTextDocumentElement) item);

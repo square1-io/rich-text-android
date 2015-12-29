@@ -92,12 +92,12 @@ public class URLSpan extends ClickableSpan implements io.square1.richtextlib.spa
     }
 
     @Override
-    public void onAttachedToView(RichContentViewDisplay view) {
+    public void onAttachedToWindow(RichContentViewDisplay view) {
 
     }
 
     @Override
-    public void onDetachedFromView(RichContentViewDisplay view) {
+    public void onDetachedFromWindow(RichContentViewDisplay view) {
 
     }
 

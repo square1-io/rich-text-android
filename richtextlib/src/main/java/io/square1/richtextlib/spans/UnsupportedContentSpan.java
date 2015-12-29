@@ -87,12 +87,12 @@ public class UnsupportedContentSpan extends android.text.style.ClickableSpan imp
     }
 
     @Override
-    public void onAttachedToView(RichContentViewDisplay view) {
+    public void onAttachedToWindow(RichContentViewDisplay view) {
 
     }
 
     @Override
-    public void onDetachedFromView(RichContentViewDisplay view) {
+    public void onDetachedFromWindow(RichContentViewDisplay view) {
 
     }
 

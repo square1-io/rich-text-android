@@ -42,6 +42,8 @@ public interface RichContentViewDisplay extends Drawable.Callback {
     void setUrlBitmapDownloader(UrlBitmapDownloader downloader);
     void setRichTextContentChanged(RichTextContentChanged richTextContentChanged);
 
+
+
     public interface OnSpanClickedObserver {
          boolean onSpanClicked(ClickableSpan span);
     }

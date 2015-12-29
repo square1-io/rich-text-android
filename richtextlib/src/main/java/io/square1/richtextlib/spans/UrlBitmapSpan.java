@@ -45,7 +45,7 @@ import io.square1.richtextlib.util.UniqueId;
 /**
  * Created by roberto on 23/06/15.
  */
-public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, ClickableSpan, UpdateAppearance, RichTextSpan {
+public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, ClickableSpan, UpdateAppearance, RichTextSpan  {
 
     public static final Creator<UrlBitmapSpan> CREATOR  = DynamicParcelableCreator.getInstance(UrlBitmapSpan.class);
     public static final int TYPE = UniqueId.getType();
@@ -134,17 +134,18 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
     public void onSpannedSetToView(RichContentViewDisplay view) {
         mRef = new WeakReference(view);
         mAttachedToWindow = view.viewAttachedToWindow();
-        loadImage();
+        ensureDrawableIsAttached(view);
     }
 
     @Override
-    public void onAttachedToView(RichContentViewDisplay view) {
+    public void onAttachedToWindow(RichContentViewDisplay view) {
         mAttachedToWindow = true;
         loadImage();
+        ensureDrawableIsAttached(view);
     }
 
     @Override
-    public void onDetachedFromView(RichContentViewDisplay view) {
+    public void onDetachedFromWindow(RichContentViewDisplay view) {
         mAttachedToWindow  = false;
     }
 
@@ -311,13 +312,9 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
 
         boolean needsLayout = (newRect.equals(mRect) == false);
 
-        if(view != null && mAttachedToWindow){
+        ensureDrawableIsAttached(view);
 
-            mBitmap.setCallback(view);
-            mBitmap.invalidateSelf();
-            if(mBitmap instanceof Animatable){
-                ((Animatable)mBitmap).start();
-            }
+        if(view != null && mAttachedToWindow){
 
             if(needsLayout == true){
                 view.performLayout();
@@ -326,6 +323,36 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
             }
         }
 
+    }
+
+    private void ensureDrawableIsAttached(RichContentViewDisplay viewDisplay){
+
+        if(mAttachedToWindow == false || viewDisplay == null){
+            return;
+        }
+        if(mBitmap != null && mBitmap.getCallback() != viewDisplay) {
+
+            mBitmap.setCallback(viewDisplay);
+            mBitmap.invalidateSelf();
+
+            animate();
+
+        }
+    }
+
+    private void animate(){
+
+        RichContentViewDisplay container  = mRef.get();
+
+        if( container != null &&
+                container.viewAttachedToWindow() &&
+                mBitmap != null &&
+                mBitmap instanceof Animatable){
+            mBitmap.setCallback(container);
+            Animatable animatable = (Animatable)mBitmap;
+            animatable.start();
+
+        }
     }
 
     @Override
@@ -341,10 +368,11 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
             UrlBitmapDownloader downloader = SpanUtil.get(mRef);
             if(downloader != null){
                 //acquire one from the view
-                downloader.downloadImage(this,mImage);
+                downloader.downloadImage(this, mImage);
             }
         }
     }
+
 
 
 

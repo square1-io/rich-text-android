@@ -88,12 +88,12 @@ public class BitmapSpan extends ReplacementSpan implements RichTextSpan, Clickab
     }
 
     @Override
-    public void onAttachedToView(RichContentViewDisplay view) {
+    public void onAttachedToWindow(RichContentViewDisplay view) {
 
     }
 
     @Override
-    public void onDetachedFromView(RichContentViewDisplay view) {
+    public void onDetachedFromWindow(RichContentViewDisplay view) {
 
     }
 
