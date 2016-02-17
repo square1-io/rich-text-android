@@ -1,22 +1,37 @@
+/*
+ * Copyright (c) 2015. Roberto  Prato <https://github.com/robertoprato>
+ *
+ *  *
+ *  *
+ *  *    Licensed under the Apache License, Version 2.0 (the "License");
+ *  *    you may not use this file except in compliance with the License.
+ *  *    You may obtain a copy of the License at
+ *  *
+ *  *        http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  *    Unless required by applicable law or agreed to in writing, software
+ *  *    distributed under the License is distributed on an "AS IS" BASIS,
+ *  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  *    See the License for the specific language governing permissions and
+ *  *    limitations under the License.
+ *
+ */
+
 package io.square1.richtextlib.ui;
 
 import android.annotation.TargetApi;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.TypedArray;
 
+import android.graphics.Movie;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.os.Handler;
-import android.os.Message;
-import android.text.Spannable;
-import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.view.Surface;
 import android.widget.TextView;
 
+<<<<<<< HEAD
 
 import io.square1.richtextlib.style.ClickableSpan;
 import io.square1.richtextlib.style.P2ParcelableSpan;
@@ -25,13 +40,19 @@ import io.square1.richtextlib.style.URLSpan;
 import io.square1.richtextlib.style.UnsupportedContentSpan;
 import io.square1.richtextlib.style.UrlBitmapDownloader;
 import io.square1.richtextlib.style.YouTubeSpan;
+=======
+>>>>>>> ab90cbb48ff8f0c9b26f4ca97aa2e17ed5baf703
 import io.square1.richtextlib.R;
+
+
 /**
  * Created by roberto on 24/06/15.
  */
-public class RichTextView extends TextView implements RichTextLinkMovementMethod.Observer {
+@Deprecated
+public class RichTextView extends TextView  {
 
 
+<<<<<<< HEAD
     private Style mStyle;
 
     public void setStyle(Style style) {
@@ -57,16 +78,16 @@ public class RichTextView extends TextView implements RichTextLinkMovementMethod
     private Handler mHandler;
     private boolean mAttachedToWindow;
     private UrlBitmapDownloader mDownloader;
+=======
+>>>>>>> ab90cbb48ff8f0c9b26f4ca97aa2e17ed5baf703
 
     public RichTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
         parseCustomAttributes(context, attrs);
     }
 
     public RichTextView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
         parseCustomAttributes(context, attrs);
     }
 
@@ -80,6 +101,7 @@ public class RichTextView extends TextView implements RichTextLinkMovementMethod
 
     public RichTextView(Context context) {
         super(context);
+<<<<<<< HEAD
         init();
     }
 
@@ -231,14 +253,16 @@ public class RichTextView extends TextView implements RichTextLinkMovementMethod
 
     public final boolean isAttachedToWindow(){
         return mAttachedToWindow;
+=======
+>>>>>>> ab90cbb48ff8f0c9b26f4ca97aa2e17ed5baf703
     }
 
 
     private void parseCustomAttributes(Context ctx, AttributeSet attrs) {
-        TypedArray a = ctx.obtainStyledAttributes(attrs, R.styleable.io_square1_richtextlib_ui_RichTextView);
-        String customFont = a.getString(R.styleable.io_square1_richtextlib_ui_RichTextView_fontName);
-        setCustomFont(ctx, customFont);
-        a.recycle();
+       // TypedArray a = ctx.obtainStyledAttributes(attrs, R.styleable.io_square1_richtextlib_ui_RichTextView);
+       // String customFont = a.getString(R.styleable.io_square1_richtextlib_ui_RichTextView_fontName);
+       // setCustomFont(ctx, customFont);
+       // a.recycle();
     }
 
     public boolean setCustomFont(Context ctx, String asset) {
@@ -260,4 +284,5 @@ public class RichTextView extends TextView implements RichTextLinkMovementMethod
 
         return true;
     }
+
 }

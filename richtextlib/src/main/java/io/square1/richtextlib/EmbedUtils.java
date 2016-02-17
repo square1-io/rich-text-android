@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2015. Roberto  Prato <https://github.com/robertoprato>
+ *
+ *  *
+ *  *
+ *  *    Licensed under the Apache License, Version 2.0 (the "License");
+ *  *    you may not use this file except in compliance with the License.
+ *  *    You may obtain a copy of the License at
+ *  *
+ *  *        http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  *    Unless required by applicable law or agreed to in writing, software
+ *  *    distributed under the License is distributed on an "AS IS" BASIS,
+ *  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  *    See the License for the specific language governing permissions and
+ *  *    limitations under the License.
+ *
+ */
+
 package io.square1.richtextlib;
 
 import android.net.Uri;
@@ -12,7 +31,9 @@ import java.util.regex.Pattern;
  */
 public class EmbedUtils {
 
-    public static final String OEMBED_API_INSTAGRAM = "http://api.instagram.com/oembed";
+
+    public final static String SOUND_CLOUD_CLIENT_ID = "1f6456941b1176c22d44fb16ec2015a2";
+    public static final String OEMBED_API_INSTAGRAM = "https://api.instagram.com/oembed";
     public static final String OEMBED_API_VINE = "https://vine.co/oembed.json";
     public static final String OEMBED_API_VIMEO = "https://vimeo.com/api/oembed.json";
 
@@ -31,6 +52,7 @@ public class EmbedUtils {
 
     }
 
+
     public interface ParseLinkCallback {
          void onLinkParsed(Object callingObject, String result, TEmbedType type);
     }
@@ -43,6 +65,7 @@ public class EmbedUtils {
         EVimeo,
         EVine,
         EInstagram,
+       EFacebook,
        EUnsupported
     }
 
@@ -72,6 +95,7 @@ public class EmbedUtils {
 
         result = parseSoundCloud(link);
         if(TextUtils.isEmpty(result) == false){
+            result = getSoundCloudStreamFromTrackId(result,SOUND_CLOUD_CLIENT_ID);
             callback.onLinkParsed(calling, result, TEmbedType.ESoundCloud);
             return true;
         }
@@ -116,7 +140,7 @@ public class EmbedUtils {
         }
         if(authority.indexOf("api.soundcloud") >= 0 ){
             trackURL = baseURL;
-        }else if(baseURL.indexOf("soundcloud") >= 0){
+        }else if(authority.indexOf("soundcloud") >= 0){
             Uri parsedURI = Uri.parse(baseURL);
             try {
                 trackURL =  parsedURI.getQueryParameter("url");
