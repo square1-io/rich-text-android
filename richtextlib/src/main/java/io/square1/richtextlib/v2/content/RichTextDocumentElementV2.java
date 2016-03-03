@@ -34,16 +34,10 @@ import android.text.TextWatcher;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-<<<<<<< HEAD:richtextlib/src/main/java/io/square1/richtextlib/ParcelableSpannedBuilder.java
-import io.square1.richtextlib.style.DummySpan;
-import io.square1.richtextlib.style.P2ParcelUtils;
-import io.square1.richtextlib.style.P2ParcelableSpan;
-import io.square1.richtextlib.ui.RichTextView;
-=======
+
 import io.square1.parcelable.DynamicParcelable;
 import io.square1.parcelable.DynamicParcelableCreator;
 import io.square1.richtextlib.spans.RichTextSpan;
->>>>>>> ab90cbb48ff8f0c9b26f4ca97aa2e17ed5baf703:richtextlib/src/main/java/io/square1/richtextlib/v2/content/RichTextDocumentElementV2.java
 import io.square1.richtextlib.util.ArrayUtils;
 
 /**
@@ -1058,17 +1052,8 @@ public class RichTextDocumentElementV2 extends DocumentElement implements CharSe
         ArrayList<RichTextSpan> spans = new ArrayList<>();
 
         for(int index = 0; index < mSpans.length; index ++){
-<<<<<<< HEAD:richtextlib/src/main/java/io/square1/richtextlib/ParcelableSpannedBuilder.java
-            P2ParcelableSpan span = (P2ParcelableSpan)mSpans[index];
-            if(span == null){
-                span = new DummySpan();
-            }
-            dest.writeParcelable(span, flags);
-=======
             RichTextSpan span = (RichTextSpan)mSpans[index];
             spans.add(span);
-           // dest.writeParcelable(span,flags);
->>>>>>> ab90cbb48ff8f0c9b26f4ca97aa2e17ed5baf703:richtextlib/src/main/java/io/square1/richtextlib/v2/content/RichTextDocumentElementV2.java
         }
 
         dest.writeTypedList(spans);
@@ -1080,9 +1065,7 @@ public class RichTextDocumentElementV2 extends DocumentElement implements CharSe
         dest.writeInt(mSpanCount);
     }
 
-<<<<<<< HEAD:richtextlib/src/main/java/io/square1/richtextlib/ParcelableSpannedBuilder.java
 
-=======
     public  <T>  T getLastSpan(Class<T> kind) {
         /*
          * This knows that the last returned object from getSpans()
@@ -1100,5 +1083,4 @@ public class RichTextDocumentElementV2 extends DocumentElement implements CharSe
     public RichTextSpan[] getSpans() {
         return getSpans(0,length(),RichTextSpan.class);
     }
->>>>>>> ab90cbb48ff8f0c9b26f4ca97aa2e17ed5baf703:richtextlib/src/main/java/io/square1/richtextlib/v2/content/RichTextDocumentElementV2.java
 }

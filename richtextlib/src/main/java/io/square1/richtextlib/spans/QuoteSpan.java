@@ -190,12 +190,7 @@ public class QuoteSpan extends MetricAffectingSpan implements /*LineHeightSpan,*
     }
 
     @Override
-<<<<<<< HEAD:richtextlib/src/main/java/io/square1/richtextlib/style/QuoteSpan.java
-    public void onSpannedSetToView(RichTextView view){
-        mQuoteSign = view.getStyle().quoteBitmap();
-=======
     public void onSpannedSetToView(RichContentViewDisplay view){
 
->>>>>>> ab90cbb48ff8f0c9b26f4ca97aa2e17ed5baf703:richtextlib/src/main/java/io/square1/richtextlib/spans/QuoteSpan.java
     }
 }
