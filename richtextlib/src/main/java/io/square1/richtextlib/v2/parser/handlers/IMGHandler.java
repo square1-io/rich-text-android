@@ -24,6 +24,7 @@ import android.text.Spannable;
 
 import org.xml.sax.Attributes;
 
+import io.square1.richtextlib.v2.content.ImageDocumentElement;
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 import io.square1.richtextlib.spans.UrlBitmapSpan;
 import io.square1.richtextlib.util.NumberUtils;
@@ -40,11 +41,16 @@ public class IMGHandler extends TagHandler {
     @Override
     public void onTagOpen(MarkupContext context, MarkupTag tag, RichTextDocumentElement out) {
 
-        //buildNewSpannable();
-        //SpannedBuilderUtils.ensureAtLeastThoseNewLines(out,1);
-
         Attributes attributes = tag.attributes;
         String src = attributes.getValue("", "src");
+
+        if(context.getStyle().extractImages() == true){
+            SpannedBuilderUtils.trimTrailNewlines(out, 0);
+            int w =  NumberUtils.parseImageDimension(attributes.getValue("width"),0);
+            int h =  NumberUtils.parseImageDimension(attributes.getValue("height"),0);
+            context.getRichText().splitDocument(ImageDocumentElement.newInstance(src,null,w,h));
+            return;
+        }
 
 
         int maxSize = context.getStyle().maxImageWidth();

@@ -136,6 +136,11 @@ public class RichTextV2 {
             return true;
         }
 
+        @Override
+        public boolean extractImages(){
+            return false;
+        }
+
     }
 
 
@@ -360,6 +365,10 @@ public class RichTextV2 {
     }
 
     public void onEmbedFound(EmbedUtils.TEmbedType type, String content){
+        splitDocument(OembedDocumentElement.newInstance(type, content));
+    }
+
+    public void splitDocument(DocumentElement element){
 
         mOembedCount ++;
 
@@ -385,14 +394,14 @@ public class RichTextV2 {
             }
 
             //create new Output
-        for(int index = 0; index < mStack.size(); index ++){
+            for(int index = 0; index < mStack.size(); index ++){
                 mCurrentContext.onTagOpen(mStack.get(index), newOut, true );
             }
 
             mOutput = newOut;
         }
 
-        mResult.add(OembedDocumentElement.newInstance(type, content));
+        mResult.add(element);
 
     }
 

@@ -92,4 +92,9 @@ public interface Style {
      * @return
      */
     boolean treatAsHtml();
+
+    /**
+     * @return true if the parser should extract images. False is images are treated inside the content
+     */
+    boolean extractImages();
 }

@@ -34,6 +34,7 @@ import com.bumptech.glide.Glide;
 
 import io.square1.richtext.R;
 import io.square1.richtextlib.spans.RemoteBitmapSpan;
+import io.square1.richtextlib.spans.Style;
 import io.square1.richtextlib.spans.UrlBitmapDownloader;
 import io.square1.richtextlib.ui.RichContentView;
 import io.square1.richtextlib.v2.RichTextV2;
@@ -51,6 +52,19 @@ public  class ContentFragment extends Fragment implements UrlBitmapDownloader {
 
     private ListView mListView;
     private ContentAdapter mContentAdapter;
+
+    private class InternalStyle extends RichTextV2.DefaultStyle {
+
+
+        public InternalStyle(Context context) {
+            super(context);
+        }
+
+        @Override
+        public boolean extractImages(){
+            return true;
+        }
+    }
 
 
     public ContentFragment() {
@@ -111,7 +125,7 @@ public  class ContentFragment extends Fragment implements UrlBitmapDownloader {
         @Override
         protected RichDocument doInBackground(String... sampleFileName) {
             mHtml = Utils.readFromfile(mApplicationContext, sampleFileName[0]);
-            RichDocument result = RichTextV2.fromHtml(mApplicationContext, mHtml);
+            RichDocument result = RichTextV2.fromHtml(mApplicationContext, mHtml, new InternalStyle(mApplicationContext));
             return result;
         }
 

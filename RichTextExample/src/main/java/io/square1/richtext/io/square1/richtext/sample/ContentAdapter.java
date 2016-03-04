@@ -26,14 +26,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
+import com.bumptech.glide.Glide;
 
 import io.square1.richtext.R;
 import io.square1.richtextlib.spans.RemoteBitmapSpan;
 import io.square1.richtextlib.spans.UrlBitmapDownloader;
 import io.square1.richtextlib.ui.RichContentView;
+import io.square1.richtextlib.v2.content.ImageDocumentElement;
 import io.square1.richtextlib.v2.content.OembedDocumentElement;
 import io.square1.richtextlib.v2.content.RichDocument;
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
@@ -97,6 +100,18 @@ public class ContentAdapter extends BaseAdapter  {
                 convertView = view;
             }
             view.setText( (RichTextDocumentElement) item);
+        }
+        else if(item instanceof ImageDocumentElement){
+
+            if(convertView == null){
+                ImageView img = new ImageView(parent.getContext());
+                convertView = img;
+            }
+
+            String url = ((ImageDocumentElement)item).getImageURL();
+            ImageView imageView = (ImageView)convertView;
+            Glide.with(parent.getContext()).load(url).into(imageView);
+
         }
         else if(item instanceof OembedDocumentElement){
 
