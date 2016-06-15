@@ -7,4 +7,4 @@
     android:paddingBottom="0dip"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-</io.square1.richtextlib.ui.RichContentView><!-- From: file:/projects/Android/RichText/RichTextExample/src/main/res/layout/text_view.xml -->
+</io.square1.richtextlib.ui.RichContentView><!-- From: file:/projects/Android/square1.io/maximummedia-android-apps/submodules/rich-content-android/RichTextExample/src/main/res/layout/text_view.xml -->

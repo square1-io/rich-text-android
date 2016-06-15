@@ -4,4 +4,4 @@
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="100" app:showAsAction="never" />
 </menu>
-<!-- From: file:/projects/Android/RichText/RichTextExample/src/main/res/menu/menu_main.xml -->
+<!-- From: file:/projects/Android/square1.io/maximummedia-android-apps/submodules/rich-content-android/RichTextExample/src/main/res/menu/menu_main.xml -->
