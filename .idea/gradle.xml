@@ -10,7 +10,14 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/RichTextExample" />
-            <option value="$PROJECT_DIR$/richtextlib" />
+            <option value="$PROJECT_DIR$/richtext" />
+          </set>
+        </option>
+        <option name="myModules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/RichTextExample" />
+            <option value="$PROJECT_DIR$/richtext" />
           </set>
         </option>
       </GradleProjectSettings>

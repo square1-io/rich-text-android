@@ -62,7 +62,7 @@ public  class ContentFragment extends Fragment implements UrlBitmapDownloader {
 
         @Override
         public boolean extractImages(){
-            return true;
+            return false;
         }
     }
 
