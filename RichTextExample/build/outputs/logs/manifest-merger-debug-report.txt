@@ -22,17 +22,10 @@ ADDED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.x
 	android:name
 		ADDED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.xml:6:22-75
 application
-<<<<<<< HEAD
 ADDED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.xml:8:5-22:19
 MERGED from [com.android.support:appcompat-v7:22.2.0] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/AndroidManifest.xml:22:5-20
 MERGED from [com.android.support:support-v4:22.2.0] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.0/AndroidManifest.xml:22:5-20
 MERGED from [io.square1:richtext:1.0] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/io.square1/richtext/1.0/AndroidManifest.xml:11:5-14:19
-=======
-ADDED from AndroidManifest.xml:8:5
-MERGED from com.android.support:appcompat-v7:22.2.0:22:5
-MERGED from com.android.support:support-v4:22.2.0:22:5
-MERGED from rich-content-android:richtextlib:unspecified:11:5
->>>>>>> 821dd6fee1857aef458196440a448f246bf08645
 	android:label
 		ADDED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.xml:11:9-41
 	android:allowBackup
@@ -58,17 +51,10 @@ ADDED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.x
 	android:name
 		ADDED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.xml:19:27-74
 uses-sdk
-<<<<<<< HEAD
 INJECTED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.xml reason: use-sdk injection requested
 MERGED from [com.android.support:appcompat-v7:22.2.0] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/AndroidManifest.xml:20:5-43
 MERGED from [com.android.support:support-v4:22.2.0] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.0/AndroidManifest.xml:20:5-43
 MERGED from [io.square1:richtext:1.0] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/io.square1/richtext/1.0/AndroidManifest.xml:7:5-9:41
-=======
-INJECTED from AndroidManifest.xml:0:0 reason: use-sdk injection requested
-MERGED from com.android.support:appcompat-v7:22.2.0:20:5
-MERGED from com.android.support:support-v4:22.2.0:20:5
-MERGED from rich-content-android:richtextlib:unspecified:7:5
->>>>>>> 821dd6fee1857aef458196440a448f246bf08645
 	android:targetSdkVersion
 		INJECTED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.xml
 		INJECTED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.xml
