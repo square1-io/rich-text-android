@@ -104,7 +104,7 @@ public class AudioPlayerHolder {
     final String ZERO_TIME ;
 
     public AudioPlayerHolder(View v, AudioPlayerProvider provider) {
-
+        mView = v;
         mAudioPlayerProvider = provider;
 
         ZERO_TIME = v.getContext().getString(R.string.zero_time);
@@ -179,6 +179,7 @@ public class AudioPlayerHolder {
     }
 
     public void destroy(){
+        mView.setTag(null);
         mAudioPlayerProvider.onStop(mCurrentFile);
         mAudioPlayerProvider = null;
     }
