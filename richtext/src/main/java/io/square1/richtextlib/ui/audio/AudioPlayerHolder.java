@@ -103,6 +103,8 @@ public class AudioPlayerHolder {
 
     final String ZERO_TIME ;
 
+    private  View mView;
+
     public AudioPlayerHolder(View v, AudioPlayerProvider provider) {
         mView = v;
         mAudioPlayerProvider = provider;
