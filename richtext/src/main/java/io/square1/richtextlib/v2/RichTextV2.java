@@ -29,6 +29,7 @@ import android.graphics.Color;
 
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 
 
@@ -274,6 +275,7 @@ public class RichTextV2 {
             return out;
 
         } catch (Exception e) {
+            Log.e("HTML", "error");
             e.printStackTrace();
         }
 

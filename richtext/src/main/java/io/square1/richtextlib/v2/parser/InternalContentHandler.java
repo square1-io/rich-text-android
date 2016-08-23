@@ -19,6 +19,8 @@
 
 package io.square1.richtextlib.v2.parser;
 
+import android.util.Log;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
@@ -68,15 +70,14 @@ public class InternalContentHandler  implements ContentHandler {
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
-
+        Log.i("HTML","TAG -- > open " + localName);
         mHandler.startElement(uri, localName, atts, mAccumulatedText.toString());
         mAccumulatedText.setLength(0);
     }
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
-
-
+        Log.i("HTML","TAG -- > closed " + localName);
         mHandler.endElement(uri, localName, mAccumulatedText.toString());
         mAccumulatedText.setLength(0);
     }
