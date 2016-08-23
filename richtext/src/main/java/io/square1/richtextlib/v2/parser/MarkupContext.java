@@ -25,6 +25,7 @@ import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 import io.square1.richtextlib.spans.Style;
 import io.square1.richtextlib.v2.RichTextV2;
 import io.square1.richtextlib.v2.parser.handlers.DefaultHandler;
+import io.square1.richtextlib.v2.parser.handlers.SCRIPTHandler;
 
 /**
  * Created by roberto on 19/08/15.
@@ -75,7 +76,9 @@ public class MarkupContext {
                     mHandlers.put(tag.tag,tagHandlerClass);
                 }
 
-            }catch (Exception e){}
+            }catch (Exception e){
+
+            }
         }
 
         try {
