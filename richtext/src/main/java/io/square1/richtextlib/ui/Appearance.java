@@ -22,11 +22,15 @@ package io.square1.richtextlib.ui;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.text.TextPaint;
 import android.util.TypedValue;
+
+import io.square1.richtextlib.R;
 
 /**
  * Created by roberto on 18/09/2016.
@@ -66,13 +70,39 @@ public class Appearance {
     private float linkFontSize = 0;
 
 
+
+    /**
+     *  padding between quote sign and the left margin
+     */
+    private float quoteSignLeftPadding = 0;
+
+    /**
+     *  padding between quote sign and the text
+     */
+    private float quoteSignRightPadding = 0;
+
+    /**
+     *  padding between quote sign and the top pf the quotation box
+     *  negative values supported
+     */
+    private float quoteSignTopPadding = 0;
+
+
+    /**
+     *
+     */
     /**
      *  background color for quotes
      */
-    private  int quoteBacgroundColor = 0;
+    private  int quoteBackgroundColor = 0;
 
+    /**
+     * a bitmap to be displayed on the top left corner of a quote
+     */
+    private Bitmap quoteSign;
 
     private Context applicationContext;
+
 
     public Appearance(Context context){
 
@@ -82,9 +112,24 @@ public class Appearance {
 
         textColor = -1;
         linkColor = -1;
-        quoteBacgroundColor = Color.TRANSPARENT;
+
+        quoteBackgroundColor = Color.TRANSPARENT;
 
         final Resources res = applicationContext.getResources();
+
+        quoteSign = BitmapFactory.decodeResource(res, R.drawable.quote);
+
+        quoteSignLeftPadding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                5,
+                res.getDisplayMetrics());
+
+        quoteSignRightPadding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                5,
+                res.getDisplayMetrics());
+
+        quoteSignTopPadding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                -5,
+                res.getDisplayMetrics());
 
 
         textFontSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
@@ -161,11 +206,43 @@ public class Appearance {
 
 
     public int getQuoteBackgroundColor() {
-        return quoteBacgroundColor;
+        return Color.RED;//quoteBackgroundColor;
     }
 
-    public void setQuoteBacgroundColor(int color){
-        quoteBacgroundColor = color;
+    public void setQuoteBackgroundColor(int color){
+        quoteBackgroundColor = color;
+    }
+
+    public Bitmap getQuoteSign(){
+        return quoteSign;
+    }
+
+    public void setQuoteSign(Bitmap quoteSign){
+         this.quoteSign = quoteSign;
+    }
+
+    public float getQuoteSignLeftPadding() {
+        return quoteSignLeftPadding;
+    }
+
+    public void setQuoteSignLeftPadding(float quoteSignLeftPadding) {
+        this.quoteSignLeftPadding = quoteSignLeftPadding;
+    }
+
+    public float getQuoteSignRightPadding() {
+        return quoteSignRightPadding;
+    }
+
+    public void setQuoteSignRightPadding(float quoteSignRightPadding) {
+        this.quoteSignRightPadding = quoteSignRightPadding;
+    }
+
+    public float getQuoteSignTopPadding() {
+        return quoteSignTopPadding;
+    }
+
+    public void setQuoteSignTopPadding(float quoteSignTopPadding) {
+        this.quoteSignTopPadding = quoteSignTopPadding;
     }
 
     private TextPaint defaultTextPaint(){

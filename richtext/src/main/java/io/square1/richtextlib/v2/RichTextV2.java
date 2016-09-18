@@ -73,13 +73,13 @@ public class RichTextV2 {
         };
 
         private Context mApplicationContext;
-        private Bitmap mQuoteBitmap;
+
         private int mMaxImageWidth;
 
         public DefaultStyle(Context context){
             mApplicationContext = context.getApplicationContext();
             Resources resources = context.getResources();
-            mQuoteBitmap = BitmapFactory.decodeResource(resources, R.drawable.quote);
+
             mMaxImageWidth = resources.getDisplayMetrics().widthPixels;
         }
 
@@ -87,15 +87,7 @@ public class RichTextV2 {
         public Context getApplicationContext(){
             return mApplicationContext;
         }
-        @Override
-        public Bitmap quoteBitmap() {
-            return mQuoteBitmap;
-        }
 
-        @Override
-        public int getQuoteBackgroundColor() {
-            return Color.parseColor("#d3d3d3");
-        }
 
         @Override
         public int headerColor() {

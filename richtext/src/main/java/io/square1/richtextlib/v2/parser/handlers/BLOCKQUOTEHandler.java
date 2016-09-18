@@ -64,7 +64,7 @@ public class BLOCKQUOTEHandler extends TagHandler {
                 StyleSpan styleSpan = new StyleSpan(Typeface.ITALIC);
                 out.setSpan(styleSpan, where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-                QuoteSpan quoteSpan = new QuoteSpan(style.getQuoteBackgroundColor(), style.quoteBitmap());
+                QuoteSpan quoteSpan = new QuoteSpan();
                 out.setSpan(quoteSpan, where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
     }

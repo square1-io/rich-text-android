@@ -50,19 +50,18 @@ public class QuoteSpan extends MetricAffectingSpan implements /*LineHeightSpan,*
         return TYPE;
     }
 
-    private static final int STRIPE_WIDTH = 2;
-    private static final int STRIPE_PADDING = 4;
-    private static final int GAP_WIDTH = 10;
 
     private Bitmap mQuoteSign;
     private int mColor;
     private int mLinesCount;
-    private int mCurrentLine;
+
+    private  float mSignLeftPadding = 0;
+    private  float mSignRightPadding = 0;
+    private  float mSignTopPadding = 0;
+
 
     public QuoteSpan() {
-
-       this(0xff0000ff,
-               Bitmap.createBitmap(10,10, Bitmap.Config.RGB_565));
+       this(0xff0000ff,null);
     }
 
     public QuoteSpan(Bitmap quoteSign) {
@@ -76,32 +75,22 @@ public class QuoteSpan extends MetricAffectingSpan implements /*LineHeightSpan,*
         mLinesCount = -1;
     }
 
-    private float mInitialTextSize = -1;
+
 
     @Override
     public void updateDrawState(TextPaint p) {
-
-        if(mInitialTextSize < 0){
-            mInitialTextSize = p.getTextSize();
-        }
-
-        p.setTextSize(mInitialTextSize);
 
     }
 
     @Override
     public void updateMeasureState(TextPaint p) {
-        if(mInitialTextSize < 0){
-            mInitialTextSize = p.getTextSize();
-        }
-        p.setTextSize(mInitialTextSize * 1.1f);
+
     }
 
 
     public QuoteSpan(int color) {
         super();
         mColor = color;
-
     }
 
     public QuoteSpan(Parcel src) {
@@ -116,26 +105,40 @@ public class QuoteSpan extends MetricAffectingSpan implements /*LineHeightSpan,*
     public void writeToParcel(Parcel dest, int flags) {
         DynamicParcelableCreator.writeType(dest, this);
         dest.writeInt(mColor);
-      //  mQuoteSign.writeToParcel(dest,flags);
-       // dest.writeParcelable(mQuoteSign, 0);
     }
 
     public void readFromParcel(Parcel src){
         mColor = src.readInt();
-      //  mQuoteSign = Bitmap.CREATOR.createFromParcel(src);
+
     }
 
 
     public int getLeadingMargin(boolean first) {
-        return  mQuoteSign.getWidth() + GAP_WIDTH;
+
+        if(mQuoteSign != null) {
+
+            return mQuoteSign.getWidth() +
+                    (int)mSignLeftPadding +
+                    (int)mSignRightPadding;
+
+        }
+        return  (int)mSignLeftPadding +
+                (int)mSignRightPadding;
     }
 
-    public int getBitmapH(Bitmap bmp){
-        return mQuoteSign.getHeight() + STRIPE_PADDING;
+    public float getBitmapH(Bitmap bmp){
+        if(mQuoteSign != null) {
+            return mQuoteSign.getHeight();
+        }
+        return 0;
     }
 
-    public int getBitmapW(Bitmap bmp){
-        return mQuoteSign.getWidth() + STRIPE_PADDING;
+    public float getBitmapW(Bitmap bmp){
+
+        if(mQuoteSign != null) {
+            return mQuoteSign.getWidth();
+        }
+        return 0;
     }
 
     public void drawLeadingMargin(Canvas c,
@@ -154,9 +157,14 @@ public class QuoteSpan extends MetricAffectingSpan implements /*LineHeightSpan,*
         int st = ((Spanned) text).getSpanStart(this);
 
         int itop = layout.getLineTop(layout.getLineForOffset(st));
-        if (dir < 0)
+
+        if (dir < 0) {
             x -= getBitmapW(mQuoteSign);
-        c.drawBitmap(mQuoteSign, x + STRIPE_PADDING, itop + STRIPE_PADDING, p);
+        }
+
+        if(mQuoteSign != null) {
+            c.drawBitmap(mQuoteSign, x + mSignLeftPadding, itop + mSignTopPadding, p);
+        }
 
     }
 
@@ -175,9 +183,6 @@ public class QuoteSpan extends MetricAffectingSpan implements /*LineHeightSpan,*
 
         if(mLinesCount < 0){
             mLinesCount = lnum;
-            mCurrentLine = 1;
-        }else {
-            mCurrentLine ++;
         }
 
         final int paintColor = p.getColor();
@@ -185,7 +190,6 @@ public class QuoteSpan extends MetricAffectingSpan implements /*LineHeightSpan,*
         p.setStyle(Paint.Style.FILL);
         Rect rect = new Rect(left, top, right, bottom);
         c.drawRect(rect, p);
-
 
         p.setColor(paintColor);
     }
@@ -202,8 +206,12 @@ public class QuoteSpan extends MetricAffectingSpan implements /*LineHeightSpan,*
 
     @Override
     public void onSpannedSetToView(RichContentViewDisplay view){
-        Appearance appearance = view.getStyle();
-        mColor = appearance.getQuoteBackgroundColor();
 
+        final Appearance appearance = view.getStyle();
+        mColor = appearance.getQuoteBackgroundColor();
+        mQuoteSign = appearance.getQuoteSign();
+        mSignLeftPadding = appearance.getQuoteSignLeftPadding();
+        mSignRightPadding = appearance.getQuoteSignRightPadding();
+        mSignTopPadding = appearance.getQuoteSignTopPadding();
     }
 }

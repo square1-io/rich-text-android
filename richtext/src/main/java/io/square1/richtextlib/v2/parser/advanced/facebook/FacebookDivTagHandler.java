@@ -48,7 +48,7 @@ public class FacebookDivTagHandler extends TagHandler {
 
             Style style = mFacebookContext.getStyle();
             SpannedBuilderUtils.ensureAtLeastThoseNewLines(out, 2);
-            QuoteSpan quoteSpan = new QuoteSpan(style.getQuoteBackgroundColor(), style.quoteBitmap());
+            QuoteSpan quoteSpan = new QuoteSpan();
             SpannedBuilderUtils.endSpan(out, Markers.Blockquote.class, quoteSpan);
 
         if (TextUtils.isEmpty(mFacebookContext.getFacebookPostUrl()) == false) {

@@ -36,17 +36,8 @@ public interface Style {
 
     Context getApplicationContext();
 
-    /**
-     * Bitmap image used when showing a quote
-     * @return
-     */
-     Bitmap quoteBitmap();
 
-    /**
-     * getInstance the background color for a quote tag
-     * @return
-     */
-    int getQuoteBackgroundColor();
+
 
     /**
      * text color to be used for H1... headers
