@@ -33,6 +33,7 @@ import android.text.style.LineBackgroundSpan;
 import android.text.style.MetricAffectingSpan;
 
 import io.square1.parcelable.DynamicParcelableCreator;
+import io.square1.richtextlib.ui.Appearance;
 import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.UniqueId;
 
@@ -160,7 +161,17 @@ public class QuoteSpan extends MetricAffectingSpan implements /*LineHeightSpan,*
     }
 
     @Override
-    public void drawBackground(Canvas c, Paint p, int left, int right, int top, int baseline, int bottom, CharSequence text, int start, int end, int lnum) {
+    public void drawBackground(Canvas c,
+                               Paint p,
+                               int left,
+                               int right,
+                               int top,
+                               int baseline,
+                               int bottom,
+                               CharSequence text,
+                               int start,
+                               int end,
+                               int lnum) {
 
         if(mLinesCount < 0){
             mLinesCount = lnum;
@@ -191,6 +202,8 @@ public class QuoteSpan extends MetricAffectingSpan implements /*LineHeightSpan,*
 
     @Override
     public void onSpannedSetToView(RichContentViewDisplay view){
+        Appearance appearance = view.getStyle();
+        mColor = appearance.getQuoteBackgroundColor();
 
     }
 }

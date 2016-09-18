@@ -72,15 +72,15 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
 
     private boolean mAttachedToWindow;
 
+    private Appearance mAppearance;
 
 
-    private TextPaint mTextPaint;
     private Layout mLayout;
     private float mSpacingMult = 0.99f;
     private float mSpacingAdd = 0.0f;
 
     private int mLastMeasuredWidth;
-    private float mDefaultPixelSize;
+
 
 
     private OnSpanClickedObserver mOnSpanClickedObserver;
@@ -124,14 +124,6 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
     }
 
 
-    private void setRawTextSize(float size) {
-
-        if (size != mTextPaint.getTextSize()) {
-            mTextPaint.setTextSize(size);
-            performLayout();
-        }
-
-    }
 
     @Override
     public void performLayout(){
@@ -169,25 +161,17 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
 
         setWillNotDraw(false);
 
+        mAppearance = new Appearance(context);
 
         mText = new RichTextDocumentElement();
         mSpans = mText.getSpans();
 
-        final Resources res = getResources();
-        mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-        mTextPaint.linkColor = Color.BLUE;
-        mTextPaint.density = res.getDisplayMetrics().density;
         mLastMeasuredWidth = 0;
-
-        mDefaultPixelSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                15,
-                res.getDisplayMetrics());
-
-        setRawTextSize(mDefaultPixelSize);
 
         parseCustomAttributes(context, attrs);
 
 
+        performLayout();
 
     }
 
@@ -219,7 +203,7 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
     private Layout makeLayout(int width){
 
         StaticLayout result = new StaticLayout(mText,
-                mTextPaint,
+                mAppearance.textPaint(null),
                 width,
                 Layout.Alignment.ALIGN_NORMAL,
                 mSpacingMult,
@@ -383,18 +367,18 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
             setFontFamily(customFont);
 
             if (a.hasValue(R.styleable.RichContentView_android_textSize)) {
-                int textSize = a.getDimensionPixelSize(R.styleable.RichContentView_android_textSize, (int) mDefaultPixelSize);
-                setRawTextSize(textSize);
+                int textSize = a.getDimensionPixelSize(R.styleable.RichContentView_android_textSize, 15);
+                mAppearance.setTextFontSize(textSize);
             }
 
             if (a.hasValue(R.styleable.RichContentView_android_textColor)) {
                 int color = a.getColor(R.styleable.RichContentView_android_textColor, Color.BLACK);
-                mTextPaint.setColor(color);
+                mAppearance.setTextColor(color);
             }
 
             if (a.hasValue(R.styleable.RichContentView_android_textColorLink)) {
                 int color = a.getColor(R.styleable.RichContentView_android_textColorLink, Color.BLUE);
-                mTextPaint.linkColor = color;
+                mAppearance.setLinkColor(color);
             }
         }finally {
             a.recycle();
@@ -410,7 +394,7 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
         try {
 
             Typeface tf  = Typeface.createFromAsset(getContext().getAssets(), customFont);
-            mTextPaint.setTypeface(tf);
+            mAppearance.setTextTypeFace(tf);
 
         } catch (Exception e) {
 
@@ -501,5 +485,10 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
     @Override
     public void unscheduleDrawable(Drawable who, Runnable what) {
         super.unscheduleDrawable(who, what);
+    }
+
+    @Override
+    public Appearance getStyle(){
+        return mAppearance;
     }
 }

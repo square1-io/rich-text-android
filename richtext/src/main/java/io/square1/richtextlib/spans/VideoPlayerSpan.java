@@ -44,7 +44,10 @@ import io.square1.richtextlib.util.UniqueId;
 /**
  * Created by roberto on 23/06/15.
  */
-public class VideoPlayerSpan extends ReplacementSpan implements ClickableSpan, UpdateAppearance, RichTextSpan,  Animatable {
+public class VideoPlayerSpan extends ReplacementSpan implements ClickableSpan,
+        UpdateAppearance,
+        RichTextSpan,
+        Animatable {
 
     public static final Creator<VideoPlayerSpan> CREATOR  = DynamicParcelableCreator.getInstance(VideoPlayerSpan.class);
     public static final int TYPE = UniqueId.getType();
@@ -63,8 +66,6 @@ public class VideoPlayerSpan extends ReplacementSpan implements ClickableSpan, U
 
     public VideoPlayerSpan(String videoUrl, int maxWidth){
         super();
-
-
         mVideoUri = Uri.parse(videoUrl);
 
     }
@@ -157,7 +158,9 @@ public class VideoPlayerSpan extends ReplacementSpan implements ClickableSpan, U
     int mTransY;
 
     @Override
-    public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
+    public void draw(Canvas canvas,
+                     CharSequence text,
+                     int start, int end, float x, int top, int y, int bottom, Paint paint) {
 
          mStart = start;
          mEnd = end;
@@ -186,8 +189,12 @@ public class VideoPlayerSpan extends ReplacementSpan implements ClickableSpan, U
             viewDisplay.addSubView(mPlayer);
             mPlayer.setData(mVideoUri);
         }
+
         Point point = new Point((int) mX, mTransY);
-        mPlayer.setLayoutParams(viewDisplay.generateDefaultLayoutParams(point, getBitmapSize().width(), getBitmapSize().height()));
+
+        mPlayer.setLayoutParams(viewDisplay.generateDefaultLayoutParams(point,
+                getBitmapSize().width(),
+                getBitmapSize().height()));
     }
 
     @Override
