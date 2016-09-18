@@ -96,4 +96,12 @@ public class ImageDocumentElement extends DocumentElement {
         mWidth = source.readInt();
         mHeight = source.readInt();
     }
+
+    public int getWidth(){
+        return mWidth;
+    }
+
+    public int getHeight(){
+        return mHeight;
+    }
 }
