@@ -27,6 +27,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.text.TextPaint;
 import android.util.TypedValue;
 
@@ -40,13 +41,13 @@ public class Appearance {
     /**
      * main color for the text
      */
-    private int textColor;
+    private Integer textColor;
 
 
     /**
      * text color for links
      */
-    private int linkColor;
+    private Integer linkColor;
 
     /**
      *  font for the main text
@@ -87,10 +88,6 @@ public class Appearance {
      */
     private float quoteSignTopPadding = 0;
 
-
-    /**
-     *
-     */
     /**
      *  background color for quotes
      */
@@ -99,7 +96,29 @@ public class Appearance {
     /**
      * a bitmap to be displayed on the top left corner of a quote
      */
-    private Bitmap quoteSign;
+    private Drawable quoteSign;
+
+    /**
+     * text color for the quote
+     */
+    private Integer textQuoteColor;
+
+    /**
+     *  text size for the quote
+     */
+    private float textQuoteFontSize;
+
+    /**
+     *  font for the quote text
+     */
+    private Typeface textQuoteTypeFace;
+
+
+
+    /**
+     * text color for the quote
+     */
+    private Integer textHeaderColor;
 
     private Context applicationContext;
 
@@ -109,15 +128,17 @@ public class Appearance {
         applicationContext = context.getApplicationContext();
         textTypeFace = null;
         linkTypeFace = null;
+        textQuoteTypeFace = null;
 
-        textColor = -1;
-        linkColor = -1;
+        textColor = null;
+        linkColor = null;
+        textQuoteColor = null;
 
         quoteBackgroundColor = Color.TRANSPARENT;
 
         final Resources res = applicationContext.getResources();
 
-        quoteSign = BitmapFactory.decodeResource(res, R.drawable.quote);
+        quoteSign = res.getDrawable(R.drawable.quote);
 
         quoteSignLeftPadding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                 5,
@@ -136,7 +157,7 @@ public class Appearance {
                 15,
                 res.getDisplayMetrics());
 
-        linkFontSize = textFontSize;
+        textQuoteFontSize = linkFontSize = textFontSize;
 
     }
 
@@ -177,8 +198,12 @@ public class Appearance {
             textPaint.setTextSize(textFontSize);
         }
 
-        if(textColor > 0) {
+        if(textColor != null) {
             textPaint.setColor(textColor);
+        }
+
+        if(linkColor != null) {
+            textPaint.linkColor = linkColor;
         }
 
 
@@ -197,7 +222,7 @@ public class Appearance {
             textPaint.setTextSize(linkFontSize);
         }
 
-        if(linkColor > 0) {
+        if(linkColor != null) {
             textPaint.setColor(linkColor);
         }
 
@@ -206,18 +231,18 @@ public class Appearance {
 
 
     public int getQuoteBackgroundColor() {
-        return Color.RED;//quoteBackgroundColor;
+        return quoteBackgroundColor;
     }
 
     public void setQuoteBackgroundColor(int color){
         quoteBackgroundColor = color;
     }
 
-    public Bitmap getQuoteSign(){
+    public Drawable getQuoteSign(){
         return quoteSign;
     }
 
-    public void setQuoteSign(Bitmap quoteSign){
+    public void setQuoteSign(Drawable quoteSign){
          this.quoteSign = quoteSign;
     }
 
@@ -256,4 +281,83 @@ public class Appearance {
         return defaultTextPaint;
     }
 
+    public float getTextQuoteFontSize() {
+        return textQuoteFontSize;
+    }
+
+    public void setTextQuoteFontSize(float textQuoteFontSize) {
+        this.textQuoteFontSize = textQuoteFontSize;
+    }
+
+    public Typeface getTextQuoteTypeFace() {
+        return textQuoteTypeFace;
+    }
+
+    public void setTextQuoteTypeFace(Typeface textQuoteTypeFace) {
+        this.textQuoteTypeFace = textQuoteTypeFace;
+    }
+
+    public int getTextQuoteColor() {
+        return textQuoteColor;
+    }
+
+    public void setTextQuoteColor(int textQuoteColor) {
+        this.textQuoteColor = textQuoteColor;
+    }
+
+    public TextPaint getQuoteTextPaint() {
+
+        TextPaint quoteTextPaint = textPaint(null);
+
+        if(textQuoteTypeFace != null){
+            quoteTextPaint.setTypeface(textQuoteTypeFace);
+        }
+
+        if(textQuoteFontSize > 0){
+            quoteTextPaint.setTextSize(textQuoteFontSize);
+        }
+
+        if(textQuoteColor != null) {
+            quoteTextPaint.setColor(textQuoteColor);
+        }
+
+        if(linkColor != null) {
+            quoteTextPaint.linkColor = linkColor;
+        }
+
+        return quoteTextPaint;
+    }
+
+    public Integer getTextHeaderColor() {
+        return textHeaderColor;
+    }
+
+    public void setTextHeaderColor(Integer textHeaderColor) {
+        this.textHeaderColor = textHeaderColor;
+    }
+
+    private static final float[] HEADER_SIZES = {
+            1.5f, 1.4f, 1.3f, 1.2f, 1.1f, 1f,
+    };
+
+    public TextPaint textPaintForHeader(final int header){
+
+       final TextPaint textPaint = textPaint(null);
+
+        if(header >= 0 &&  header <= 6) {
+            float mx = HEADER_SIZES[header];
+            textPaint.setTypeface(Typeface.create(textPaint.getTypeface(), Typeface.BOLD));
+            textPaint.setTextSize(textPaint.getTextSize() * mx);
+        }
+
+        if(textHeaderColor != null){
+            textPaint.setColor(textHeaderColor);
+        }
+
+        if(linkColor != null) {
+            textPaint.linkColor = linkColor;
+        }
+
+        return textPaint;
+    }
 }

@@ -363,8 +363,16 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
                 R.styleable.RichContentView,
                 0, 0);
         try {
-            String customFont = a.getString(R.styleable.RichContentView_android_fontFamily);
-            setFontFamily(customFont);
+
+            if (a.hasValue(R.styleable.RichContentView_android_fontFamily)) {
+
+                String customFont = a.getString(R.styleable.RichContentView_android_fontFamily);
+
+                Typeface typeface = getTypeFace(customFont);
+                if (typeface != null) {
+                    mAppearance.setTextTypeFace(typeface);
+                }
+            }
 
             if (a.hasValue(R.styleable.RichContentView_android_textSize)) {
                 int textSize = a.getDimensionPixelSize(R.styleable.RichContentView_android_textSize, 15);
@@ -380,6 +388,45 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
                 int color = a.getColor(R.styleable.RichContentView_android_textColorLink, Color.BLUE);
                 mAppearance.setLinkColor(color);
             }
+
+            if (a.hasValue(R.styleable.RichContentView_richDrawableQuoteColorBackground)) {
+                int color = a.getColor(R.styleable.RichContentView_richDrawableQuoteColorBackground, Color.TRANSPARENT);
+                mAppearance.setQuoteBackgroundColor(color);
+            }
+
+            if (a.hasValue(R.styleable.RichContentView_richDrawableQuoteSign)) {
+                Drawable quote = a.getDrawable(R.styleable.RichContentView_richDrawableQuoteSign);
+                mAppearance.setQuoteSign(quote);
+            }
+
+            if (a.hasValue(R.styleable.RichContentView_richQuoteFontFamily)) {
+
+                String customQuoteFont = a.getString(R.styleable.RichContentView_richQuoteFontFamily);
+                Typeface quoteTypeFace = getTypeFace(customQuoteFont);
+                if (quoteTypeFace != null) {
+                    mAppearance.setTextQuoteTypeFace(quoteTypeFace);
+                }
+            }
+
+            if (a.hasValue(R.styleable.RichContentView_richQuoteTextColor)) {
+                int color = a.getColor(R.styleable.RichContentView_richQuoteTextColor, 0);
+                mAppearance.setTextQuoteColor(color);
+            }
+
+            if (a.hasValue(R.styleable.RichContentView_richQuoteTextSize)) {
+                int textSize = a.getDimensionPixelSize(R.styleable.RichContentView_richQuoteTextSize, 15);
+                mAppearance.setTextQuoteFontSize(textSize);
+            }
+
+            if (a.hasValue(R.styleable.RichContentView_richHeaderTextColor)) {
+                int color = a.getColor(R.styleable.RichContentView_richHeaderTextColor, 0);
+                mAppearance.setTextHeaderColor(color);
+            }
+
+
+
+
+
         }finally {
             a.recycle();
         }
@@ -403,6 +450,23 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
         }
 
         return true;
+    }
+
+    private Typeface getTypeFace(String customTypeFace){
+
+        if(TextUtils.isEmpty(customTypeFace)){
+            return null;
+        }
+
+        try {
+
+            Typeface tf  = Typeface.createFromAsset(getContext().getAssets(), customTypeFace);
+            return tf;
+
+        } catch (Exception e) {
+            return null;
+        }
+
     }
 
     public Point getSpanOrigin(Object span) {

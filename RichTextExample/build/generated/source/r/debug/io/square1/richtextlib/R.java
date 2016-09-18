@@ -8,12 +8,17 @@ package io.square1.richtextlib;
 
 public final class R {
 	public static final class attr {
-		public static final int richDrawableQuoteSign = 0x7f010003;
-		public static final int richFontFamily = 0x7f010004;
-		public static final int richTextColor = 0x7f010005;
-		public static final int richTextColorLink = 0x7f010006;
-		public static final int richTextColorQuote = 0x7f010007;
-		public static final int richTextSize = 0x7f010008;
+		public static final int richDrawableQuoteColorBackground = 0x7f010003;
+		public static final int richDrawableQuoteSign = 0x7f010004;
+		public static final int richFontFamily = 0x7f010005;
+		public static final int richHeaderTextColor = 0x7f010006;
+		public static final int richQuoteFontFamily = 0x7f010007;
+		public static final int richQuoteTextColor = 0x7f010008;
+		public static final int richQuoteTextSize = 0x7f010009;
+		public static final int richTextColor = 0x7f01000a;
+		public static final int richTextColorLink = 0x7f01000b;
+		public static final int richTextColorQuote = 0x7f01000c;
+		public static final int richTextSize = 0x7f01000d;
 	}
 	public static final class dimen {
 		public static final int post_details_content_padding = 0x7f070048;
@@ -28,7 +33,7 @@ public final class R {
 		public static final int place_holder_twitter = 0x7f020042;
 		public static final int place_holder_twitter_xml = 0x7f020043;
 		public static final int quote = 0x7f020044;
-		public static final int youtube_play = 0x7f020045;
+		public static final int youtube_play = 0x7f020046;
 	}
 	public static final class id {
 		public static final int ffwd = 0x7f0c0066;
@@ -55,10 +60,16 @@ public final class R {
 		public static final int full_screen_dialog = 0x7f080125;
 	}
 	public static final class styleable {
-		public static final int[] RichContentView = { 0x01010095, 0x01010098, 0x0101009b, 0x010103ac };
+		public static final int[] RichContentView = { 0x01010095, 0x01010098, 0x0101009b, 0x010103ac, 0x7f010003, 0x7f010004, 0x7f010006, 0x7f010007, 0x7f010008, 0x7f010009 };
 		public static final int RichContentView_android_fontFamily = 3;
 		public static final int RichContentView_android_textColor = 1;
 		public static final int RichContentView_android_textColorLink = 2;
 		public static final int RichContentView_android_textSize = 0;
+		public static final int RichContentView_richDrawableQuoteColorBackground = 4;
+		public static final int RichContentView_richDrawableQuoteSign = 5;
+		public static final int RichContentView_richHeaderTextColor = 6;
+		public static final int RichContentView_richQuoteFontFamily = 7;
+		public static final int RichContentView_richQuoteTextColor = 8;
+		public static final int RichContentView_richQuoteTextSize = 9;
 	}
 }

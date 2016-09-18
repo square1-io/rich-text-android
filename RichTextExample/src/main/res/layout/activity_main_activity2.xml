@@ -1,5 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
@@ -9,6 +11,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <io.square1.richtextlib.ui.RichContentView
+        app:richDrawableQuoteSign="@drawable/quote2"
         android:id="@+id/textView"
         android:textSize="20dip"
         android:layout_width="wrap_content"

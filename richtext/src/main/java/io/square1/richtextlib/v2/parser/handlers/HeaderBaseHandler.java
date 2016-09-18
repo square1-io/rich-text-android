@@ -22,6 +22,7 @@ package io.square1.richtextlib.v2.parser.handlers;
 import android.graphics.Typeface;
 import android.text.Spannable;
 
+import io.square1.richtextlib.spans.HeaderSpan;
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 import io.square1.richtextlib.spans.ForegroundColorSpan;
 import io.square1.richtextlib.spans.RelativeSizeSpan;
@@ -65,17 +66,23 @@ public abstract class HeaderBaseHandler extends TagHandler {
 
         if (where != len) {
 
-            int foreground = context.getStyle().headerColor();
-
-            out.setSpan(new ForegroundColorSpan(foreground),
+            out.setSpan(new HeaderSpan(header.level),
                     where,
                     len,
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-            out.setSpan(new RelativeSizeSpan(context.getStyle().headerIncrease(header.level)),
-                    where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            out.setSpan(new StyleSpan(Typeface.BOLD),
-                    where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//            int foreground = context.getStyle().headerColor();
+//
+//            out.setSpan(new ForegroundColorSpan(foreground),
+//                    where,
+//                    len,
+//                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//
+//            out.setSpan(new RelativeSizeSpan(context.getStyle().headerIncrease(header.level)),
+//                    where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//
+//            out.setSpan(new StyleSpan(Typeface.BOLD),
+//                    where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
             SpannedBuilderUtils.ensureAtLeastThoseNewLines(out, 2);
         }

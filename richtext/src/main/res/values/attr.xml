@@ -6,10 +6,21 @@
     <attr name="richTextColorLink" format="color"/>
     <attr name="richTextColorQuote" format="color"/>
     <attr name="richDrawableQuoteSign" format="reference"/>
+    <attr name="richDrawableQuoteColorBackground" format="color"/>
+    <attr name="richQuoteFontFamily" format="string"/>
+    <attr name="richQuoteTextSize" format="dimension" />
+    <attr name="richQuoteTextColor" format="color" />
+    <attr name="richHeaderTextColor" format="color" />
     <declare-styleable name="RichContentView">
         <attr name="android:fontFamily"/>
         <attr name="android:textSize" />
         <attr name="android:textColor" />
         <attr name="android:textColorLink"/>
+        <attr name="richDrawableQuoteSign"/>
+        <attr name="richDrawableQuoteColorBackground"/>
+        <attr name="richQuoteFontFamily"/>
+        <attr name="richQuoteTextSize"/>
+        <attr name="richQuoteTextColor"/>
+        <attr name="richHeaderTextColor"/>
     </declare-styleable>
 </resources>

@@ -23,6 +23,8 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.Layout;
@@ -51,7 +53,7 @@ public class QuoteSpan extends MetricAffectingSpan implements /*LineHeightSpan,*
     }
 
 
-    private Bitmap mQuoteSign;
+    private Drawable mQuoteSign;
     private int mColor;
     private int mLinesCount;
 
@@ -59,20 +61,14 @@ public class QuoteSpan extends MetricAffectingSpan implements /*LineHeightSpan,*
     private  float mSignRightPadding = 0;
     private  float mSignTopPadding = 0;
 
+    private TextPaint mTextPaint;
 
     public QuoteSpan() {
-       this(0xff0000ff,null);
-    }
-
-    public QuoteSpan(Bitmap quoteSign) {
-        this(0xff0000ff, quoteSign);
-    }
-
-    public QuoteSpan(int color , Bitmap quoteSign) {
         super();
-        mQuoteSign = quoteSign;
-        mColor = color;
+        mQuoteSign = null;
+        mColor = -1;
         mLinesCount = -1;
+        mTextPaint = null;
     }
 
 
@@ -80,10 +76,17 @@ public class QuoteSpan extends MetricAffectingSpan implements /*LineHeightSpan,*
     @Override
     public void updateDrawState(TextPaint p) {
 
+        if(mTextPaint != null){
+            p.set(mTextPaint);
+        }
     }
 
     @Override
     public void updateMeasureState(TextPaint p) {
+
+        if(mTextPaint != null){
+            p.set(mTextPaint);
+        }
 
     }
 
@@ -117,7 +120,7 @@ public class QuoteSpan extends MetricAffectingSpan implements /*LineHeightSpan,*
 
         if(mQuoteSign != null) {
 
-            return mQuoteSign.getWidth() +
+            return mQuoteSign.getIntrinsicWidth() +
                     (int)mSignLeftPadding +
                     (int)mSignRightPadding;
 
@@ -126,17 +129,17 @@ public class QuoteSpan extends MetricAffectingSpan implements /*LineHeightSpan,*
                 (int)mSignRightPadding;
     }
 
-    public float getBitmapH(Bitmap bmp){
+    public float getBitmapH(){
         if(mQuoteSign != null) {
-            return mQuoteSign.getHeight();
+            return mQuoteSign.getIntrinsicHeight();
         }
         return 0;
     }
 
-    public float getBitmapW(Bitmap bmp){
+    public float getBitmapW(){
 
         if(mQuoteSign != null) {
-            return mQuoteSign.getWidth();
+            return mQuoteSign.getIntrinsicWidth();
         }
         return 0;
     }
@@ -159,11 +162,20 @@ public class QuoteSpan extends MetricAffectingSpan implements /*LineHeightSpan,*
         int itop = layout.getLineTop(layout.getLineForOffset(st));
 
         if (dir < 0) {
-            x -= getBitmapW(mQuoteSign);
+            x -= getBitmapW();
         }
 
         if(mQuoteSign != null) {
-            c.drawBitmap(mQuoteSign, x + mSignLeftPadding, itop + mSignTopPadding, p);
+
+            Rect rect = new Rect();
+            rect.left = (int)(x + mSignLeftPadding);
+            rect.top =  (int)(itop + mSignTopPadding);
+            rect.right = rect.left + mQuoteSign.getIntrinsicWidth();
+            rect.bottom = rect.top + mQuoteSign.getIntrinsicHeight();
+            mQuoteSign.setBounds(rect);
+            mQuoteSign.draw(c);
+
+            //c.drawBitmap(mQuoteSign, x + mSignLeftPadding, itop + mSignTopPadding, p);
         }
 
     }
@@ -213,5 +225,6 @@ public class QuoteSpan extends MetricAffectingSpan implements /*LineHeightSpan,*
         mSignLeftPadding = appearance.getQuoteSignLeftPadding();
         mSignRightPadding = appearance.getQuoteSignRightPadding();
         mSignTopPadding = appearance.getQuoteSignTopPadding();
+        mTextPaint = appearance.getQuoteTextPaint();
     }
 }

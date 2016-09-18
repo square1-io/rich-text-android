@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <io.square1.richtextlib.ui.RichContentView
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    app:richDrawableQuoteSign="@drawable/quote2"
+    app:richDrawableQuoteColorBackground="@android:color/transparent"
+    app:richQuoteFontFamily="fonts/Velino_Text-Bold.otf"
+    android:textSize="20dip"
+    app:richHeaderTextColor="#ff0000"
+    android:textColor="#dd99dd"
+    android:textColorLink="#995500"
+    app:richQuoteTextSize="45dip"
+    app:richQuoteTextColor="#334400"
     android:background="#d3d3d3"
     android:paddingLeft="25dip"
     android:paddingRight="25dip"
