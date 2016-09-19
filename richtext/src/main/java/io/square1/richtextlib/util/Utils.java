@@ -35,6 +35,7 @@ public class Utils {
             Log.i("CLASS", className);
             return item;
         }catch (Exception e){
+            Log.e("CLASS" , className);
             e.printStackTrace();
         }
 
