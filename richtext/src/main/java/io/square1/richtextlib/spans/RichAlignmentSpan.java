@@ -41,7 +41,7 @@ public interface RichAlignmentSpan extends android.text.style.AlignmentSpan, Ric
             return TYPE;
         }
 
-        public static final Parcelable.Creator<Standard> CREATOR  = DynamicParcelableCreator.getInstance(Standard.class);
+        public static final Parcelable.Creator<io.square1.richtextlib.spans.RichAlignmentSpan.Standard> CREATOR  = DynamicParcelableCreator.getInstance(io.square1.richtextlib.spans.RichAlignmentSpan.Standard.class);
 
         public Standard(Layout.Alignment align) {
             mAlignment = align;

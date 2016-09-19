@@ -95,6 +95,7 @@ public class LeadingMarginSpan implements RichTextSpan, android.text.style.Leadi
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        DynamicParcelableCreator.writeType(dest, this);
         dest.writeInt(mFirstLine);
         dest.writeInt(mRest);
     }
