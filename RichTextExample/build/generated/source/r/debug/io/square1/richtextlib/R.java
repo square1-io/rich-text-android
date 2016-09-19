@@ -36,18 +36,18 @@ public final class R {
 		public static final int youtube_play = 0x7f020046;
 	}
 	public static final class id {
-		public static final int ffwd = 0x7f0c0066;
-		public static final int mediacontroller_progress = 0x7f0c0068;
-		public static final int pause = 0x7f0c0065;
-		public static final int play = 0x7f0c0064;
-		public static final int rew = 0x7f0c0063;
-		public static final int time = 0x7f0c005c;
-		public static final int time_current = 0x7f0c0067;
-		public static final int tweetContainer = 0x7f0c0069;
+		public static final int ffwd = 0x7f0c0067;
+		public static final int mediacontroller_progress = 0x7f0c0069;
+		public static final int pause = 0x7f0c0066;
+		public static final int play = 0x7f0c0065;
+		public static final int rew = 0x7f0c0064;
+		public static final int time = 0x7f0c005d;
+		public static final int time_current = 0x7f0c0068;
+		public static final int tweetContainer = 0x7f0c006a;
 	}
 	public static final class layout {
-		public static final int rich_text_embed_layout_audio_player = 0x7f040026;
-		public static final int rich_text_embed_layout_twitter_container = 0x7f040027;
+		public static final int rich_text_embed_layout_audio_player = 0x7f040027;
+		public static final int rich_text_embed_layout_twitter_container = 0x7f040028;
 	}
 	public static final class string {
 		public static final int app_name = 0x7f060013;

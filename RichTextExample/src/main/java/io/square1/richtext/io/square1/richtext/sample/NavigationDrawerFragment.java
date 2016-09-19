@@ -42,6 +42,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.Arrays;
+
 import io.square1.richtext.R;
 
 /**
@@ -50,6 +52,8 @@ import io.square1.richtext.R;
  * design guidelines</a> for a complete explanation of the behaviors implemented here.
  */
 public class NavigationDrawerFragment extends Fragment {
+
+    public static final String OPEN = "Open";
 
     /**
      * Remember the position of the selected item.
@@ -80,9 +84,9 @@ public class NavigationDrawerFragment extends Fragment {
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
 
-    private String[] mSampleFiles;
+    public String[] mSampleFiles;
 
-    private static final String SAMPLES_FOLDER = "samples";
+    public static final String SAMPLES_FOLDER = "samples";
 
     public NavigationDrawerFragment() {
     }
@@ -132,6 +136,10 @@ public class NavigationDrawerFragment extends Fragment {
                 selectItem(position);
             }
         });
+
+        int N = mSampleFiles.length;
+        mSampleFiles = Arrays.copyOf(mSampleFiles, N + 1);
+        mSampleFiles[N] = OPEN;
         mDrawerListView.setAdapter(new ArrayAdapter<String>(
                 getActionBar().getThemedContext(),
                 android.R.layout.simple_list_item_activated_1,

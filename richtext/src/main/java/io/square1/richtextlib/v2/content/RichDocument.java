@@ -24,6 +24,8 @@ import android.os.Parcelable;
 
 import java.util.ArrayList;
 
+import io.square1.parcelable.DynamicParcelableCreator;
+
 /**
  * Created by roberto on 04/10/15.
  */
@@ -40,7 +42,7 @@ public class RichDocument implements Parcelable {
     }
 
     protected RichDocument(Parcel in) {
-        mElements = in.createTypedArrayList(DocumentElement.CREATOR);
+        mElements = in.createTypedArrayList(DynamicParcelableCreator.getInstance(DocumentElement.class));
         mTitle = in.readString();
     }
 

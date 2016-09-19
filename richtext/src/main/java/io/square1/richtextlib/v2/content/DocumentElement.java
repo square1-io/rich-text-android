@@ -23,6 +23,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import io.square1.parcelable.DynamicParcelable;
+import io.square1.parcelable.DynamicParcelableCreator;
 import io.square1.richtextlib.util.Utils;
 
 /**
@@ -62,11 +63,11 @@ public abstract class DocumentElement implements DynamicParcelable {
 
     @Override
     public final void writeToParcel(Parcel dest, int flags){
-        dest.writeString(getClass().getName());
+        DynamicParcelableCreator.writeType(dest, this);
         write(dest, flags);
     }
 
 
-    public abstract void write(Parcel dest, int flags);
+    protected abstract void write(Parcel dest, int flags);
     public abstract void readFromParcel(Parcel source);
 }

@@ -35,6 +35,7 @@ import android.widget.ListView;
 
 import io.square1.richtext.R;
 import io.square1.richtextlib.v2.RichTextV2;
+import io.square1.richtextlib.v2.content.RichDocument;
 
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -66,6 +67,16 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public void onNavigationDrawerItemSelected(String fileName) {
+
+        if(( NavigationDrawerFragment.SAMPLES_FOLDER + "/" + NavigationDrawerFragment.OPEN).equalsIgnoreCase(fileName)){
+
+            String html = Utils.readFromfile(this,  NavigationDrawerFragment.SAMPLES_FOLDER + "/" + mNavigationDrawerFragment.mSampleFiles[0]);
+            RichDocument result = RichTextV2.fromHtml(this, html, new RichTextV2.DefaultStyle(this));
+
+            Main2Activity.showDocument(result, this);
+
+            return;
+        }
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()

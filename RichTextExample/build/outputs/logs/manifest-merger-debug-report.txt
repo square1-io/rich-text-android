@@ -1,6 +1,6 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.xml:2:1-24:12
+ADDED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.xml:2:1-25:12
 	package
 		ADDED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.xml:3:5-34
 		INJECTED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.xml
@@ -22,7 +22,7 @@ ADDED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.x
 	android:name
 		ADDED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.xml:6:22-75
 application
-ADDED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.xml:8:5-22:19
+ADDED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.xml:8:5-23:19
 MERGED from [com.android.support:appcompat-v7:22.2.0] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/AndroidManifest.xml:22:5-20
 MERGED from [com.android.support:support-v4:22.2.0] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.0/AndroidManifest.xml:22:5-20
 MERGED from [io.square1:richtext:2.0.2] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/io.square1/richtext/2.0.2/AndroidManifest.xml:11:5-14:19
@@ -50,6 +50,10 @@ category#android.intent.category.LAUNCHER
 ADDED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.xml:19:17-77
 	android:name
 		ADDED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.xml:19:27-74
+activity#io.square1.richtext.io.square1.richtext.sample.Main2Activity
+ADDED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.xml:22:9-87
+	android:name
+		ADDED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.xml:22:19-75
 uses-sdk
 INJECTED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.xml reason: use-sdk injection requested
 MERGED from [com.android.support:appcompat-v7:22.2.0] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/AndroidManifest.xml:20:5-43

@@ -25,6 +25,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="io.square1.richtext.io.square1.richtext.sample.Main2Activity" />
     </application>
 
 </manifest>

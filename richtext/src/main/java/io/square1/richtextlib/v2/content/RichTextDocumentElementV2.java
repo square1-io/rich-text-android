@@ -1022,7 +1022,8 @@ public class RichTextDocumentElementV2 extends DocumentElement implements CharSe
        //     mSpans[index] = in.readParcelable(DynamicParcelableCreator.class);
        // }
 
-        ArrayList<DynamicParcelable> spans = in.createTypedArrayList(DynamicParcelableCreator.CREATOR);
+        DynamicParcelableCreator CREATOR = DynamicParcelableCreator.getInstance(DynamicParcelable.class);
+        ArrayList<DynamicParcelable> spans = in.createTypedArrayList(CREATOR);
         mSpans = spans.toArray();
 
         mSpanStarts = in.createIntArray();

@@ -33,25 +33,9 @@ import io.square1.richtextlib.util.Utils;
  */
 public class DynamicParcelableCreator<T extends DynamicParcelable> implements Parcelable.Creator<T> {
 
-    public  static  final  Parcelable.Creator<DynamicParcelable> CREATOR  = new Parcelable.Creator<DynamicParcelable>() {
-
-
-        @Override
-        public  DynamicParcelable createFromParcel(Parcel source) {
-            String type = source.readString();
-            DynamicParcelable obj = Utils.newInstance(type);
-            obj.readFromParcel(source);
-            return obj;
-        }
-
-        @Override
-        public DynamicParcelable[] newArray(int size) {
-            return new DynamicParcelable[size];
-        }
-    };
 
     public static <E extends DynamicParcelable> DynamicParcelableCreator<E> getInstance(Class<E> tClass){
-        return new DynamicParcelableCreator<E>(tClass);
+        return new DynamicParcelableCreator(tClass);
     }
 
     Class<T> mType;
@@ -60,18 +44,13 @@ public class DynamicParcelableCreator<T extends DynamicParcelable> implements Pa
         mType = tClass;
     }
 
+
     @Override
-    public T createFromParcel(Parcel source) {
-
-        try {
-
-            T obj =  mType.newInstance();
-            obj.readFromParcel(source);
-            return obj;
-
-        }catch (Exception e){
-            throw  new RuntimeException(e);
-        }
+    public  T createFromParcel(Parcel source) {
+        String type = source.readString();
+        T obj = Utils.newInstance(type);
+        obj.readFromParcel(source);
+        return obj;
     }
 
     @Override

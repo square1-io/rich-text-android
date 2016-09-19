@@ -28,5 +28,5 @@ import android.os.Parcelable;
 public interface DynamicParcelable extends Parcelable {
 
 
-    void readFromParcel(Parcel src);
+     void readFromParcel(Parcel src);
 }
