@@ -25,7 +25,7 @@ application
 ADDED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.xml:8:5-23:19
 MERGED from [com.android.support:appcompat-v7:22.2.0] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/AndroidManifest.xml:22:5-20
 MERGED from [com.android.support:support-v4:22.2.0] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.0/AndroidManifest.xml:22:5-20
-MERGED from [io.square1:richtext:2.0.1] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/io.square1/richtext/2.0.1/AndroidManifest.xml:11:5-14:19
+MERGED from [io.square1:richtext:2.0.2 ] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/io.square1/richtext/2.0.2@/AndroidManifest.xml:11:5-14:19
 	android:label
 		ADDED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.xml:11:9-41
 	android:allowBackup
@@ -58,7 +58,7 @@ uses-sdk
 INJECTED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.xml reason: use-sdk injection requested
 MERGED from [com.android.support:appcompat-v7:22.2.0] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/AndroidManifest.xml:20:5-43
 MERGED from [com.android.support:support-v4:22.2.0] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.0/AndroidManifest.xml:20:5-43
-MERGED from [io.square1:richtext:2.0.1] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/io.square1/richtext/2.0.1/AndroidManifest.xml:7:5-9:41
+MERGED from [io.square1:richtext:2.0.2 ] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/io.square1/richtext/2.0.2@/AndroidManifest.xml:7:5-9:41
 	android:targetSdkVersion
 		INJECTED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.xml
 		INJECTED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.xml

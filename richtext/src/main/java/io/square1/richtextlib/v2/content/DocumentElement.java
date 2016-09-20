@@ -73,8 +73,6 @@ public abstract class DocumentElement implements Parcelable /**implements Dynami
     }
 
     protected DocumentElement(Parcel in) {
-        String className = in.readString();
-        Log.i("PARCEL", className);
     }
 
     public static final Creator<DocumentElement> CREATOR = new Creator<DocumentElement>() {
