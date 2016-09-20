@@ -29,7 +29,6 @@ import io.square1.richtextlib.EmbedUtils;
  */
 public class OembedDocumentElement extends DocumentElement {
 
-    public static final Creator<OembedDocumentElement> CREATOR  = DynamicParcelableCreator.getInstance(OembedDocumentElement.class);
 
     private String mBaseUrl;
     private String mId;
@@ -58,12 +57,7 @@ public class OembedDocumentElement extends DocumentElement {
         return mId;
     }
 
-    @Override
-    public void write(Parcel dest, int flags) {
-        dest.writeString(mBaseUrl);
-        dest.writeString(mId);
-        dest.writeString(mType.name());
-    }
+
 
     @Override
     public void readFromParcel(Parcel source) {
@@ -72,4 +66,36 @@ public class OembedDocumentElement extends DocumentElement {
         mType = EmbedUtils.TEmbedType.valueOf(source.readString());
 
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void write(Parcel dest, int flags) {
+        dest.writeString(this.mBaseUrl);
+        dest.writeString(this.mId);
+        dest.writeInt(this.mType == null ? -1 : this.mType.ordinal());
+    }
+
+    protected OembedDocumentElement(Parcel in) {
+        super(in);
+        this.mBaseUrl = in.readString();
+        this.mId = in.readString();
+        int tmpMType = in.readInt();
+        this.mType = tmpMType == -1 ? null : EmbedUtils.TEmbedType.values()[tmpMType];
+    }
+
+    public static final Creator<OembedDocumentElement> CREATOR = new Creator<OembedDocumentElement>() {
+        @Override
+        public OembedDocumentElement createFromParcel(Parcel source) {
+            return new OembedDocumentElement(source);
+        }
+
+        @Override
+        public OembedDocumentElement[] newArray(int size) {
+            return new OembedDocumentElement[size];
+        }
+    };
 }

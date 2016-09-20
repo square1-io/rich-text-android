@@ -24,6 +24,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.renderscript.RSInvalidStateException;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +33,7 @@ import android.widget.ListView;
 
 import com.bumptech.glide.Glide;
 
+import io.square1.parcelable.ParcelableUtil;
 import io.square1.richtext.R;
 import io.square1.richtextlib.spans.RemoteBitmapSpan;
 import io.square1.richtextlib.spans.Style;
@@ -126,7 +128,12 @@ public  class ContentFragment extends Fragment implements UrlBitmapDownloader {
         protected RichDocument doInBackground(String... sampleFileName) {
             mHtml = Utils.readFromfile(mApplicationContext, sampleFileName[0]);
             RichDocument result = RichTextV2.fromHtml(mApplicationContext, mHtml, new InternalStyle(mApplicationContext));
-            return result;
+            byte[] data = ParcelableUtil.marshall(result);
+            RichDocument result1 = ParcelableUtil.unMarshall(data, RichDocument.CREATOR);
+            if(!result.equals(result1)){
+                throw new RSInvalidStateException(" differing ");
+            }
+            return result1;
         }
 
         @Override

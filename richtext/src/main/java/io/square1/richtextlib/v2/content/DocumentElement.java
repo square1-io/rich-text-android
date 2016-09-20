@@ -21,6 +21,7 @@ package io.square1.richtextlib.v2.content;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import io.square1.parcelable.DynamicParcelable;
 import io.square1.parcelable.DynamicParcelableCreator;
@@ -29,22 +30,61 @@ import io.square1.richtextlib.util.Utils;
 /**
  * Created by roberto on 08/09/15.
  */
-public abstract class DocumentElement implements DynamicParcelable {
+public abstract class DocumentElement implements Parcelable /**implements DynamicParcelable**/ {
 
 
     public DocumentElement(){}
 
-    private DocumentElement(Parcel in){}
+    //
+//    public static final Creator<DocumentElement> CREATOR = new Creator<DocumentElement>() {
+//
+//        @Override
+//        public DocumentElement createFromParcel(Parcel in) {
+//
+//            String className = in.readString();
+//            DocumentElement item = Utils.newInstance(className);
+//            if(item != null){
+//                item.readFromParcel(in);
+//            }
+//            return item;
+//
+//        }
+//
+//        @Override
+//        public DocumentElement[] newArray(int size) {
+//            return new DocumentElement[size];
+//        }
+//    };
+
+
+    protected abstract void write(Parcel dest, int flags);
+    public abstract void readFromParcel(Parcel source);
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    final public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.getClass().getName());
+        write(dest, flags);
+    }
+
+    protected DocumentElement(Parcel in) {
+        String className = in.readString();
+        Log.i("PARCEL", className);
+    }
 
     public static final Creator<DocumentElement> CREATOR = new Creator<DocumentElement>() {
-
         @Override
-        public DocumentElement createFromParcel(Parcel in) {
+        public DocumentElement createFromParcel(Parcel source) {
 
-            String className = in.readString();
+            String className = source.readString();
             DocumentElement item = Utils.newInstance(className);
             if(item != null){
-                item.readFromParcel(in);
+               item.readFromParcel(source);
             }
             return item;
 
@@ -55,19 +95,4 @@ public abstract class DocumentElement implements DynamicParcelable {
             return new DocumentElement[size];
         }
     };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public final void writeToParcel(Parcel dest, int flags){
-        DynamicParcelableCreator.writeType(dest, this);
-        write(dest, flags);
-    }
-
-
-    protected abstract void write(Parcel dest, int flags);
-    public abstract void readFromParcel(Parcel source);
 }

@@ -30,7 +30,28 @@ import io.square1.richtextlib.EmbedUtils;
  */
 public class ImageDocumentElement extends DocumentElement {
 
-    public static final Creator<ImageDocumentElement> CREATOR  = DynamicParcelableCreator.getInstance(ImageDocumentElement.class);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ImageDocumentElement that = (ImageDocumentElement) o;
+
+        if (mWidth != that.mWidth) return false;
+        if (mHeight != that.mHeight) return false;
+        if (!mImageUrl.equals(that.mImageUrl)) return false;
+        return mClickAction.equals(that.mClickAction);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = mImageUrl.hashCode();
+        result = 31 * result + mClickAction.hashCode();
+        result = 31 * result + mWidth;
+        result = 31 * result + mHeight;
+        return result;
+    }
 
     private String mImageUrl;
     private Uri mClickAction;
@@ -80,14 +101,6 @@ public class ImageDocumentElement extends DocumentElement {
 
 
 
-    @Override
-    public void write(Parcel dest, int flags) {
-        dest.writeString(mImageUrl);
-        dest.writeParcelable(mClickAction, flags);
-        dest.writeInt(mWidth);
-        dest.writeInt(mHeight);
-
-    }
 
     @Override
     public void readFromParcel(Parcel source) {
@@ -104,4 +117,37 @@ public class ImageDocumentElement extends DocumentElement {
     public int getHeight(){
         return mHeight;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void write(Parcel dest, int flags) {
+        dest.writeString(this.mImageUrl);
+        dest.writeParcelable(this.mClickAction, flags);
+        dest.writeInt(this.mWidth);
+        dest.writeInt(this.mHeight);
+    }
+
+    protected ImageDocumentElement(Parcel in) {
+        super(in);
+        this.mImageUrl = in.readString();
+        this.mClickAction = in.readParcelable(Uri.class.getClassLoader());
+        this.mWidth = in.readInt();
+        this.mHeight = in.readInt();
+    }
+
+    public static final Creator<ImageDocumentElement> CREATOR = new Creator<ImageDocumentElement>() {
+        @Override
+        public ImageDocumentElement createFromParcel(Parcel source) {
+            return new ImageDocumentElement(source);
+        }
+
+        @Override
+        public ImageDocumentElement[] newArray(int size) {
+            return new ImageDocumentElement[size];
+        }
+    };
 }

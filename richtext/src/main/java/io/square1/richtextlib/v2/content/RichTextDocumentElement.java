@@ -25,6 +25,7 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import io.square1.parcelable.DynamicParcelableCreator;
 import io.square1.richtextlib.spans.RichTextSpan;
@@ -35,8 +36,41 @@ import io.square1.richtextlib.spans.RichTextSpan;
  */
 public class RichTextDocumentElement extends DocumentElement implements CharSequence, GetChars, Spannable, Appendable {
 
-    public static final Creator<RichTextDocumentElement> CREATOR = DynamicParcelableCreator.getInstance(RichTextDocumentElement.class);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
+        RichTextDocumentElement that = (RichTextDocumentElement) o;
+
+        if(!contentString().equals(that.contentString())) return false;
+
+        RichTextSpan[] richTextSpans = getSpans();
+        RichTextSpan[] thatRichTextSpans = that.getSpans();
+
+        if (richTextSpans == thatRichTextSpans) {
+            return true;
+        }
+        if (richTextSpans == null ||
+                thatRichTextSpans == null ||
+                richTextSpans.length != thatRichTextSpans.length) {
+            return false;
+        }
+        for (int i = 0; i < richTextSpans.length; i++) {
+            RichTextSpan e1 = richTextSpans[i], e2 = thatRichTextSpans[i];
+
+            if(e1.getClass().equals(e2.getClass()) == false) return false;
+
+        }
+        return true;
+
+
+    }
+
+    @Override
+    public int hashCode() {
+        return mSpannableString.hashCode();
+    }
 
     private SpannableStringBuilder mSpannableString;
 
@@ -227,4 +261,26 @@ public class RichTextDocumentElement extends DocumentElement implements CharSequ
         return mSpannableString == null ? "" : mSpannableString.toString();
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+
+    protected RichTextDocumentElement(Parcel in) {
+        super(in);
+        mSpannableString = in.readParcelable(SpannableStringBuilder.class.getClassLoader());
+    }
+
+    public static final Creator<RichTextDocumentElement> CREATOR = new Creator<RichTextDocumentElement>() {
+        @Override
+        public RichTextDocumentElement createFromParcel(Parcel source) {
+            return new RichTextDocumentElement(source);
+        }
+
+        @Override
+        public RichTextDocumentElement[] newArray(int size) {
+            return new RichTextDocumentElement[size];
+        }
+    };
 }

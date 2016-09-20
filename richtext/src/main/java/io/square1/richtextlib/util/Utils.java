@@ -31,11 +31,23 @@ public class Utils {
 
         try {
             Class<T> currentClass = (Class<T>) Class.forName(className);
-            T item = currentClass.newInstance();
-            Log.i("CLASS", className);
-            return item;
+            return newInstance(currentClass);
         }catch (Exception e){
             Log.e("CLASS" , className);
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static <T extends Object> T newInstance(Class<T> currentClass){
+
+        try {
+            T item = currentClass.newInstance();
+            Log.i("CLASS", currentClass.getName());
+            return item;
+        }catch (Exception e){
+            Log.e("CLASS" , currentClass.getName());
             e.printStackTrace();
         }
 

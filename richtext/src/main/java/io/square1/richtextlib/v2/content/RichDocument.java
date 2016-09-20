@@ -37,26 +37,14 @@ public class RichDocument implements Parcelable {
     private String mTitle;
 
     public RichDocument(String title, ArrayList items){
+        super();
         mElements = items;
         mTitle = title;
     }
 
-    protected RichDocument(Parcel in) {
-        mElements = in.createTypedArrayList(DynamicParcelableCreator.getInstance(DocumentElement.class));
-        mTitle = in.readString();
-    }
 
-    public static final Creator<RichDocument> CREATOR = new Creator<RichDocument>() {
-        @Override
-        public RichDocument createFromParcel(Parcel in) {
-            return new RichDocument(in);
-        }
 
-        @Override
-        public RichDocument[] newArray(int size) {
-            return new RichDocument[size];
-        }
-    };
+
 
     public ArrayList<DocumentElement> getElements(){
         return mElements;
@@ -74,7 +62,46 @@ public class RichDocument implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeTypedList(mElements);
-        dest.writeString(mTitle);
+        dest.writeTypedList(this.mElements);
+        dest.writeString(this.mTitle);
+    }
+
+    protected RichDocument(Parcel in) {
+        this.mElements = in.createTypedArrayList(DocumentElement.CREATOR);
+        this.mTitle = in.readString();
+    }
+
+    public static final Creator<RichDocument> CREATOR = new Creator<RichDocument>() {
+        @Override
+        public RichDocument createFromParcel(Parcel source) {
+            return new RichDocument(source);
+        }
+
+        @Override
+        public RichDocument[] newArray(int size) {
+            return new RichDocument[size];
+        }
+    };
+
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RichDocument that = (RichDocument) o;
+
+        if (!mElements.equals(that.mElements)) return false;
+        return mTitle.equals(that.mTitle);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = mElements.hashCode();
+        result = 31 * result + mTitle.hashCode();
+        return result;
     }
 }
