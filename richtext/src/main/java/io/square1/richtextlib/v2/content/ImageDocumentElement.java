@@ -131,23 +131,9 @@ public class ImageDocumentElement extends DocumentElement {
         dest.writeInt(this.mHeight);
     }
 
-    protected ImageDocumentElement(Parcel in) {
-        super(in);
-        this.mImageUrl = in.readString();
-        this.mClickAction = in.readParcelable(Uri.class.getClassLoader());
-        this.mWidth = in.readInt();
-        this.mHeight = in.readInt();
-    }
 
-    public static final Creator<ImageDocumentElement> CREATOR = new Creator<ImageDocumentElement>() {
-        @Override
-        public ImageDocumentElement createFromParcel(Parcel source) {
-            return new ImageDocumentElement(source);
-        }
 
-        @Override
-        public ImageDocumentElement[] newArray(int size) {
-            return new ImageDocumentElement[size];
-        }
-    };
+    public static final Creator<DocumentElement> CREATOR = DocumentElement.CREATOR;
+
+
 }

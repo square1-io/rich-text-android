@@ -60,10 +60,11 @@ public class OembedDocumentElement extends DocumentElement {
 
 
     @Override
-    public void readFromParcel(Parcel source) {
-        mBaseUrl = source.readString();
-        mId = source.readString();
-        mType = EmbedUtils.TEmbedType.valueOf(source.readString());
+    public void readFromParcel(Parcel in) {
+        this.mBaseUrl = in.readString();
+        this.mId = in.readString();
+        int tmpMType = in.readInt();
+        this.mType = tmpMType == -1 ? null : EmbedUtils.TEmbedType.values()[tmpMType];
 
     }
 
@@ -79,23 +80,6 @@ public class OembedDocumentElement extends DocumentElement {
         dest.writeInt(this.mType == null ? -1 : this.mType.ordinal());
     }
 
-    protected OembedDocumentElement(Parcel in) {
-        super(in);
-        this.mBaseUrl = in.readString();
-        this.mId = in.readString();
-        int tmpMType = in.readInt();
-        this.mType = tmpMType == -1 ? null : EmbedUtils.TEmbedType.values()[tmpMType];
-    }
 
-    public static final Creator<OembedDocumentElement> CREATOR = new Creator<OembedDocumentElement>() {
-        @Override
-        public OembedDocumentElement createFromParcel(Parcel source) {
-            return new OembedDocumentElement(source);
-        }
-
-        @Override
-        public OembedDocumentElement[] newArray(int size) {
-            return new OembedDocumentElement[size];
-        }
-    };
+    public static final Creator<DocumentElement> CREATOR = DocumentElement.CREATOR;
 }

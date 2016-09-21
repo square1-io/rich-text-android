@@ -35,27 +35,6 @@ public abstract class DocumentElement implements Parcelable /**implements Dynami
 
     public DocumentElement(){}
 
-    //
-//    public static final Creator<DocumentElement> CREATOR = new Creator<DocumentElement>() {
-//
-//        @Override
-//        public DocumentElement createFromParcel(Parcel in) {
-//
-//            String className = in.readString();
-//            DocumentElement item = Utils.newInstance(className);
-//            if(item != null){
-//                item.readFromParcel(in);
-//            }
-//            return item;
-//
-//        }
-//
-//        @Override
-//        public DocumentElement[] newArray(int size) {
-//            return new DocumentElement[size];
-//        }
-//    };
-
 
     protected abstract void write(Parcel dest, int flags);
     public abstract void readFromParcel(Parcel source);
@@ -72,7 +51,7 @@ public abstract class DocumentElement implements Parcelable /**implements Dynami
         write(dest, flags);
     }
 
-    protected DocumentElement(Parcel in) {
+    private DocumentElement(Parcel in) {
     }
 
     public static final Creator<DocumentElement> CREATOR = new Creator<DocumentElement>() {

@@ -267,20 +267,8 @@ public class RichTextDocumentElement extends DocumentElement implements CharSequ
     }
 
 
-    protected RichTextDocumentElement(Parcel in) {
-        super(in);
-        mSpannableString = in.readParcelable(SpannableStringBuilder.class.getClassLoader());
-    }
 
-    public static final Creator<RichTextDocumentElement> CREATOR = new Creator<RichTextDocumentElement>() {
-        @Override
-        public RichTextDocumentElement createFromParcel(Parcel source) {
-            return new RichTextDocumentElement(source);
-        }
+    public static final Creator<DocumentElement> CREATOR = DocumentElement.CREATOR;
 
-        @Override
-        public RichTextDocumentElement[] newArray(int size) {
-            return new RichTextDocumentElement[size];
-        }
-    };
+
 }
