@@ -8,17 +8,19 @@ package io.square1.richtextlib;
 
 public final class R {
 	public static final class attr {
-		public static final int richDrawableQuoteColorBackground = 0x7f010003;
-		public static final int richDrawableQuoteSign = 0x7f010004;
-		public static final int richFontFamily = 0x7f010005;
-		public static final int richHeaderTextColor = 0x7f010006;
-		public static final int richQuoteFontFamily = 0x7f010007;
-		public static final int richQuoteTextColor = 0x7f010008;
-		public static final int richQuoteTextSize = 0x7f010009;
-		public static final int richTextColor = 0x7f01000a;
-		public static final int richTextColorLink = 0x7f01000b;
-		public static final int richTextColorQuote = 0x7f01000c;
-		public static final int richTextSize = 0x7f01000d;
+		public static final int richFontFamily = 0x7f010003;
+		public static final int richHeaderTextColor = 0x7f010004;
+		public static final int richLineSpacingExtra = 0x7f010005;
+		public static final int richLineSpacingMultiplier = 0x7f010006;
+		public static final int richQuoteBackgroundColor = 0x7f010007;
+		public static final int richQuoteDrawable = 0x7f010008;
+		public static final int richQuoteFontFamily = 0x7f010009;
+		public static final int richQuoteTextColor = 0x7f01000a;
+		public static final int richQuoteTextSize = 0x7f01000b;
+		public static final int richTextColor = 0x7f01000c;
+		public static final int richTextColorLink = 0x7f01000d;
+		public static final int richTextColorQuote = 0x7f01000e;
+		public static final int richTextSize = 0x7f01000f;
 	}
 	public static final class dimen {
 		public static final int post_details_content_padding = 0x7f070048;
@@ -54,22 +56,26 @@ public final class R {
 		public static final int audio_media_player = 0x7f060014;
 		public static final int error_opening_message = 0x7f060015;
 		public static final int loading = 0x7f060017;
-		public static final int zero_time = 0x7f060020;
+		public static final int sample_html_tags = 0x7f06001a;
+		public static final int zero_time = 0x7f060021;
 	}
 	public static final class style {
 		public static final int full_screen_dialog = 0x7f080125;
 	}
 	public static final class styleable {
-		public static final int[] RichContentView = { 0x01010095, 0x01010098, 0x0101009b, 0x010103ac, 0x7f010003, 0x7f010004, 0x7f010006, 0x7f010007, 0x7f010008, 0x7f010009 };
-		public static final int RichContentView_android_fontFamily = 3;
+		public static final int[] RichContentView = { 0x01010095, 0x01010098, 0x0101009b, 0x0101014f, 0x010103ac, 0x7f010004, 0x7f010005, 0x7f010006, 0x7f010007, 0x7f010008, 0x7f010009, 0x7f01000a, 0x7f01000b };
+		public static final int RichContentView_android_fontFamily = 4;
+		public static final int RichContentView_android_text = 3;
 		public static final int RichContentView_android_textColor = 1;
 		public static final int RichContentView_android_textColorLink = 2;
 		public static final int RichContentView_android_textSize = 0;
-		public static final int RichContentView_richDrawableQuoteColorBackground = 4;
-		public static final int RichContentView_richDrawableQuoteSign = 5;
-		public static final int RichContentView_richHeaderTextColor = 6;
-		public static final int RichContentView_richQuoteFontFamily = 7;
-		public static final int RichContentView_richQuoteTextColor = 8;
-		public static final int RichContentView_richQuoteTextSize = 9;
+		public static final int RichContentView_richHeaderTextColor = 5;
+		public static final int RichContentView_richLineSpacingExtra = 6;
+		public static final int RichContentView_richLineSpacingMultiplier = 7;
+		public static final int RichContentView_richQuoteBackgroundColor = 8;
+		public static final int RichContentView_richQuoteDrawable = 9;
+		public static final int RichContentView_richQuoteFontFamily = 10;
+		public static final int RichContentView_richQuoteTextColor = 11;
+		public static final int RichContentView_richQuoteTextSize = 12;
 	}
 }

@@ -36,6 +36,8 @@ import io.square1.richtextlib.spans.RichTextSpan;
  */
 public class RichTextDocumentElement extends DocumentElement implements CharSequence, GetChars, Spannable, Appendable {
 
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -57,9 +59,13 @@ public class RichTextDocumentElement extends DocumentElement implements CharSequ
             return false;
         }
         for (int i = 0; i < richTextSpans.length; i++) {
-            RichTextSpan e1 = richTextSpans[i], e2 = thatRichTextSpans[i];
 
-            if(e1.getClass().equals(e2.getClass()) == false) return false;
+            RichTextSpan e1 = richTextSpans[i];
+            RichTextSpan e2 = thatRichTextSpans[i];
+
+            if(e1.getClass().equals(e2.getClass()) == false) {
+                return false;
+            }
 
         }
         return true;
@@ -90,15 +96,18 @@ public class RichTextDocumentElement extends DocumentElement implements CharSequ
         dest.writeString(mSpannableString.toString());
 
         RichTextSpan[] spans =  getSpans();
+
         int[] spanStarts = new int[spans.length];
         int[] spanEnds = new int[spans.length];
         int[] spanFlags = new int[spans.length];
 
         for(int index = 0; index < spans.length; index ++){
+
             RichTextSpan currentSpan = spans[index];
             spanStarts[index] = mSpannableString.getSpanStart(currentSpan);
             spanEnds[index] = mSpannableString.getSpanEnd(currentSpan);
             spanFlags[index] = mSpannableString.getSpanFlags(currentSpan);
+
         }
 
         dest.writeIntArray(spanStarts);
@@ -261,14 +270,11 @@ public class RichTextDocumentElement extends DocumentElement implements CharSequ
         return mSpannableString == null ? "" : mSpannableString.toString();
     }
 
+
     @Override
     public int describeContents() {
         return 0;
     }
-
-
-
-    public static final Creator<DocumentElement> CREATOR = DocumentElement.CREATOR;
 
 
 }

@@ -5,4 +5,9 @@
     <string name="error_opening_message">There was a problem opening this link.</string>
     <string name="zero_time">00:00:00</string>
     <string name="audio_media_player">There was an error playing this audio file.</string>
+    <string name="sample_html_tags">&lt;p&gt;&lt;span style=&quot;font-size:10px;&quot;&gt;Small font&lt;/span&gt;
+&lt;span style=&quot;font-size:18px;&quot;&gt;Large font&lt;/span&gt;
+&lt;span style=&quot;font-size:12px;color:orange;&quot;&gt;Colored font&lt;/span&gt;
+&lt;span style=&quot;font-size:12px;font-weight:bold;&quot;&gt;Bold font&lt;/span&gt;
+&lt;span style=&quot;font-size:12px;font-style:italic;&quot;&gt;Italic font&lt;/span&gt; and more...&lt;/p&gt;</string>
 </resources>

@@ -14,7 +14,7 @@ ext {
     siteUrl = 'https://bitbucket.org/square1mobileteam/rich-content-android'
     gitUrl = 'https://bitbucket.org/square1mobileteam/rich-content-android'
 
-    libraryVersion = '2.0.3'
+    libraryVersion = '2.0.5'
 
     developerId = 'square1io'
     developerName = 'Roberto Prato'
@@ -26,12 +26,12 @@ ext {
 }
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "21.1.2"
+    compileSdkVersion 24
+    buildToolsVersion "24.0.0"
 
     defaultConfig {
         minSdkVersion 15
-        targetSdkVersion 21
+        targetSdkVersion 24
         versionCode 1
         versionName "1.0"
     }
@@ -43,9 +43,9 @@ android {
     }
 
     sourceSets {
-        main {
-            res.srcDirs = ['src/main/res']
-        }
+//        main {
+//            res.srcDirs = ['src/main/res']
+//        }
     }
     lintOptions {
         abortOnError false

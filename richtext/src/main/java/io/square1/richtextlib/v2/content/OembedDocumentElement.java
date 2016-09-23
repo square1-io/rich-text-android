@@ -30,6 +30,27 @@ import io.square1.richtextlib.EmbedUtils;
 public class OembedDocumentElement extends DocumentElement {
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        OembedDocumentElement that = (OembedDocumentElement) o;
+
+        if (!mBaseUrl.equals(that.mBaseUrl)) return false;
+        if (!mId.equals(that.mId)) return false;
+        return mType == that.mType;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = mBaseUrl.hashCode();
+        result = 31 * result + mId.hashCode();
+        result = 31 * result + mType.hashCode();
+        return result;
+    }
+
     private String mBaseUrl;
     private String mId;
     private EmbedUtils.TEmbedType mType;

@@ -23,11 +23,9 @@ import android.annotation.TargetApi;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Typeface;
@@ -37,17 +35,19 @@ import android.net.Uri;
 import android.os.Build;
 import android.text.Layout;
 import android.text.StaticLayout;
-import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 import io.square1.richtextlib.R;
+import io.square1.richtextlib.v2.RichTextV2;
+import io.square1.richtextlib.v2.content.DocumentElement;
+import io.square1.richtextlib.v2.content.RichDocument;
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 
 
@@ -74,10 +74,7 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
 
     private Appearance mAppearance;
 
-
     private Layout mLayout;
-    private float mSpacingMult = 0.99f;
-    private float mSpacingAdd = 0.0f;
 
     private int mLastMeasuredWidth;
 
@@ -206,8 +203,8 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
                 mAppearance.textPaint(null),
                 width,
                 Layout.Alignment.ALIGN_NORMAL,
-                mSpacingMult,
-                mSpacingAdd,
+                mAppearance.getSpacingMult(),
+                mAppearance.getLineSpacingAdd(),
                 false);
 
         return result;
@@ -389,13 +386,13 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
                 mAppearance.setLinkColor(color);
             }
 
-            if (a.hasValue(R.styleable.RichContentView_richDrawableQuoteColorBackground)) {
-                int color = a.getColor(R.styleable.RichContentView_richDrawableQuoteColorBackground, Color.TRANSPARENT);
+            if (a.hasValue(R.styleable.RichContentView_richQuoteBackgroundColor)) {
+                int color = a.getColor(R.styleable.RichContentView_richQuoteBackgroundColor, Color.TRANSPARENT);
                 mAppearance.setQuoteBackgroundColor(color);
             }
 
-            if (a.hasValue(R.styleable.RichContentView_richDrawableQuoteSign)) {
-                Drawable quote = a.getDrawable(R.styleable.RichContentView_richDrawableQuoteSign);
+            if (a.hasValue(R.styleable.RichContentView_richQuoteDrawable)) {
+                Drawable quote = a.getDrawable(R.styleable.RichContentView_richQuoteDrawable);
                 mAppearance.setQuoteSign(quote);
             }
 
@@ -423,8 +420,34 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
                 mAppearance.setTextHeaderColor(color);
             }
 
+            if(a.hasValue(R.styleable.RichContentView_richLineSpacingMultiplier)){
+                float spacingMult = a.getFloat(R.styleable.RichContentView_richLineSpacingMultiplier, 1.0f);
+                mAppearance.setSpacingMult(spacingMult);
+            }
 
+            if(a.hasValue(R.styleable.RichContentView_richLineSpacingExtra)){
+                float lineSpacingAdd = a.getDimensionPixelSize(R.styleable.RichContentView_richLineSpacingExtra, (int) 0);
+                mAppearance.setLineSpacingAdd(lineSpacingAdd);
+            }
 
+            CharSequence sequence =  "";
+
+            if(a.hasValue(R.styleable.RichContentView_android_text)){
+                sequence = a.getText(R.styleable.RichContentView_android_text);
+            }else if (isInEditMode()) {
+                sequence = getResources().getString(R.string.sample_html_tags);
+            }
+
+            if(TextUtils.isEmpty(sequence) == false){
+                RichDocument richDocument = RichTextV2.fromHtml(getContext(),sequence.toString());
+                ArrayList<DocumentElement> elementArrayList = richDocument.getElements();
+                for(DocumentElement documentElement : elementArrayList){
+                    if(documentElement instanceof RichTextDocumentElement){
+                        setText((RichTextDocumentElement) documentElement);
+                        break;
+                    }
+                }
+            }
 
 
         }finally {

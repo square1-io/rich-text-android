@@ -130,9 +130,11 @@ public  class ContentFragment extends Fragment implements UrlBitmapDownloader {
             RichDocument result = RichTextV2.fromHtml(mApplicationContext, mHtml, new InternalStyle(mApplicationContext));
             byte[] data = ParcelableUtil.marshall(result);
             RichDocument result1 = ParcelableUtil.unMarshall(data, RichDocument.CREATOR);
-            if(!result.equals(result1)){
-                throw new RSInvalidStateException(" differing ");
-            }
+
+          //  boolean equals = result.equals(result1);
+         //   if(equals == false){
+         //       throw new RSInvalidStateException(" differing ");
+         //   }
             return result1;
         }
 

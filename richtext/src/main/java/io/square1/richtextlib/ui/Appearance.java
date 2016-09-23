@@ -114,11 +114,15 @@ public class Appearance {
     private Typeface textQuoteTypeFace;
 
 
-
     /**
      * text color for the quote
      */
     private Integer textHeaderColor;
+
+
+    private float spacingMult = 1.0f;
+
+    private float spacingAdd = 0.0f;
 
     private Context applicationContext;
 
@@ -327,6 +331,24 @@ public class Appearance {
 
         return quoteTextPaint;
     }
+
+    public float getSpacingMult(){
+        return spacingMult;
+    }
+
+    public void setSpacingMult(float spacingMult){
+        this.spacingMult = spacingMult;
+    }
+
+    public float getLineSpacingAdd(){
+        return spacingAdd;
+    }
+
+    public void setLineSpacingAdd(float spacingAdd){
+        this.spacingAdd = spacingAdd;
+    }
+
+
 
     public Integer getTextHeaderColor() {
         return textHeaderColor;

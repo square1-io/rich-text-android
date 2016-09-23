@@ -21,6 +21,7 @@ package io.square1.richtextlib.v2.content;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -93,9 +94,27 @@ public class RichDocument implements Parcelable {
 
         RichDocument that = (RichDocument) o;
 
-        if (!mElements.equals(that.mElements)) return false;
-        return mTitle.equals(that.mTitle);
+        if(mElements.size() != that.mElements.size()){
+            return false;
+        }
 
+        for(int index = 0; index < mElements.size(); index ++) {
+
+            DocumentElement d1 = mElements.get(index);
+            DocumentElement d2 = that.mElements.get(index);
+
+            if(d1.equals(d2) == false){
+                return false;
+            }
+
+        }
+
+        if( mTitle.equals(that.mTitle) == false ){
+            Log.d("DOC" , "different title");
+            return false;
+        }
+
+        return true;
     }
 
     @Override
