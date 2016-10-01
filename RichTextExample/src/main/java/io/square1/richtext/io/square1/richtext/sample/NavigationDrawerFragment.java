@@ -19,6 +19,7 @@
 
 package io.square1.richtext.io.square1.richtext.sample;
 
+import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.app.Activity;
@@ -42,6 +43,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import io.square1.richtext.R;
@@ -84,7 +86,7 @@ public class NavigationDrawerFragment extends Fragment {
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
 
-    public String[] mSampleFiles;
+    public ArrayList<Uri> mSampleFiles;
 
     public static final String SAMPLES_FOLDER = "samples";
 
@@ -94,6 +96,17 @@ public class NavigationDrawerFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        mSampleFiles = new ArrayList<>();
+
+        Uri openVideo = new Uri.Builder()
+                .scheme("fragment")
+                .appendPath("video")
+                .appendEncodedPath("fragment").build();
+
+
+        mSampleFiles.add(openVideo);
 
         // Read in the flag indicating whether or not the user has demonstrated awareness of the
         // drawer. See PREF_USER_LEARNED_DRAWER for details.
@@ -106,9 +119,20 @@ public class NavigationDrawerFragment extends Fragment {
         }
 
         try {
-            mSampleFiles = getActivity().getAssets().list(SAMPLES_FOLDER);
+
+            String[] files = getActivity().getAssets().list(SAMPLES_FOLDER);
+            for(String file : files){
+
+                Uri current = new Uri.Builder()
+                        .scheme("file")
+                        .appendPath(SAMPLES_FOLDER)
+                        .appendEncodedPath(file).build();
+
+                mSampleFiles.add(current);
+
+            }
         }catch (Exception ex){
-            mSampleFiles = new String[0];
+            mSampleFiles = new ArrayList<>();
         }
 
         // Select either the default item (0) or the last selected item.
@@ -137,15 +161,10 @@ public class NavigationDrawerFragment extends Fragment {
             }
         });
 
-        int N = mSampleFiles.length;
-        mSampleFiles = Arrays.copyOf(mSampleFiles, N + 1);
-        mSampleFiles[N] = OPEN;
-        mDrawerListView.setAdapter(new ArrayAdapter<String>(
-                getActionBar().getThemedContext(),
-                android.R.layout.simple_list_item_activated_1,
-                android.R.id.text1,
-                mSampleFiles));
+
+        mDrawerListView.setAdapter(new UriAdapter(mSampleFiles));
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
+
         return mDrawerListView;
     }
 
@@ -236,8 +255,8 @@ public class NavigationDrawerFragment extends Fragment {
             mDrawerLayout.closeDrawer(mFragmentContainerView);
         }
         if (mCallbacks != null) {
-            String fileName = mSampleFiles[position];
-            mCallbacks.onNavigationDrawerItemSelected( SAMPLES_FOLDER + "/" + fileName);
+            Uri fileName = mSampleFiles.get(position);
+            mCallbacks.onNavigationDrawerItemSelected(fileName);
         }
     }
 
@@ -306,6 +325,6 @@ public class NavigationDrawerFragment extends Fragment {
         /**
          * Called when an item in the navigation drawer is selected.
          */
-        void onNavigationDrawerItemSelected(String fileName);
+        void onNavigationDrawerItemSelected(Uri fileName);
     }
 }

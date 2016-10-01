@@ -38,26 +38,31 @@ public final class R {
 		public static final int youtube_play = 0x7f020046;
 	}
 	public static final class id {
-		public static final int ffwd = 0x7f0c0067;
-		public static final int mediacontroller_progress = 0x7f0c0069;
-		public static final int pause = 0x7f0c0066;
-		public static final int play = 0x7f0c0065;
-		public static final int rew = 0x7f0c0064;
-		public static final int time = 0x7f0c005d;
-		public static final int time_current = 0x7f0c0068;
-		public static final int tweetContainer = 0x7f0c006a;
+		public static final int ffwd = 0x7f0c006b;
+		public static final int internal_aspect_ratio_view = 0x7f0c0058;
+		public static final int internal_progress = 0x7f0c005a;
+		public static final int internal_texture_view = 0x7f0c0059;
+		public static final int mediacontroller_progress = 0x7f0c006d;
+		public static final int pause = 0x7f0c006a;
+		public static final int play = 0x7f0c0069;
+		public static final int rew = 0x7f0c0068;
+		public static final int time = 0x7f0c0061;
+		public static final int time_current = 0x7f0c006c;
+		public static final int tweetContainer = 0x7f0c006e;
 	}
 	public static final class layout {
-		public static final int rich_text_embed_layout_audio_player = 0x7f040027;
-		public static final int rich_text_embed_layout_twitter_container = 0x7f040028;
+		public static final int internal_rich_text_video_controller = 0x7f040020;
+		public static final int rich_text_embed_layout_audio_player = 0x7f040029;
+		public static final int rich_text_embed_layout_twitter_container = 0x7f04002a;
+		public static final int test_rich_video_view = 0x7f04002f;
 	}
 	public static final class string {
 		public static final int app_name = 0x7f060013;
 		public static final int audio_media_player = 0x7f060014;
 		public static final int error_opening_message = 0x7f060015;
-		public static final int loading = 0x7f060017;
-		public static final int sample_html_tags = 0x7f06001a;
-		public static final int zero_time = 0x7f060021;
+		public static final int loading = 0x7f060018;
+		public static final int sample_html_tags = 0x7f06001b;
+		public static final int zero_time = 0x7f060022;
 	}
 	public static final class style {
 		public static final int full_screen_dialog = 0x7f080125;

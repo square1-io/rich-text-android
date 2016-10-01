@@ -10,7 +10,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
-        <activity
+        <activity  android:hardwareAccelerated="true"
             android:name=".io.square1.richtext.sample.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
@@ -19,7 +19,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".io.square1.richtext.sample.Main2Activity"></activity>
+        <activity android:hardwareAccelerated="true"
+            android:name=".io.square1.richtext.sample.Main2Activity"></activity>
     </application>
 
 </manifest>

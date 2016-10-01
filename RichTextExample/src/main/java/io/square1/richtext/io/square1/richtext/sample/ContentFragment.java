@@ -76,10 +76,10 @@ public  class ContentFragment extends Fragment implements UrlBitmapDownloader {
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static ContentFragment newInstance(String sampleFileName) {
+    public static ContentFragment newInstance(Uri sampleFileName) {
         ContentFragment fragment = new ContentFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_SAMPLE_FILE_NAME, sampleFileName);
+        args.putParcelable(ARG_SAMPLE_FILE_NAME, sampleFileName);
         fragment.setArguments(args);
         return fragment;
     }
@@ -100,7 +100,7 @@ public  class ContentFragment extends Fragment implements UrlBitmapDownloader {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mContentAdapter = new ContentAdapter(this);
-        String sampleFileName = getArguments().getString(ARG_SAMPLE_FILE_NAME);
+        Uri sampleFileName = getArguments().getParcelable(ARG_SAMPLE_FILE_NAME);
         ((MainActivity) activity).onSectionAttached(sampleFileName);
          new ParseContentTask(activity).execute(sampleFileName);
 
@@ -114,7 +114,7 @@ public  class ContentFragment extends Fragment implements UrlBitmapDownloader {
     }
 
 
-    private class ParseContentTask extends AsyncTask<String,Integer,RichDocument> {
+    private class ParseContentTask extends AsyncTask<Uri,Integer,RichDocument> {
 
         private Context mApplicationContext;
         private String mHtml;
@@ -125,7 +125,7 @@ public  class ContentFragment extends Fragment implements UrlBitmapDownloader {
         }
 
         @Override
-        protected RichDocument doInBackground(String... sampleFileName) {
+        protected RichDocument doInBackground(Uri... sampleFileName) {
             mHtml = Utils.readFromfile(mApplicationContext, sampleFileName[0]);
             RichDocument result = RichTextV2.fromHtml(mApplicationContext, mHtml, new InternalStyle(mApplicationContext));
             byte[] data = ParcelableUtil.marshall(result);

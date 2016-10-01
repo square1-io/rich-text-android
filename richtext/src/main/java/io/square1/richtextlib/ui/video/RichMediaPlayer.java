@@ -30,9 +30,12 @@ import android.view.SurfaceHolder;
 /**
  * Created by roberto on 12/10/15.
  */
-public class RichMediaPlayer implements MediaPlayer.OnPreparedListener {
+public class RichMediaPlayer implements MediaPlayer.OnPreparedListener, android.widget.MediaController.MediaPlayerControl {
 
 
+    public interface OnVideoSizeListener {
+        void onVideoSizeChanged(RichMediaPlayer mp);
+    }
 
     public interface OnCompletionListener {
         void onCompletion(RichMediaPlayer mp);
@@ -63,6 +66,12 @@ public class RichMediaPlayer implements MediaPlayer.OnPreparedListener {
     private MediaPlayer.OnBufferingUpdateListener mOnBufferingUpdateListener;
 
 
+    private OnVideoSizeListener mOnVideoSizeListener;
+
+    public void setOnVideoSizeListener(OnVideoSizeListener listener){
+        mOnVideoSizeListener = listener;
+    }
+
 
     private static int MEDIA_PREPARED = 1;
     private static int MEDIA_WAITING = 2;
@@ -76,9 +85,16 @@ public class RichMediaPlayer implements MediaPlayer.OnPreparedListener {
 
     @Override
     public void onPrepared(MediaPlayer mp) {
+
         mCurrentMedia.state = MEDIA_PREPARED;
         mCurrentMedia.height = mp.getVideoHeight();
         mCurrentMedia.width = mp.getVideoWidth();
+        mCurrentMedia.duration = mp.getDuration();
+
+        if(mOnVideoSizeListener != null){
+            mOnVideoSizeListener.onVideoSizeChanged(this);
+        }
+
         // if it is not playing we want to show the first frame
         if(mCurrentMedia.playbackState != PLAYBACK_PLAY) {
             mCurrentMedia.playbackState = PLAYBACK_SHOW_FIRST_FRAME;
@@ -90,7 +106,9 @@ public class RichMediaPlayer implements MediaPlayer.OnPreparedListener {
 
         mCurrentMedia.state = MEDIA_WAITING;
         mCurrentMedia.playbackState = PLAYBACK_STOP;
-        mMediaPlayer.release();
+        if(mMediaPlayer != null) {
+            mMediaPlayer.release();
+        }
         mMediaPlayer = null;
     }
 
@@ -117,6 +135,7 @@ public class RichMediaPlayer implements MediaPlayer.OnPreparedListener {
             this.uri = uri;
             this.state = MEDIA_WAITING;
             this.playbackState = PLAYBACK_SHOW_FIRST_FRAME;
+            this.duration = 0;
         }
 
         final Uri uri;
@@ -124,6 +143,8 @@ public class RichMediaPlayer implements MediaPlayer.OnPreparedListener {
         int playbackState;
         int width;
         int height;
+        int duration;
+        int currentPosition;
     }
 
     private Context mApplicationContext;
@@ -135,7 +156,9 @@ public class RichMediaPlayer implements MediaPlayer.OnPreparedListener {
     }
 
     private void initMediaPlayer(){
+
         if(mMediaPlayer == null) {
+
             mMediaPlayer = new InternalMediaPlayer();
             mMediaPlayer.setOnPreparedListener(this);
 
@@ -193,6 +216,31 @@ public class RichMediaPlayer implements MediaPlayer.OnPreparedListener {
                 mMediaPlayer.prepareAsync();
                 return true;
             } catch (Exception exc) {
+                exc.printStackTrace();
+                mCurrentMedia = new MediaState(Uri.EMPTY);
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+
+    public boolean setData(String uri){
+
+        initMediaPlayer();
+
+        MediaState mediaState = new MediaState(Uri.parse(uri));
+
+        if(mediaState.equals(mCurrentMedia) == false) {
+
+            try {
+                mMediaPlayer.setDataSource(uri);
+                mCurrentMedia = mediaState;
+                mMediaPlayer.prepareAsync();
+                return true;
+            } catch (Exception exc) {
+                exc.printStackTrace();;
                 mCurrentMedia = new MediaState(Uri.EMPTY);
                 return false;
             }
@@ -232,6 +280,9 @@ public class RichMediaPlayer implements MediaPlayer.OnPreparedListener {
             new ShowFrameSeekCompleteListener(0, false, this);
 
         }else if(mCurrentMedia.playbackState == PLAYBACK_STOP){
+            if(mMediaPlayer != null) {
+                mCurrentMedia.currentPosition = mMediaPlayer.getCurrentPosition();
+            }
             mMediaPlayer.pause();
 
         }
@@ -292,5 +343,50 @@ public class RichMediaPlayer implements MediaPlayer.OnPreparedListener {
             }
         }
     }
+
+    @Override
+    public int getDuration() {
+        return mCurrentMedia.duration;
+    }
+
+    @Override
+    public int getCurrentPosition() {
+        if(mMediaPlayer != null) {
+            return mMediaPlayer.getCurrentPosition();
+        }
+        return 0;
+    }
+
+    @Override
+    public void seekTo(int pos) {
+
+    }
+
+
+    @Override
+    public int getBufferPercentage() {
+        return 0;
+    }
+
+    @Override
+    public boolean canPause() {
+        return mediaPrepared();
+    }
+
+    @Override
+    public boolean canSeekBackward() {
+        return mediaPrepared();
+    }
+
+    @Override
+    public boolean canSeekForward() {
+        return mediaPrepared();
+    }
+
+    @Override
+    public int getAudioSessionId() {
+        return 0;
+    }
+
 
 }

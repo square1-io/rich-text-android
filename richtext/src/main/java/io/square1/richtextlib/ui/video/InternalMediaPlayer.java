@@ -24,7 +24,6 @@ import android.media.MediaPlayer;
 class InternalMediaPlayer extends MediaPlayer {
 
 
-
     private  OnCompletionListener mOnCompletionListener;
     private  OnSeekCompleteListener mSeekListener;
 

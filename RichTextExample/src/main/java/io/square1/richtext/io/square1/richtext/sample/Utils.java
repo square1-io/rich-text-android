@@ -20,16 +20,37 @@
 package io.square1.richtext.io.square1.richtext.sample;
 
 import android.content.Context;
+import android.net.Uri;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 
 /**
  * Created by roberto on 22/12/2015.
  */
 public class Utils {
 
+    public static String readFromfile(Context context, Uri file) {
+
+        if("file".equalsIgnoreCase(file.getScheme())) {
+
+            List<String> segments = file.getPathSegments();
+            StringBuilder builder = new StringBuilder();
+
+            for (String segment : segments) {
+                if (builder.length() > 0) {
+                    builder.append("/");
+                }
+                builder.append(segment);
+            }
+
+            return readFromfile(context, builder.toString());
+        }
+
+        return "";
+    }
     public static String readFromfile(Context context ,String fileName) {
         StringBuilder returnString = new StringBuilder();
         InputStream fIn = null;

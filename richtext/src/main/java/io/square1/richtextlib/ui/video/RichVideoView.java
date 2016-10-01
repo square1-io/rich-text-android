@@ -29,11 +29,14 @@ import android.net.Uri;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.ProgressBar;
 
 import io.square1.richtextlib.R;
@@ -44,24 +47,18 @@ import io.square1.richtextlib.ui.AspectRatioFrameLayout;
  */
 public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstFrameAvailableListener ,
         MediaPlayer.OnBufferingUpdateListener,
-        RichMediaPlayer.OnCompletionListener {
-
-
-    private static final FrameLayout.LayoutParams MATCH_PARENT_PARAMS =
-            new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT);
-
-    static {
-        MATCH_PARENT_PARAMS.gravity = Gravity.CENTER;
-    }
+        RichMediaPlayer.OnCompletionListener,
+        RichMediaPlayer.OnVideoSizeListener {
 
 
 
+
+    private FullScreenMediaController mFullScreenMediaController;
     private AspectRatioFrameLayout mMainVideoContainer;
     private TextureView mTextureView;
     private RichMediaPlayer mMediaPlayer;
 
-    private ImageView mPlayButton;
+    //private ImageView mPlayButton;
     private ProgressBar mLoadingProgress;
 
     public RichVideoView(Context context) {
@@ -89,53 +86,60 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
 
         setBackgroundColor(Color.BLUE);
 
-        mMediaPlayer = new RichMediaPlayer(getContext());
-        mMediaPlayer.setFirstFrameAvailableListener(this);
-        mMediaPlayer.setOnCompletionListener(this);
 
-        //setup inline containers
-        mMainVideoContainer = new AspectRatioFrameLayout(getContext());
-        mMainVideoContainer.setLayoutParams(MATCH_PARENT_PARAMS);
-        mMainVideoContainer.setBackgroundColor(Color.RED);
-        addView(mMainVideoContainer);
-        //add Texture View
-        mTextureView = new TextureView(getContext());
+        if(isInEditMode() == false) {
+            mMediaPlayer = new RichMediaPlayer(getContext());
+            mMediaPlayer.setFirstFrameAvailableListener(this);
+            mMediaPlayer.setOnCompletionListener(this);
+            mMediaPlayer.setOnVideoSizeListener(this);
+        }
+
+        LayoutInflater.from(getContext())
+                .inflate(R.layout.internal_rich_text_video_controller,
+                this, true);
+
+        mMainVideoContainer = (AspectRatioFrameLayout)findViewById(R.id.internal_aspect_ratio_view);
+
+        mTextureView =  (TextureView)findViewById(R.id.internal_texture_view); //new TextureView(getContext());
         mTextureView.setSurfaceTextureListener(mSurfaceTextureListener);
-        mTextureView.setLayoutParams(MATCH_PARENT_PARAMS);
-        mMainVideoContainer.addView(mTextureView);
+
+
+        if(mTextureView.isAvailable() == true){
+            mSurfaceTextureListener.onSurfaceTextureAvailable(mTextureView.getSurfaceTexture(),
+                    mTextureView.getWidth()
+                    ,mTextureView.getHeight());
+        }
+
+        mFullScreenMediaController = new FullScreenMediaController(getContext());
+        mFullScreenMediaController.setAnchorView(mMainVideoContainer);
+        mFullScreenMediaController.setMediaPlayer(mMediaPlayer);
 
         //setup the progress bar
-        mLoadingProgress = new ProgressBar(getContext(),null,android.R.attr.progressBarStyleSmall);
+        mLoadingProgress = (ProgressBar) findViewById(R.id.internal_progress);
         mLoadingProgress.setIndeterminate(true);
 
+       // mPlayButton = (ImageView) findViewById(R.id.internal_button);
+       // mPlayButton.setVisibility(GONE);
 
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.gravity = Gravity.CENTER;
-        mLoadingProgress.setLayoutParams(params);
-        addView(mLoadingProgress);
+       // mPlayButton.setOnClickListener(new OnClickListener() {
+       //     @Override
+       //     public void onClick(View v) {
+       //         mMediaPlayer.start();
+       //     }
+       // });
 
-        mPlayButton = new ImageView(getContext());
-        mPlayButton.setLayoutParams(MATCH_PARENT_PARAMS);
-        mPlayButton.setScaleType(ImageView.ScaleType.CENTER);
-        mPlayButton.setImageResource(R.drawable.fa_play_circle);
-        mPlayButton.setVisibility(GONE);
 
-        mPlayButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mMediaPlayer.start();
-            }
-        });
-
-        addView(mPlayButton);
 
     }
 
 
-
-
     @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
+
+
+        @Override
     public void onAttachedToWindow(){
         super.onAttachedToWindow();
     }
@@ -143,7 +147,10 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
     @Override
     public void onDetachedFromWindow(){
         super.onDetachedFromWindow();
-        mMediaPlayer.release();
+        if(mMediaPlayer != null) {
+            mMediaPlayer.release();
+            mMediaPlayer = null;
+        }
     }
 
     private TextureView.SurfaceTextureListener mSurfaceTextureListener =  new TextureView.SurfaceTextureListener() {
@@ -171,20 +178,33 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
     };
 
     public boolean isPlaying() {
+
+        if(mMediaPlayer == null){
+            return false;
+        }
+
         return mMediaPlayer.isPlaying();
     }
 
     public void pause() {
+
+        if(mMediaPlayer == null){
+            return;
+        }
+
          mMediaPlayer.pause();
     }
 
     public void start() {
+        if(mMediaPlayer == null){
+            return ;
+        }
         mMediaPlayer.start();
     }
 
-    public void setData(Uri videoUri) {
+    public void setData(String videoUri) {
         mLoadingProgress.setVisibility(View.VISIBLE);
-        mPlayButton.setVisibility(View.GONE);
+       // mPlayButton.setVisibility(View.GONE);
         mMediaPlayer.setData(videoUri);
 
     }
@@ -192,7 +212,9 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
     @Override
     public void onFirstFrameAvailable(RichMediaPlayer player) {
         mLoadingProgress.setVisibility(GONE);
-        mPlayButton.setVisibility(player.isPlaying() ? View.GONE : View.VISIBLE);
+        //mPlayButton.setVisibility(player.isPlaying() ? View.GONE : View.VISIBLE);
+       // mPlayButton.setVisibility(View.VISIBLE);
+        mFullScreenMediaController.show();
         mMainVideoContainer.setRatio(player.getVideoWidth(), player.getVideoHeight());
         adjustAspectRatio(mTextureView, player.getVideoWidth(), player.getVideoHeight());
         invalidate();
@@ -235,5 +257,19 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
     @Override
     public void onCompletion(RichMediaPlayer mp) {
         onFirstFrameAvailable(mp);
+    }
+
+    @Override
+    public void onVideoSizeChanged(RichMediaPlayer mp) {
+        mMainVideoContainer.setRatio(mp.getVideoWidth(), mp.getVideoHeight());
+        adjustAspectRatio(mTextureView, mp.getVideoWidth(), mp.getVideoHeight());
+        requestLayout();
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        //the MediaController will hide after 3 seconds - tap the screen to make it appear again
+        mFullScreenMediaController.show();
+        return false;
     }
 }

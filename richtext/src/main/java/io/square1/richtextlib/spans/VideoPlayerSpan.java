@@ -21,6 +21,7 @@ package io.square1.richtextlib.spans;
 
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -53,7 +54,7 @@ public class VideoPlayerSpan extends ReplacementSpan implements ClickableSpan,
     public static final int TYPE = UniqueId.getType();
 
 
-    private Uri mVideoUri;
+    private String mVideoUri;
 
 
     private RichVideoView mPlayer;
@@ -66,7 +67,7 @@ public class VideoPlayerSpan extends ReplacementSpan implements ClickableSpan,
 
     public VideoPlayerSpan(String videoUrl, int maxWidth){
         super();
-        mVideoUri = Uri.parse(videoUrl);
+        mVideoUri = videoUrl;
 
     }
 
@@ -75,11 +76,12 @@ public class VideoPlayerSpan extends ReplacementSpan implements ClickableSpan,
     public Rect getBitmapSize(){
 
         RichContentView viewDisplay = (RichContentView)mRef.get();
+
         int viewDisplayWidth = viewDisplay.getMeasuredWidth() -
                 viewDisplay.getPaddingRight() -
                 viewDisplay.getPaddingRight();
 
-        double measure =  viewDisplayWidth;
+        double measure =  viewDisplayWidth > 0 ? viewDisplayWidth : 640.0;
         double height = measure / 16 * 9;
         return new Rect(0,0,(int)measure,(int)height);
     }
@@ -93,7 +95,7 @@ public class VideoPlayerSpan extends ReplacementSpan implements ClickableSpan,
     @Override
     public void readFromParcel(Parcel src) {
         String s = src.readString();
-        mVideoUri = Uri.parse(s);
+        mVideoUri = s;
     }
 
     WeakReference<RichContentViewDisplay> mRef;
@@ -122,7 +124,7 @@ public class VideoPlayerSpan extends ReplacementSpan implements ClickableSpan,
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         DynamicParcelableCreator.writeType(dest, this);
-        dest.writeString(mVideoUri.toString());
+        dest.writeString(mVideoUri);
        // dest.writeParcelable(mVideoUri,0);
     }
 
@@ -160,7 +162,7 @@ public class VideoPlayerSpan extends ReplacementSpan implements ClickableSpan,
     @Override
     public void draw(Canvas canvas,
                      CharSequence text,
-                     int start, int end, float x, int top, int y, int bottom, Paint paint) {
+                     int start, int end, float x, int top, int y, int bottom, Paint p) {
 
          mStart = start;
          mEnd = end;
@@ -173,7 +175,20 @@ public class VideoPlayerSpan extends ReplacementSpan implements ClickableSpan,
         final Rect bitmapBounds = getBitmapSize();
 
         mTransY = bottom - bitmapBounds.bottom;
-        mTransY -= paint.getFontMetricsInt().descent;
+        mTransY -= p.getFontMetricsInt().descent;
+
+//        final int paintColor = p.getColor();
+//        p.setColor(Color.LTGRAY);
+//        p.setStyle(Paint.Style.FILL);
+//
+//        Point point = new Point((int) mX, mTransY);
+//        Rect rect = new Rect(point.x, point.y, point.x + getBitmapSize().width(),
+//                point.y + getBitmapSize().height());
+//        canvas.drawRect(rect, p);
+//
+//        p.setColor(paintColor);
+
+
 
         prepareVideoView();
 
@@ -184,17 +199,20 @@ public class VideoPlayerSpan extends ReplacementSpan implements ClickableSpan,
     private void prepareVideoView(){
 
         RichContentView viewDisplay = (RichContentView)mRef.get();
+
         if(mPlayer == null) {
             mPlayer = new RichVideoView(mRef.get().getContext());
+
+            Point point = new Point((int) mX, mTransY);
+
+            mPlayer.setLayoutParams(viewDisplay.generateDefaultLayoutParams(point,
+                    getBitmapSize().width(),
+                    getBitmapSize().height()));
+
             viewDisplay.addSubView(mPlayer);
             mPlayer.setData(mVideoUri);
+            viewDisplay.invalidate();
         }
-
-        Point point = new Point((int) mX, mTransY);
-
-        mPlayer.setLayoutParams(viewDisplay.generateDefaultLayoutParams(point,
-                getBitmapSize().width(),
-                getBitmapSize().height()));
     }
 
     @Override

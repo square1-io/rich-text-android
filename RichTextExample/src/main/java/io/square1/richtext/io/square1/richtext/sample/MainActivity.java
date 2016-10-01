@@ -21,6 +21,7 @@ package io.square1.richtext.io.square1.richtext.sample;
 
 import android.app.Activity;
 import android.content.res.AssetManager;
+import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -66,26 +67,28 @@ public class MainActivity extends ActionBarActivity
     }
 
     @Override
-    public void onNavigationDrawerItemSelected(String fileName) {
+    public void onNavigationDrawerItemSelected(Uri uri) {
 
-        if(( NavigationDrawerFragment.SAMPLES_FOLDER + "/" + NavigationDrawerFragment.OPEN).equalsIgnoreCase(fileName)){
-
-            String html = Utils.readFromfile(this,  NavigationDrawerFragment.SAMPLES_FOLDER + "/" + mNavigationDrawerFragment.mSampleFiles[0]);
-            RichDocument result = RichTextV2.fromHtml(this, html, new RichTextV2.DefaultStyle(this));
-
-            Main2Activity.showDocument(result, this);
-
-            return;
-        }
         // update the main content by replacing fragments
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, ContentFragment.newInstance(fileName))
-                .commit();
+        if("file".equalsIgnoreCase(uri.getScheme())) {
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, ContentFragment.newInstance(uri))
+                    .commit();
+
+        }else if("fragment".equalsIgnoreCase(uri.getScheme())){
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, VideoTestFragment.newInstance())
+                    .commit();
+
+        }
     }
 
-    public void onSectionAttached(String fileName) {
-        mTitle = fileName;
+    public void onSectionAttached(Uri fileName) {
+        mTitle = fileName.getLastPathSegment();
     }
 
     public void restoreActionBar() {
