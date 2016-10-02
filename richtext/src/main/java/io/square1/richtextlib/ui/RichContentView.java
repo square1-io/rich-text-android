@@ -62,7 +62,7 @@ import io.square1.richtextlib.spans.YouTubeSpan;
 /**
  * Created by roberto on 20/09/15.
  */
-public class RichContentView extends FrameLayout implements RichContentViewDisplay {
+public class RichContentView extends FrameLayout implements RichContentViewDisplay , Drawable.Callback  {
 
 
     private UrlBitmapDownloader mBitmapManager;
@@ -78,6 +78,7 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
 
     private int mLastMeasuredWidth;
 
+    private boolean mEmptyText;
 
 
     private OnSpanClickedObserver mOnSpanClickedObserver;
@@ -105,18 +106,46 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
         addView(view);
     }
 
+    public void setText(CharSequence text){
+
+        RichDocument richDocument = RichTextV2.fromHtml(getContext(),text.toString());
+        setText(richDocument);
+
+    }
+
+    public void setText(RichDocument richDocument){
+
+        ArrayList<DocumentElement> elementArrayList = richDocument.getElements();
+        for(DocumentElement documentElement : elementArrayList){
+            if(documentElement instanceof RichTextDocumentElement){
+                setText((RichTextDocumentElement) documentElement);
+                break;
+            }
+        }
+    }
+
     public void setText(RichTextDocumentElement builder){
+
         if(mText != builder) {
+
             mText = builder;
-            mSpans = mText.getSpans();
-            mLayout = null;
-            for(RichTextSpan span : mSpans){
-                span.onSpannedSetToView(this);
+
+            mEmptyText = TextUtils.isEmpty(mText);
+
+            if(mText != null) {
+                mSpans = mText.getSpans();
+            }else {
+                mSpans = new RichTextSpan[0];
             }
 
+            for(RichTextSpan span : mSpans){
+                span.onSpannedSetToView(this);
+                if(viewAttachedToWindow() == true){
+                    span.onAttachedToWindow(this);
+                }
+            }
 
-            requestLayout();
-            invalidate();
+            performLayout();
         }
     }
 
@@ -126,9 +155,14 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
     public void performLayout(){
         if (mLayout != null) {
             mLayout = null;
+            forceLayout();
             requestLayout();
             invalidate();
         }
+    }
+
+    public boolean isAttachedToWindow(){
+        return  mAttachedToWindow;
     }
 
     @Override
@@ -157,11 +191,13 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
     private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
 
         setWillNotDraw(false);
+        setDrawingCacheEnabled(false);
 
         mAppearance = new Appearance(context);
 
         mText = new RichTextDocumentElement();
         mSpans = mText.getSpans();
+        mEmptyText = true;
 
         mLastMeasuredWidth = 0;
 
@@ -175,6 +211,10 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 
+        if(mEmptyText == true){
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+            return;
+        }
 
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
 
@@ -185,7 +225,10 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
         }
 
         if (mLayout != null) {
-
+            if(getChildCount() > 0){
+                //need to measure child too or videos will never be displayed
+                super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+            }
             setMeasuredDimension(widthSize,
                     getPaddingTop() + getPaddingBottom() + mLayout.getHeight());
 
@@ -213,12 +256,18 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
 
     @Override
     public void onDraw(Canvas canvas){
+        super.onDraw(canvas);
         canvas.save();
         if (mLayout != null) {
             canvas.translate(getPaddingLeft(), getPaddingTop());
             mLayout.draw(canvas);
         }
         canvas.restore();
+    }
+
+    @Override
+    protected void dispatchDraw(Canvas canvas) {
+        super.dispatchDraw(canvas);
     }
 
 
@@ -281,9 +330,8 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
 
     @Override
     public void onAttachedToWindow(){
-        super.onAttachedToWindow();
-
         mAttachedToWindow = true;
+        super.onAttachedToWindow();
 
         for (RichTextSpan span : mSpans) {
                 span.onAttachedToWindow(this);
@@ -293,13 +341,25 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
 
     @Override
     public void onDetachedFromWindow(){
-        super.onDetachedFromWindow();
         mAttachedToWindow = false;
+        super.onDetachedFromWindow();
         for(RichTextSpan span : mSpans){
             span.onDetachedFromWindow(this);
         }
     }
 
+
+    public boolean areLayoutParamsDifferent(FrameLayout.LayoutParams params1, FrameLayout.LayoutParams params2){
+
+        if(params1 == null && params2 != null) return true;
+
+        if(params2 == null && params1 != null) return true;
+
+        if (params1.leftMargin != params2.leftMargin) return true;
+        if (params1.topMargin != params2.topMargin) return true;
+
+        return false;
+    }
 
     public LayoutParams generateDefaultLayoutParams(Point position,int width, int height ){
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(width,height);
@@ -439,14 +499,7 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
             }
 
             if(TextUtils.isEmpty(sequence) == false){
-                RichDocument richDocument = RichTextV2.fromHtml(getContext(),sequence.toString());
-                ArrayList<DocumentElement> elementArrayList = richDocument.getElements();
-                for(DocumentElement documentElement : elementArrayList){
-                    if(documentElement instanceof RichTextDocumentElement){
-                        setText((RichTextDocumentElement) documentElement);
-                        break;
-                    }
-                }
+                setText(sequence);
             }
 
 

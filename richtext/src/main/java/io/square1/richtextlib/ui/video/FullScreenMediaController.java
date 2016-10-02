@@ -46,12 +46,12 @@ public class FullScreenMediaController extends MediaController {
         void onRequestFullScreen();
     }
 
-    Context mContext;
+
     private OnMediaControllerInteractionListener mListener;
 
     public FullScreenMediaController(Context context) {
         super(context);
-        mContext = context;
+
     }
 
     void setListener(OnMediaControllerInteractionListener listener) {

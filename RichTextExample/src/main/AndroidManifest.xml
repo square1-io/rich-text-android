@@ -19,7 +19,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:hardwareAccelerated="true"
+        <activity
             android:name=".io.square1.richtext.sample.Main2Activity"></activity>
     </application>
 

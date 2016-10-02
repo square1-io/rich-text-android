@@ -171,7 +171,7 @@ public class BitmapSpan extends ReplacementSpan implements RichTextSpan, Clickab
 
 
 //    private void loadImage(){
-//        if(mAttachedToWindow == true && mBitmap == null){
+//        if(mAttachedToWindow == true && mVideoPlayer == null){
 //            Glide.with(mViewRef.getInstance().getContext()).load(mImageUri).asBitmap().into(mSimpleTarget);
 //        }
 //    }

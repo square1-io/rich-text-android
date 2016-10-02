@@ -23,6 +23,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -41,6 +42,7 @@ import android.widget.ProgressBar;
 
 import io.square1.richtextlib.R;
 import io.square1.richtextlib.ui.AspectRatioFrameLayout;
+import io.square1.richtextlib.util.NumberUtils;
 
 /**
  * Created by roberto on 12/10/15.
@@ -50,8 +52,13 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
         RichMediaPlayer.OnCompletionListener,
         RichMediaPlayer.OnVideoSizeListener {
 
+    public interface  RichVideoViewListener {
 
+        public void onVideoReady(RichVideoView videoView);
 
+    }
+
+    private RichVideoViewListener mRichVideoViewListener;
 
     private FullScreenMediaController mFullScreenMediaController;
     private AspectRatioFrameLayout mMainVideoContainer;
@@ -60,6 +67,8 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
 
     //private ImageView mPlayButton;
     private ProgressBar mLoadingProgress;
+    private String mCurrentUri;
+
 
     public RichVideoView(Context context) {
         super(context);
@@ -84,8 +93,6 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
 
     public void init(){
 
-        setBackgroundColor(Color.BLUE);
-
 
         if(isInEditMode() == false) {
             mMediaPlayer = new RichMediaPlayer(getContext());
@@ -100,7 +107,7 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
 
         mMainVideoContainer = (AspectRatioFrameLayout)findViewById(R.id.internal_aspect_ratio_view);
 
-        mTextureView =  (TextureView)findViewById(R.id.internal_texture_view); //new TextureView(getContext());
+        mTextureView =  (TextureView)findViewById(R.id.internal_texture_view);
         mTextureView.setSurfaceTextureListener(mSurfaceTextureListener);
 
 
@@ -118,20 +125,11 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
         mLoadingProgress = (ProgressBar) findViewById(R.id.internal_progress);
         mLoadingProgress.setIndeterminate(true);
 
-       // mPlayButton = (ImageView) findViewById(R.id.internal_button);
-       // mPlayButton.setVisibility(GONE);
-
-       // mPlayButton.setOnClickListener(new OnClickListener() {
-       //     @Override
-       //     public void onClick(View v) {
-       //         mMediaPlayer.start();
-       //     }
-       // });
-
-
-
     }
 
+    public Rect getBounds(){
+        return new Rect(0,0,getVideoWidth(), getVideoHeight());
+    }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -158,11 +156,13 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
             mMediaPlayer.setSurfaceTexture(surface);
+            mMediaPlayer.setData(mCurrentUri);
+
         }
 
         @Override
         public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-
+            mMediaPlayer.setSurfaceTexture(surface);
         }
 
         @Override
@@ -205,8 +205,15 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
     public void setData(String videoUri) {
         mLoadingProgress.setVisibility(View.VISIBLE);
        // mPlayButton.setVisibility(View.GONE);
-        mMediaPlayer.setData(videoUri);
+        mCurrentUri = videoUri;
+        if(mMediaPlayer.hasSurface() == true) {
+            mMediaPlayer.setData(videoUri);
+        }
 
+    }
+
+    public void setRichVideoViewListener(RichVideoViewListener listener){
+        mRichVideoViewListener = listener;
     }
 
     @Override
@@ -219,6 +226,17 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
         adjustAspectRatio(mTextureView, player.getVideoWidth(), player.getVideoHeight());
         invalidate();
         requestLayout();
+        if(mRichVideoViewListener != null){
+            mRichVideoViewListener.onVideoReady(this);
+        }
+    }
+
+    public int getVideoWidth(){
+        return mMediaPlayer.getVideoWidth();
+    }
+
+    public int getVideoHeight(){
+        return mMediaPlayer.getVideoHeight();
     }
 
     @Override
@@ -228,8 +246,11 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
 
 
     private static void adjustAspectRatio(TextureView textureView, int videoWidth, int videoHeight) {
+
+
         int viewWidth = textureView.getWidth();
         int viewHeight = textureView.getHeight();
+
         double aspectRatio = (double) videoHeight / videoWidth;
 
         int newWidth, newHeight;
@@ -264,6 +285,11 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
         mMainVideoContainer.setRatio(mp.getVideoWidth(), mp.getVideoHeight());
         adjustAspectRatio(mTextureView, mp.getVideoWidth(), mp.getVideoHeight());
         requestLayout();
+
+    }
+
+    public boolean videSizeKnown(){
+        return mMediaPlayer.getVideoWidth() != NumberUtils.INVALID;
     }
 
     @Override

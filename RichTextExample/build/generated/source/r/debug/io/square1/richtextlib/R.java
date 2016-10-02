@@ -38,17 +38,17 @@ public final class R {
 		public static final int youtube_play = 0x7f020046;
 	}
 	public static final class id {
-		public static final int ffwd = 0x7f0c006b;
-		public static final int internal_aspect_ratio_view = 0x7f0c0058;
-		public static final int internal_progress = 0x7f0c005a;
-		public static final int internal_texture_view = 0x7f0c0059;
-		public static final int mediacontroller_progress = 0x7f0c006d;
-		public static final int pause = 0x7f0c006a;
-		public static final int play = 0x7f0c0069;
-		public static final int rew = 0x7f0c0068;
-		public static final int time = 0x7f0c0061;
-		public static final int time_current = 0x7f0c006c;
-		public static final int tweetContainer = 0x7f0c006e;
+		public static final int ffwd = 0x7f0c006a;
+		public static final int internal_aspect_ratio_view = 0x7f0c0057;
+		public static final int internal_progress = 0x7f0c0059;
+		public static final int internal_texture_view = 0x7f0c0058;
+		public static final int mediacontroller_progress = 0x7f0c006c;
+		public static final int pause = 0x7f0c0069;
+		public static final int play = 0x7f0c0068;
+		public static final int rew = 0x7f0c0067;
+		public static final int time = 0x7f0c0060;
+		public static final int time_current = 0x7f0c006b;
+		public static final int tweetContainer = 0x7f0c006d;
 	}
 	public static final class layout {
 		public static final int internal_rich_text_video_controller = 0x7f040020;

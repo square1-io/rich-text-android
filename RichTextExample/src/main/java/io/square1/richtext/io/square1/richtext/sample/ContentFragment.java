@@ -32,6 +32,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import io.square1.parcelable.ParcelableUtil;
 import io.square1.richtext.R;
@@ -110,6 +111,8 @@ public  class ContentFragment extends Fragment implements UrlBitmapDownloader {
     public void downloadImage(RemoteBitmapSpan urlBitmapSpan, Uri image) {
         Glide.with(getActivity())
                 .load(image)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
                 .into(new GlideTarget(getActivity(),urlBitmapSpan));
     }
 

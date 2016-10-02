@@ -27,6 +27,8 @@ import android.net.Uri;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
+import io.square1.richtextlib.util.NumberUtils;
+
 /**
  * Created by roberto on 12/10/15.
  */
@@ -136,6 +138,8 @@ public class RichMediaPlayer implements MediaPlayer.OnPreparedListener, android.
             this.state = MEDIA_WAITING;
             this.playbackState = PLAYBACK_SHOW_FIRST_FRAME;
             this.duration = 0;
+            this.width = NumberUtils.INVALID;
+            this.height = NumberUtils.INVALID;
         }
 
         final Uri uri;
@@ -297,7 +301,11 @@ public class RichMediaPlayer implements MediaPlayer.OnPreparedListener, android.
     }
 
     public boolean isPlaying(){
-        return mMediaPlayer.isPlaying();
+
+        if(mMediaPlayer != null) {
+            return mMediaPlayer.isPlaying();
+        }
+        return false;
     }
 
     public boolean mediaPrepared(){

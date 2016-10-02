@@ -54,8 +54,6 @@ ADDED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.x
 		ADDED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.xml:19:27-74
 activity#io.square1.richtext.io.square1.richtext.sample.Main2Activity
 ADDED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.xml:22:9-23:81
-	android:hardwareAccelerated
-		ADDED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.xml:22:19-53
 	android:name
 		ADDED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.xml:23:13-69
 uses-sdk
