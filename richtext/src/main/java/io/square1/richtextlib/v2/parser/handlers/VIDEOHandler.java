@@ -24,6 +24,7 @@ import android.text.Spannable;
 
 import org.xml.sax.Attributes;
 
+import io.square1.richtextlib.spans.URLSpan;
 import io.square1.richtextlib.spans.UrlBitmapSpan;
 import io.square1.richtextlib.spans.VideoPlayerSpan;
 import io.square1.richtextlib.util.NumberUtils;
@@ -48,14 +49,17 @@ public class VIDEOHandler extends TagHandler {
         Attributes attributes = tag.attributes;
         String src = attributes.getValue("", "src");
 
-        int maxSize = context.getStyle().maxImageWidth();
-        VideoPlayerSpan videoPlayerSpan = new VideoPlayerSpan(src,
-                NumberUtils.parseImageDimension(attributes.getValue("width"), maxSize),
-                NumberUtils.parseImageDimension(attributes.getValue("height"),0),
-                context.getStyle().maxImageWidth() );
+//        int maxSize = context.getStyle().maxImageWidth();
+//        VideoPlayerSpan videoPlayerSpan = new VideoPlayerSpan(src,
+//                NumberUtils.parseImageDimension(attributes.getValue("width"), maxSize),
+//                NumberUtils.parseImageDimension(attributes.getValue("height"),0),
+//                context.getStyle().maxImageWidth() );
+
+        URLSpan videoPlayerSpan = new URLSpan(src);
 
         int len = out.length();
-        out.append(SpannedBuilderUtils.NO_SPACE);
+       // out.append(SpannedBuilderUtils.NO_SPACE);
+        out.append(src);
 
         out.setSpan(videoPlayerSpan,
                 len,
