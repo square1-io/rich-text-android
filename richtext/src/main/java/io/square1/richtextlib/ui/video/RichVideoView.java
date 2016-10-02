@@ -55,6 +55,7 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
     public interface  RichVideoViewListener {
 
         public void onVideoReady(RichVideoView videoView);
+        public void onVideoSizeAvailable(RichVideoView videoView);
 
     }
 
@@ -64,6 +65,7 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
     private AspectRatioFrameLayout mMainVideoContainer;
     private TextureView mTextureView;
     private RichMediaPlayer mMediaPlayer;
+    private SurfaceTexture mSurface;
 
     //private ImageView mPlayButton;
     private ProgressBar mLoadingProgress;
@@ -91,15 +93,29 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
         init();
     }
 
-    public void init(){
+    public void initMediaPlayer(){
 
-
-        if(isInEditMode() == false) {
+        if(isInEditMode() == true) {
+            return;
+        }
+        if(mMediaPlayer == null) {
             mMediaPlayer = new RichMediaPlayer(getContext());
             mMediaPlayer.setFirstFrameAvailableListener(this);
             mMediaPlayer.setOnCompletionListener(this);
             mMediaPlayer.setOnVideoSizeListener(this);
         }
+
+        if(mSurface != null){
+            mMediaPlayer.setSurfaceTexture(mSurface);
+        }
+
+    }
+    public void init(){
+
+
+
+        initMediaPlayer();
+
 
         LayoutInflater.from(getContext())
                 .inflate(R.layout.internal_rich_text_video_controller,
@@ -146,27 +162,32 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
     public void onDetachedFromWindow(){
         super.onDetachedFromWindow();
         if(mMediaPlayer != null) {
-            mMediaPlayer.release();
+            mMediaPlayer.pause();
             mMediaPlayer = null;
-        }
+       }
     }
 
     private TextureView.SurfaceTextureListener mSurfaceTextureListener =  new TextureView.SurfaceTextureListener() {
 
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-            mMediaPlayer.setSurfaceTexture(surface);
+            mSurface = surface;
+            mMediaPlayer.setSurfaceTexture(mSurface);
             mMediaPlayer.setData(mCurrentUri);
 
         }
 
         @Override
         public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-            mMediaPlayer.setSurfaceTexture(surface);
+            mSurface = surface;
+            mMediaPlayer.setSurfaceTexture(mSurface);
         }
 
         @Override
         public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+            if(mSurface == surface){
+                mSurface = null;
+            }
             mMediaPlayer.onSurfaceTextureDestroyed(surface);
             return true;
         }
@@ -204,11 +225,9 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
 
     public void setData(String videoUri) {
         mLoadingProgress.setVisibility(View.VISIBLE);
-       // mPlayButton.setVisibility(View.GONE);
         mCurrentUri = videoUri;
-        if(mMediaPlayer.hasSurface() == true) {
-            mMediaPlayer.setData(videoUri);
-        }
+        initMediaPlayer();
+        mMediaPlayer.setData(videoUri);
 
     }
 
@@ -232,11 +251,11 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
     }
 
     public int getVideoWidth(){
-        return mMediaPlayer.getVideoWidth();
+        return mMediaPlayer == null ? NumberUtils.INVALID : mMediaPlayer.getVideoWidth();
     }
 
     public int getVideoHeight(){
-        return mMediaPlayer.getVideoHeight();
+        return mMediaPlayer == null ? NumberUtils.INVALID : mMediaPlayer.getVideoHeight();
     }
 
     @Override
@@ -285,11 +304,14 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
         mMainVideoContainer.setRatio(mp.getVideoWidth(), mp.getVideoHeight());
         adjustAspectRatio(mTextureView, mp.getVideoWidth(), mp.getVideoHeight());
         requestLayout();
+        if(mRichVideoViewListener != null){
+            mRichVideoViewListener.onVideoSizeAvailable(this);
+        }
 
     }
 
     public boolean videSizeKnown(){
-        return mMediaPlayer.getVideoWidth() != NumberUtils.INVALID;
+        return mMediaPlayer == null ? false : mMediaPlayer.getVideoWidth() != NumberUtils.INVALID;
     }
 
     @Override

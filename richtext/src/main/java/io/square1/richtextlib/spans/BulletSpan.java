@@ -26,8 +26,10 @@ import android.os.Parcel;
 import android.text.Layout;
 import android.text.Spanned;
 import android.text.style.LeadingMarginSpan;
+import android.view.View;
 
 import io.square1.parcelable.DynamicParcelableCreator;
+import io.square1.richtextlib.ui.RichContentView;
 import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.UniqueId;
 
@@ -143,7 +145,18 @@ public class BulletSpan implements LeadingMarginSpan, RichTextSpan {
     }
 
     @Override
-    public void onSpannedSetToView(RichContentViewDisplay view){
+    public void onSpannedSetToView(RichContentView view){
 
     }
+
+    @Override
+    public void onViewAttachedToWindow(View v) {
+
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(View v) {
+
+    }
+
 }

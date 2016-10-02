@@ -21,15 +21,17 @@ package io.square1.richtextlib.spans;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.view.View;
 
 import io.square1.parcelable.DynamicParcelable;
+import io.square1.richtextlib.ui.RichContentView;
 import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.Utils;
 
 /**
  * Created by roberto on 12/06/15.
  */
-public interface RichTextSpan extends DynamicParcelable {
+public interface RichTextSpan extends DynamicParcelable , View.OnAttachStateChangeListener {
 
     public  static  final  Parcelable.Creator<RichTextSpan> CREATOR  = new Parcelable.Creator<RichTextSpan>() {
 
@@ -52,8 +54,10 @@ public interface RichTextSpan extends DynamicParcelable {
    /// void setType(int type);
 
 
-    void onSpannedSetToView(RichContentViewDisplay view);
+    void onSpannedSetToView(RichContentView view);
     void onAttachedToWindow(RichContentViewDisplay view);
     void onDetachedFromWindow(RichContentViewDisplay view);
+
+
 
 }

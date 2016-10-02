@@ -21,6 +21,7 @@ package io.square1.richtextlib.spans;
 
 import java.lang.ref.WeakReference;
 
+import io.square1.richtextlib.ui.RichContentView;
 import io.square1.richtextlib.ui.RichContentViewDisplay;
 
 /**
@@ -28,7 +29,7 @@ import io.square1.richtextlib.ui.RichContentViewDisplay;
  */
 public class SpanUtil {
 
-    public static UrlBitmapDownloader get(WeakReference<RichContentViewDisplay> viewWeakReference) {
+    public static UrlBitmapDownloader get(WeakReference<RichContentView> viewWeakReference) {
 
         if(viewWeakReference == null) return null;
 

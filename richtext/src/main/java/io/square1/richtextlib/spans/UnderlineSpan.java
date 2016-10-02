@@ -24,8 +24,10 @@ import android.os.Parcelable;
 import android.text.TextPaint;
 import android.text.style.CharacterStyle;
 import android.text.style.UpdateAppearance;
+import android.view.View;
 
 import io.square1.parcelable.DynamicParcelableCreator;
+import io.square1.richtextlib.ui.RichContentView;
 import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.UniqueId;
 
@@ -77,7 +79,17 @@ public class UnderlineSpan extends CharacterStyle implements UpdateAppearance, R
     }
 
     @Override
-    public void onSpannedSetToView(RichContentViewDisplay view){
+    public void onSpannedSetToView(RichContentView view){
+
+    }
+
+    @Override
+    public void onViewAttachedToWindow(View v) {
+
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(View v) {
 
     }
 }

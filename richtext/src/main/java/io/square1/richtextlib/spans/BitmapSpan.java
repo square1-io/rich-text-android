@@ -26,8 +26,10 @@ import android.graphics.Rect;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.style.ReplacementSpan;
+import android.view.View;
 
 import io.square1.parcelable.DynamicParcelableCreator;
+import io.square1.richtextlib.ui.RichContentView;
 import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.UniqueId;
 
@@ -82,10 +84,6 @@ public class BitmapSpan extends ReplacementSpan implements RichTextSpan, Clickab
         mBitmap = src.readParcelable(Bitmap.class.getClassLoader());
     }
 
-    @Override
-    public void onSpannedSetToView(RichContentViewDisplay view) {
-
-    }
 
     @Override
     public void onAttachedToWindow(RichContentViewDisplay view) {
@@ -175,5 +173,20 @@ public class BitmapSpan extends ReplacementSpan implements RichTextSpan, Clickab
 //            Glide.with(mViewRef.getInstance().getContext()).load(mImageUri).asBitmap().into(mSimpleTarget);
 //        }
 //    }
+
+    @Override
+    public void onSpannedSetToView(RichContentView view){
+
+    }
+
+    @Override
+    public void onViewAttachedToWindow(View v) {
+
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(View v) {
+
+    }
 
 }

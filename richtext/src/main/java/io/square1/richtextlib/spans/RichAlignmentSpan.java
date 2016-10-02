@@ -22,9 +22,11 @@ package io.square1.richtextlib.spans;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.Layout;
+import android.view.View;
 
 
 import io.square1.parcelable.DynamicParcelableCreator;
+import io.square1.richtextlib.ui.RichContentView;
 import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.UniqueId;
 
@@ -82,7 +84,17 @@ public interface RichAlignmentSpan extends android.text.style.AlignmentSpan, Ric
         }
 
         @Override
-        public void onSpannedSetToView(RichContentViewDisplay view){
+        public void onSpannedSetToView(RichContentView view){
+
+        }
+
+        @Override
+        public void onViewAttachedToWindow(View v) {
+
+        }
+
+        @Override
+        public void onViewDetachedFromWindow(View v) {
 
         }
     }

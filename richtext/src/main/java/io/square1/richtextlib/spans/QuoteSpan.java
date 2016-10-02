@@ -19,11 +19,9 @@
 
 package io.square1.richtextlib.spans;
 
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -33,9 +31,11 @@ import android.text.TextPaint;
 import android.text.style.LeadingMarginSpan;
 import android.text.style.LineBackgroundSpan;
 import android.text.style.MetricAffectingSpan;
+import android.view.View;
 
 import io.square1.parcelable.DynamicParcelableCreator;
 import io.square1.richtextlib.ui.Appearance;
+import io.square1.richtextlib.ui.RichContentView;
 import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.UniqueId;
 
@@ -217,7 +217,7 @@ public class QuoteSpan extends MetricAffectingSpan implements /*LineHeightSpan,*
     }
 
     @Override
-    public void onSpannedSetToView(RichContentViewDisplay view){
+    public void onSpannedSetToView(RichContentView view){
 
         final Appearance appearance = view.getStyle();
         mColor = appearance.getQuoteBackgroundColor();
@@ -226,5 +226,17 @@ public class QuoteSpan extends MetricAffectingSpan implements /*LineHeightSpan,*
         mSignRightPadding = appearance.getQuoteSignRightPadding();
         mSignTopPadding = appearance.getQuoteSignTopPadding();
         mTextPaint = appearance.getQuoteTextPaint();
+    }
+
+
+
+    @Override
+    public void onViewAttachedToWindow(View v) {
+
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(View v) {
+
     }
 }

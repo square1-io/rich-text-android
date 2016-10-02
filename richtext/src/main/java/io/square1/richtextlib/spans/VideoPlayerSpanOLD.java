@@ -21,28 +21,23 @@ package io.square1.richtextlib.spans;
 
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 
 import android.graphics.drawable.Animatable;
-import android.graphics.drawable.LayerDrawable;
-import android.net.Uri;
 import android.os.Parcel;
 import android.text.style.ReplacementSpan;
 import android.text.style.UpdateAppearance;
-import android.view.LayoutInflater;
+import android.view.View;
 
 import java.lang.ref.WeakReference;
 
 
 import io.square1.parcelable.DynamicParcelableCreator;
-import io.square1.richtextlib.R;
 import io.square1.richtextlib.ui.RichContentView;
 import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.ui.video.RichVideoView;
-import io.square1.richtextlib.util.NumberUtils;
 import io.square1.richtextlib.util.UniqueId;
 
 /**
@@ -103,7 +98,7 @@ public class VideoPlayerSpanOLD extends ReplacementSpan implements ClickableSpan
     WeakReference<RichContentViewDisplay> mRef;
 
     @Override
-    public void onSpannedSetToView(RichContentViewDisplay view) {
+    public void onSpannedSetToView(RichContentView view) {
         mRef = new WeakReference(view);
     }
 
@@ -239,6 +234,18 @@ public class VideoPlayerSpanOLD extends ReplacementSpan implements ClickableSpan
             return mPlayer.isPlaying();
         }
         return false;
+    }
+
+
+
+    @Override
+    public void onViewAttachedToWindow(View v) {
+
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(View v) {
+
     }
 
 }

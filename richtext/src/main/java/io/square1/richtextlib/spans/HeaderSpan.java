@@ -22,9 +22,11 @@ package io.square1.richtextlib.spans;
 import android.os.Parcel;
 import android.text.TextPaint;
 import android.text.style.MetricAffectingSpan;
+import android.view.View;
 
 import io.square1.parcelable.DynamicParcelableCreator;
 import io.square1.richtextlib.ui.Appearance;
+import io.square1.richtextlib.ui.RichContentView;
 import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.UniqueId;
 
@@ -97,8 +99,19 @@ public class HeaderSpan extends MetricAffectingSpan implements RichTextSpan {
     }
 
     @Override
-    public void onSpannedSetToView(RichContentViewDisplay view){
+    public void onSpannedSetToView(RichContentView view){
         final Appearance appearance = view.getStyle();
         mTextPaint = appearance.textPaintForHeader(mHeaderIndex);
+    }
+
+
+    @Override
+    public void onViewAttachedToWindow(View v) {
+
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(View v) {
+
     }
 }

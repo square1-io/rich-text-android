@@ -23,7 +23,6 @@ package io.square1.richtextlib.spans;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Animatable;
@@ -41,6 +40,7 @@ import android.widget.Toast;
 import java.lang.ref.WeakReference;
 
 import io.square1.parcelable.DynamicParcelableCreator;
+import io.square1.richtextlib.ui.RichContentView;
 import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.NumberUtils;
 import io.square1.richtextlib.util.UniqueId;
@@ -48,7 +48,7 @@ import io.square1.richtextlib.util.UniqueId;
 /**
  * Created by roberto on 23/06/15.
  */
-public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, ClickableSpan, UpdateAppearance, RichTextSpan , View.OnAttachStateChangeListener  {
+public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, ClickableSpan, UpdateAppearance, RichTextSpan   {
 
     public static final Creator<UrlBitmapSpan> CREATOR  = DynamicParcelableCreator.getInstance(UrlBitmapSpan.class);
     public static final int TYPE = UniqueId.getType();
@@ -122,36 +122,39 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
         mImageHeight = src.readInt();
     }
 
-    WeakReference<RichContentViewDisplay> mRef;
+    WeakReference<RichContentView> mRef;
+
+    RichContentView getCurrentRichContentView(){
+
+        if(mRef == null){
+            return null;
+        }
+        return mRef.get();
+    }
 
     @Override
-    public void onSpannedSetToView(RichContentViewDisplay view) {
+    public void onSpannedSetToView(RichContentView view) {
+
+        RichContentView current = getCurrentRichContentView();
+
+        if(current != null){
+            current.removeOnAttachStateChangeListener(this);
+        }
+
+        view.addOnAttachStateChangeListener(this);
         mRef = new WeakReference(view);
-        ensureDrawableIsAttached(view);
+
+        ensureDrawableIsAttached();
     }
 
     @Override
     public void onAttachedToWindow(RichContentViewDisplay view) {
-
-        Toast.makeText(view.getContext(), "onAttachedToWindow", Toast.LENGTH_LONG).show();
-        loadImage();
-        ensureDrawableIsAttached(view);
-
-        //redownloaded from earlier
-        if(mBitmap != null){
-            Drawable cached = mBitmap;
-            mBitmap = null;
-            updateBitmap(view.getContext(), cached);
-        }
+        onViewAttachedToWindow(getCurrentRichContentView());
     }
 
     @Override
     public void onDetachedFromWindow(RichContentViewDisplay view) {
-        Toast.makeText(view.getContext(), "onDetachedFromWindow", Toast.LENGTH_LONG).show();
-      //  if (mBitmap != null && mBitmap.getCallback() == viewDisplay) {
-
-      //      mBitmap.setCallback(null);
-      //  }
+        onViewDetachedFromWindow(getCurrentRichContentView());
     }
 
     @Override
@@ -313,13 +316,14 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
         mImageHeight = bitmap.getIntrinsicHeight();
 
         mBitmap.setBounds(0,0,mImageWidth,mImageHeight);
-        final RichContentViewDisplay view = mRef.get();
+
+        final RichContentView view = mRef.get();
         Rect newRect = getBitmapBounds();
         mBitmap.setBounds(newRect);
 
         boolean needsLayout = (newRect.equals(mRect) == false);
 
-        ensureDrawableIsAttached(view);
+        ensureDrawableIsAttached();
 
         if(view != null){
 
@@ -334,35 +338,25 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
 
     }
 
-    private void ensureDrawableIsAttached(RichContentViewDisplay viewDisplay){
+    private void ensureDrawableIsAttached(){
 
-        if(viewDisplay == null){
+        final RichContentView viewDisplay = mRef.get();
+
+        if(viewDisplay == null ||
+                viewDisplay.viewAttachedToWindow() == false){
             return;
         }
 
         if(mBitmap != null) {
-
             mBitmap.setCallback(viewDisplay);
             mBitmap.invalidateSelf();
-
-            animate();
-
+            if(mBitmap instanceof Animatable){
+                Animatable animatable = (Animatable)mBitmap;
+                animatable.start();
+            }
         }
     }
 
-    private void animate(){
-
-        RichContentViewDisplay container  = mRef.get();
-
-        if( container != null &&
-                mBitmap != null &&
-                mBitmap instanceof Animatable){
-            mBitmap.setCallback(container);
-            Animatable animatable = (Animatable)mBitmap;
-            animatable.start();
-
-        }
-    }
 
     @Override
     public Rect getPossibleSize() {
@@ -384,12 +378,28 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
 
 
     @Override
-    public void onViewAttachedToWindow(View v) {
+    public void onViewAttachedToWindow(View view) {
 
+        Toast.makeText(view.getContext(), "onAttachedToWindow", Toast.LENGTH_LONG).show();
+        loadImage();
+        ensureDrawableIsAttached();
+
+        //redownloaded from earlier
+        if(mBitmap != null){
+            Drawable cached = mBitmap;
+            mBitmap = null;
+            updateBitmap(view.getContext(), cached);
+        }
     }
 
     @Override
-    public void onViewDetachedFromWindow(View v) {
+    public void onViewDetachedFromWindow(View viewDisplay) {
 
+        Toast.makeText(viewDisplay.getContext(), "onDetachedFromWindow", Toast.LENGTH_LONG).show();
+          if (mBitmap != null && mBitmap.getCallback() == viewDisplay) {
+
+              mBitmap.setCallback(null);
+          }
     }
+
 }

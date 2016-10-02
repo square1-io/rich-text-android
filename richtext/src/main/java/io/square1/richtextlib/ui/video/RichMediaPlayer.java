@@ -195,6 +195,8 @@ public class RichMediaPlayer implements MediaPlayer.OnPreparedListener, android.
         syncMediaState();
     }
 
+
+
     public void onSurfaceTextureDestroyed(SurfaceTexture texture){
 
         initMediaPlayer();

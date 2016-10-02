@@ -25,10 +25,11 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.net.Uri;
 import android.os.Parcel;
 import android.text.style.ReplacementSpan;
 import android.text.style.UpdateAppearance;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import java.lang.ref.WeakReference;
@@ -88,9 +89,6 @@ public class VideoPlayerSpan extends ReplacementSpan implements  ClickableSpan, 
         mMaxImageWidth = maxImageWidth;
         mImageWidth = imageWidth;
         mImageHeight = imageHeight;
-
-
-
     }
 
     @Override
@@ -106,30 +104,31 @@ public class VideoPlayerSpan extends ReplacementSpan implements  ClickableSpan, 
         mImageHeight = src.readInt();
     }
 
-    WeakReference<RichContentViewDisplay> mRef;
+    WeakReference<RichContentView> mRef;
 
     @Override
-    public void onSpannedSetToView(RichContentViewDisplay view) {
+    public void onSpannedSetToView(RichContentView view) {
         mRef = new WeakReference(view);
         mAttachedToWindow = view.viewAttachedToWindow();
+
+
 
     }
 
     @Override
     public void onAttachedToWindow(RichContentViewDisplay view) {
-        mAttachedToWindow = true;
+
         if(mVideoPlayer == null){
             mVideoPlayer = new RichVideoView(view.getContext());
-            ///view.addSubView(mVideoPlayer);
             mVideoPlayer.setRichVideoViewListener(this);
-            mVideoPlayer.setData(mVideoPath);
         }
-
+        ensureViewIsAddedToParent(mVideoPlayer, mRef.get());
+        mVideoPlayer.setData(mVideoPath);
     }
 
     @Override
     public void onDetachedFromWindow(RichContentViewDisplay view) {
-        mAttachedToWindow  = false;
+
     }
 
     @Override
@@ -162,33 +161,34 @@ public class VideoPlayerSpan extends ReplacementSpan implements  ClickableSpan, 
         return NumberUtils.INVALID;
     }
 
-    private Rect estimateSize() {
-
-        int maxAvailableWidth = containerViewHasMeasure();
-        //taking a guess here
-        if(maxAvailableWidth == NumberUtils.INVALID)
-            maxAvailableWidth = mMaxImageWidth;
-
-        //we know the image size
-        if(mImageWidth  !=  NumberUtils.INVALID){
-
-            int imageHeight = mImageHeight != NumberUtils.INVALID ?
-                    mImageHeight : (int)(mImageWidth*RATIO);
-
-            double rate = (double)maxAvailableWidth / (double)mImageWidth;
-            return new Rect(0, 0, maxAvailableWidth, (int)(imageHeight * rate));
-        }
-
-        return new Rect(0, 0, maxAvailableWidth, (int)(maxAvailableWidth * RATIO));
-    }
+//    private Rect estimateSize() {
+//
+//        int maxAvailableWidth = containerViewHasMeasure();
+//        //taking a guess here
+//        if(maxAvailableWidth == NumberUtils.INVALID)
+//            maxAvailableWidth = mMaxImageWidth;
+//
+//        //we know the image size
+//        if(mImageWidth  !=  NumberUtils.INVALID){
+//
+//            int imageHeight = mImageHeight != NumberUtils.INVALID ?
+//                    mImageHeight : (int)(mImageWidth*RATIO);
+//
+//            double rate = (double)maxAvailableWidth / (double)mImageWidth;
+//            return new Rect(0, 0, maxAvailableWidth, (int)(imageHeight * rate));
+//        }
+//
+//        return new Rect(0, 0, maxAvailableWidth, (int)(maxAvailableWidth * RATIO));
+//    }
 
     private  Rect evaluateBitmapBounds(int bitmabW, int bitmapH) {
 
         int maxAvailableWidth = containerViewHasMeasure();
 
         //taking a guess here
-        if(maxAvailableWidth == NumberUtils.INVALID)
+        if(maxAvailableWidth == NumberUtils.INVALID) {
             maxAvailableWidth = mMaxImageWidth;
+        }
 
         //we know the image size
         if(bitmabW  !=  NumberUtils.INVALID){
@@ -206,21 +206,20 @@ public class VideoPlayerSpan extends ReplacementSpan implements  ClickableSpan, 
     private Rect getBitmapBounds(){
 
 
-        int maxAvailableWidth = containerViewHasMeasure();
-        if(maxAvailableWidth == NumberUtils.INVALID){
-            maxAvailableWidth = mMaxImageWidth;
-        }
-        return new Rect(0, 0, maxAvailableWidth, (int)(maxAvailableWidth * RATIO));
+        if(mVideoPlayer == null ||
+                mVideoPlayer.videSizeKnown() == false) {
 
-//        if(mVideoPlayer == null ||
-//                mVideoPlayer.videSizeKnown() == false) {
-//
-//            return estimateSize();
-//
-//        }else{
-//           return evaluateBitmapBounds(mVideoPlayer.getVideoWidth(),
-//                   mVideoPlayer.getVideoWidth());
-//        }
+            int maxAvailableWidth = containerViewHasMeasure();
+            if(maxAvailableWidth == NumberUtils.INVALID){
+                maxAvailableWidth = mMaxImageWidth;
+            }
+
+            return new Rect(0, 0, maxAvailableWidth, (int)(maxAvailableWidth * RATIO));
+
+        }else{
+           return evaluateBitmapBounds(mVideoPlayer.getVideoWidth(),
+                   mVideoPlayer.getVideoWidth());
+        }
     }
 
     @Override
@@ -268,18 +267,20 @@ public class VideoPlayerSpan extends ReplacementSpan implements  ClickableSpan, 
         canvas.drawRect(bitmapBounds, paint);
         canvas.restore();
 
-        RichContentView view = (RichContentView)mVideoPlayer.getParent();
-        if(view != null) {
-            FrameLayout.LayoutParams current = (FrameLayout.LayoutParams) mVideoPlayer.getLayoutParams();
-            FrameLayout.LayoutParams newParams = view.generateDefaultLayoutParams(new Point((int) x, transY),
-                    bitmapBounds.width(),
-                    bitmapBounds.height());
+        ensureViewIsAddedToParent(mVideoPlayer, mRef.get());
 
-            if (view.areLayoutParamsDifferent(current, newParams) == true) {
-                mVideoPlayer.setLayoutParams(newParams);
+        RichContentView view = (RichContentView)mVideoPlayer.getParent();
+
+        FrameLayout.LayoutParams current = (FrameLayout.LayoutParams) mVideoPlayer.getLayoutParams();
+        FrameLayout.LayoutParams newParams = view.generateDefaultLayoutParams(new Point((int) x, transY),
+                bitmapBounds.width(),
+                bitmapBounds.height());
+
+        if (view.areLayoutParamsDifferent(current, newParams) == true) {
+            mVideoPlayer.setLayoutParams(newParams);
                 view.performLayout();
-            }
         }
+
 
     }
 
@@ -292,7 +293,10 @@ public class VideoPlayerSpan extends ReplacementSpan implements  ClickableSpan, 
     @Override
     public void onVideoReady(RichVideoView videoView) {
 
-        mVideoPlayer = videoView;
+    }
+
+    @Override
+    public void onVideoSizeAvailable(RichVideoView videoView) {
 
         mImageWidth = mVideoPlayer.getVideoWidth();
         mImageHeight = mVideoPlayer.getVideoHeight();
@@ -303,7 +307,7 @@ public class VideoPlayerSpan extends ReplacementSpan implements  ClickableSpan, 
         boolean needsLayout = (newRect.equals(mRect) == false);
 
 
-        if(view != null && mAttachedToWindow){
+        if(view != null){
 
             if(needsLayout == true){
                 view.performLayout();
@@ -314,5 +318,33 @@ public class VideoPlayerSpan extends ReplacementSpan implements  ClickableSpan, 
 
     }
 
+    private boolean ensureViewIsAddedToParent(View view, ViewGroup parent){
+
+        if(view == null || parent == null) {
+            return false;
+        }
+
+        if(view.getParent() != parent){
+            ViewGroup currentParent = (ViewGroup)view.getParent();
+            if(currentParent!= null)
+                currentParent.removeView(view);
+            parent.addView(view);
+            return true;
+        }
+
+        return false;
+
+    }
+
+
+    @Override
+    public void onViewAttachedToWindow(View v) {
+
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(View v) {
+
+    }
 
 }

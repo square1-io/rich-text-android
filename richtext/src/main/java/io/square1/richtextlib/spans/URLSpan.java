@@ -25,12 +25,12 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.Browser;
-import android.text.Html;
 import android.text.TextUtils;
 import android.text.style.ClickableSpan;
 import android.view.View;
 
 import io.square1.parcelable.DynamicParcelableCreator;
+import io.square1.richtextlib.ui.RichContentView;
 import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.UniqueId;
 
@@ -102,7 +102,17 @@ public class URLSpan extends ClickableSpan implements io.square1.richtextlib.spa
     }
 
     @Override
-    public void onSpannedSetToView(RichContentViewDisplay view){
+    public void onSpannedSetToView(RichContentView view){
+
+    }
+
+    @Override
+    public void onViewAttachedToWindow(View v) {
+
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(View v) {
 
     }
 }

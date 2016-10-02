@@ -6,6 +6,7 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +26,7 @@ import io.square1.richtextlib.v2.content.RichDocument;
 public class VideoTestFragment extends Fragment implements UrlBitmapDownloader {
 
 
-    //private RichVideoView mVideoView;
+    private RichVideoView mVideoView;
     private RichContentView mContentView;
 
     public VideoTestFragment() {
@@ -52,11 +53,12 @@ public class VideoTestFragment extends Fragment implements UrlBitmapDownloader {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        mContentView =  (RichContentView)inflater.inflate(R.layout.fragment_video_test, container, false);
+        View  contentView = inflater.inflate(R.layout.fragment_video_test, container, false);
+        mContentView =  (RichContentView)contentView.findViewById(R.id.content);
         mContentView.setUrlBitmapDownloader(this);
-       // mVideoView = (RichVideoView)mContentView.findViewById(R.id.video_view);
 
-        return mContentView;
+
+        return contentView;
     }
 
     @Override
@@ -64,12 +66,29 @@ public class VideoTestFragment extends Fragment implements UrlBitmapDownloader {
         super.onActivityCreated(savedInstanceState);
 
         String html = Utils.readFromfile(getActivity(),
-                NavigationDrawerFragment.SAMPLES_FOLDER +"/image.html");
+                NavigationDrawerFragment.SAMPLES_FOLDER +"/single_video.html");
 
         RichDocument result = RichTextV2.fromHtml(getActivity(), html);
         mContentView.setText(result);
 
-       // mVideoView.setData("http://www.w3schools.com/html/mov_bbb.mp4");
+         mVideoView = new RichVideoView(getActivity());
+         mVideoView.setRichVideoViewListener(new RichVideoView.RichVideoViewListener() {
+             @Override
+             public void onVideoReady(RichVideoView videoView) {
+
+
+             }
+
+             @Override
+             public void onVideoSizeAvailable(RichVideoView videoView) {
+
+                 Log.d("VIDEO", "size " +
+                         videoView.getVideoWidth() +
+                         " - " +
+                         videoView.getVideoHeight());
+             }
+         });
+         mVideoView.setData("http://www.w3schools.com/html/mov_bbb.mp4");
        // mVideoView.setLayoutParams(mContentView.generateDefaultLayoutParams(new Point(0,0),100,100));
 
     }

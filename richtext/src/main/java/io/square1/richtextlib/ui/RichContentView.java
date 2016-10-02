@@ -62,7 +62,7 @@ import io.square1.richtextlib.spans.YouTubeSpan;
 /**
  * Created by roberto on 20/09/15.
  */
-public class RichContentView extends FrameLayout implements RichContentViewDisplay , Drawable.Callback  {
+public class RichContentView extends FrameLayout implements RichContentViewDisplay , Drawable.Callback {
 
 
     private UrlBitmapDownloader mBitmapManager;
@@ -140,9 +140,11 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
 
             for(RichTextSpan span : mSpans){
                 span.onSpannedSetToView(this);
+
                 if(viewAttachedToWindow() == true){
                     span.onAttachedToWindow(this);
                 }
+
             }
 
             performLayout();
@@ -159,10 +161,6 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
             requestLayout();
             invalidate();
         }
-    }
-
-    public boolean isAttachedToWindow(){
-        return  mAttachedToWindow;
     }
 
     @Override
@@ -189,6 +187,8 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
     }
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+
+        mAttachedToWindow = false;
 
         setWillNotDraw(false);
         setDrawingCacheEnabled(false);
@@ -343,6 +343,7 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
     public void onDetachedFromWindow(){
         mAttachedToWindow = false;
         super.onDetachedFromWindow();
+
         for(RichTextSpan span : mSpans){
             span.onDetachedFromWindow(this);
         }
@@ -618,6 +619,7 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
     @Override
     public void scheduleDrawable(Drawable who, Runnable what, long when) {
         super.scheduleDrawable(who,what,when);
+        this.invalidate();
 
     }
 
@@ -625,10 +627,13 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
     @Override
     public void unscheduleDrawable(Drawable who, Runnable what) {
         super.unscheduleDrawable(who, what);
+        this.invalidate();
     }
 
     @Override
     public Appearance getStyle(){
         return mAppearance;
     }
+
+
 }

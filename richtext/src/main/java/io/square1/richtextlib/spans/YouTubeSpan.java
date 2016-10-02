@@ -20,26 +20,21 @@
 package io.square1.richtextlib.spans;
 
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Parcel;
-import android.text.style.ReplacementSpan;
-import android.text.style.UpdateAppearance;
 
 import java.lang.ref.WeakReference;
 
 import io.square1.parcelable.DynamicParcelableCreator;
 import io.square1.richtextlib.EmbedUtils;
 import io.square1.richtextlib.R;
+import io.square1.richtextlib.ui.RichContentView;
 import io.square1.richtextlib.ui.RichContentViewDisplay;
-import io.square1.richtextlib.util.NumberUtils;
 import io.square1.richtextlib.util.UniqueId;
 
 /**
@@ -81,7 +76,7 @@ public class YouTubeSpan extends UrlBitmapSpan {
     WeakReference<RichContentViewDisplay> mRef;
 
     @Override
-    public void onSpannedSetToView(RichContentViewDisplay view) {
+    public void onSpannedSetToView(RichContentView view) {
 
         if(mYoutubeIcon == null){
             mYoutubeIcon = BitmapFactory.decodeResource(view.getContext().getResources(),

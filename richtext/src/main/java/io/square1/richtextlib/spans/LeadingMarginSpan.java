@@ -24,8 +24,10 @@ import android.graphics.Paint;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.Layout;
+import android.view.View;
 
 import io.square1.parcelable.DynamicParcelableCreator;
+import io.square1.richtextlib.ui.RichContentView;
 import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.util.UniqueId;
 
@@ -73,10 +75,6 @@ public class LeadingMarginSpan implements RichTextSpan, android.text.style.Leadi
         mRest = src.readInt();
     }
 
-    @Override
-    public void onSpannedSetToView(RichContentViewDisplay view) {
-
-    }
 
     @Override
     public void onAttachedToWindow(RichContentViewDisplay view) {
@@ -98,5 +96,20 @@ public class LeadingMarginSpan implements RichTextSpan, android.text.style.Leadi
         DynamicParcelableCreator.writeType(dest, this);
         dest.writeInt(mFirstLine);
         dest.writeInt(mRest);
+    }
+
+    @Override
+    public void onSpannedSetToView(RichContentView view){
+
+    }
+
+    @Override
+    public void onViewAttachedToWindow(View v) {
+
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(View v) {
+
     }
 }
