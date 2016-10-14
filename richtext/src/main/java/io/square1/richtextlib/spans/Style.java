@@ -88,4 +88,9 @@ public interface Style {
      * @return true if the parser should extract images. False is images are treated inside the content
      */
     boolean extractImages();
+
+    /**
+     * @return true if the parser should extract videos. False is videos are treated inside the content
+     */
+    boolean extractVideos();
 }

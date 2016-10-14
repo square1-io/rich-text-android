@@ -28,7 +28,9 @@ import io.square1.richtextlib.spans.URLSpan;
 import io.square1.richtextlib.spans.UrlBitmapSpan;
 import io.square1.richtextlib.spans.VideoPlayerSpan;
 import io.square1.richtextlib.util.NumberUtils;
+import io.square1.richtextlib.v2.content.ImageDocumentElement;
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
+import io.square1.richtextlib.v2.content.VideoDocumentElement;
 import io.square1.richtextlib.v2.parser.MarkupContext;
 import io.square1.richtextlib.v2.parser.MarkupTag;
 import io.square1.richtextlib.v2.parser.TagHandler;
@@ -42,20 +44,31 @@ public class VIDEOHandler extends TagHandler {
     @Override
     public void onTagOpen(MarkupContext context, MarkupTag tag, RichTextDocumentElement out) {
 
+        Attributes attributes = tag.attributes;
+        String src = attributes.getValue("", "src");
+
+        if(context.getStyle().extractVideos() == true){
+
+            SpannedBuilderUtils.trimTrailNewlines(out, 0);
+            int w =  NumberUtils.parseImageDimension(attributes.getValue("width"),0);
+            int h =  NumberUtils.parseImageDimension(attributes.getValue("height"),0);
+            context.getRichText().splitDocument(VideoDocumentElement.newInstance(src,w,h));
+            return;
+        }
+
+
         if(out.length() > 0) {
             SpannedBuilderUtils.ensureAtLeastThoseNewLines(out, 1);
         }
 
-        Attributes attributes = tag.attributes;
-        String src = attributes.getValue("", "src");
 
-//        int maxSize = context.getStyle().maxImageWidth();
-//        VideoPlayerSpan videoPlayerSpan = new VideoPlayerSpan(src,
-//                NumberUtils.parseImageDimension(attributes.getValue("width"), maxSize),
-//                NumberUtils.parseImageDimension(attributes.getValue("height"),0),
-//                context.getStyle().maxImageWidth() );
+        int maxSize = context.getStyle().maxImageWidth();
+        VideoPlayerSpan videoPlayerSpan = new VideoPlayerSpan(src,
+                NumberUtils.parseImageDimension(attributes.getValue("width"), maxSize),
+                NumberUtils.parseImageDimension(attributes.getValue("height"),0),
+                context.getStyle().maxImageWidth() );
 
-        URLSpan videoPlayerSpan = new URLSpan(src);
+      //  URLSpan videoPlayerSpan = new URLSpan(src);
 
         int len = out.length();
        // out.append(SpannedBuilderUtils.NO_SPACE);
@@ -74,6 +87,18 @@ public class VIDEOHandler extends TagHandler {
     }
 
     public boolean processContent() {
+        return false;
+    }
+
+
+    @Override
+    public boolean closeWhenSplitting(){
+        return false;
+    }
+
+
+    @Override
+    public boolean openWhenSplitting(){
         return false;
     }
 }

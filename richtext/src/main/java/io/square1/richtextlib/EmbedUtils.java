@@ -73,6 +73,8 @@ public class EmbedUtils {
 
     public static boolean parseLink( Object calling , String link , ParseLinkCallback callback ) {
 
+
+
         final Uri uri = Uri.parse(link);
 
         String result = getTweetId(link);

@@ -53,6 +53,7 @@ public class IMGHandler extends TagHandler {
         }
 
 
+        SpannedBuilderUtils.ensureAtLeastThoseNewLines(out, 1);
         int maxSize = context.getStyle().maxImageWidth();
         UrlBitmapSpan imageDrawable = new UrlBitmapSpan(Uri.parse(src),
                 NumberUtils.parseImageDimension(attributes.getValue("width"), maxSize),

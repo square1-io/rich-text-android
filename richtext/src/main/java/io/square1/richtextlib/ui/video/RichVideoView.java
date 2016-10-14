@@ -20,28 +20,30 @@
 package io.square1.richtextlib.ui.video;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
-import android.graphics.Color;
+import android.content.DialogInterface;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
-import android.net.Uri;
+import android.os.Bundle;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.MediaController;
 import android.widget.ProgressBar;
 
+import java.util.ArrayList;
+
 import io.square1.richtextlib.R;
-import io.square1.richtextlib.ui.AspectRatioFrameLayout;
 import io.square1.richtextlib.util.NumberUtils;
 
 /**
@@ -52,6 +54,15 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
         RichMediaPlayer.OnCompletionListener,
         RichMediaPlayer.OnVideoSizeListener {
 
+
+    public void setSurface(SurfaceTexture surface) {
+        mMediaPlayer.setSurfaceTexture(surface);
+    }
+
+    public RichMediaPlayer getMediaPlayer() {
+        return mMediaPlayer;
+    }
+
     public interface  RichVideoViewListener {
 
         public void onVideoReady(RichVideoView videoView);
@@ -59,10 +70,13 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
 
     }
 
+
+
     private RichVideoViewListener mRichVideoViewListener;
 
-    private FullScreenMediaController mFullScreenMediaController;
-    private AspectRatioFrameLayout mMainVideoContainer;
+    private VideoControls mControlsContainer;
+
+    private FrameLayout mMainVideoContainer;
     private TextureView mTextureView;
     private RichMediaPlayer mMediaPlayer;
     private SurfaceTexture mSurface;
@@ -100,10 +114,12 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
         }
         if(mMediaPlayer == null) {
             mMediaPlayer = new RichMediaPlayer(getContext());
-            mMediaPlayer.setFirstFrameAvailableListener(this);
-            mMediaPlayer.setOnCompletionListener(this);
-            mMediaPlayer.setOnVideoSizeListener(this);
         }
+
+
+        mMediaPlayer.setFirstFrameAvailableListener(this);
+        mMediaPlayer.setOnCompletionListener(this);
+        mMediaPlayer.setOnVideoSizeListener(this);
 
         if(mSurface != null){
             mMediaPlayer.setSurfaceTexture(mSurface);
@@ -112,17 +128,13 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
     }
     public void init(){
 
-
-
         initMediaPlayer();
 
-
         LayoutInflater.from(getContext())
-                .inflate(R.layout.internal_rich_text_video_controller,
+                .inflate(R.layout.internal_richtext_video_display,
                 this, true);
 
-        mMainVideoContainer = (AspectRatioFrameLayout)findViewById(R.id.internal_aspect_ratio_view);
-
+        mMainVideoContainer = (FrameLayout)findViewById(R.id.internal_aspect_ratio_view);
         mTextureView =  (TextureView)findViewById(R.id.internal_texture_view);
         mTextureView.setSurfaceTextureListener(mSurfaceTextureListener);
 
@@ -133,13 +145,45 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
                     ,mTextureView.getHeight());
         }
 
-        mFullScreenMediaController = new FullScreenMediaController(getContext());
-        mFullScreenMediaController.setAnchorView(mMainVideoContainer);
-        mFullScreenMediaController.setMediaPlayer(mMediaPlayer);
+        mControlsContainer = new VideoControls(getContext(), this);
+
+
+       ViewGroup.LayoutParams currentLayoutParams = getLayoutParams();
+
+        if(currentLayoutParams == null){
+            currentLayoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+        currentLayoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+
+        setLayoutParams(currentLayoutParams);
+
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        params.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
 
         //setup the progress bar
         mLoadingProgress = (ProgressBar) findViewById(R.id.internal_progress);
         mLoadingProgress.setIndeterminate(true);
+
+    }
+
+    public void handover(RichVideoView destination){
+
+        destination.mMediaPlayer = mMediaPlayer;
+
+        if(destination.mTextureView.isAvailable() == true){
+
+            destination.mSurfaceTextureListener.onSurfaceTextureAvailable(destination.mTextureView.getSurfaceTexture(),
+                    destination.mTextureView.getWidth(),
+                    destination.mTextureView.getHeight());
+        }
+
+        destination.initMediaPlayer();
+        destination.mMediaPlayer.syncMediaState();
+
+
 
     }
 
@@ -153,7 +197,7 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
     }
 
 
-        @Override
+    @Override
     public void onAttachedToWindow(){
         super.onAttachedToWindow();
     }
@@ -161,10 +205,10 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
     @Override
     public void onDetachedFromWindow(){
         super.onDetachedFromWindow();
-        if(mMediaPlayer != null) {
-            mMediaPlayer.pause();
-            mMediaPlayer = null;
-       }
+//        if(mMediaPlayer != null) {
+//            mMediaPlayer.pause();
+//            mMediaPlayer = null;
+//       }
     }
 
     private TextureView.SurfaceTextureListener mSurfaceTextureListener =  new TextureView.SurfaceTextureListener() {
@@ -217,9 +261,12 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
     }
 
     public void start() {
-        if(mMediaPlayer == null){
+
+        if(mMediaPlayer == null ||
+                mMediaPlayer.isPlaying()){
             return ;
         }
+
         mMediaPlayer.start();
     }
 
@@ -238,16 +285,22 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
     @Override
     public void onFirstFrameAvailable(RichMediaPlayer player) {
         mLoadingProgress.setVisibility(GONE);
+
         //mPlayButton.setVisibility(player.isPlaying() ? View.GONE : View.VISIBLE);
        // mPlayButton.setVisibility(View.VISIBLE);
-        mFullScreenMediaController.show();
-        mMainVideoContainer.setRatio(player.getVideoWidth(), player.getVideoHeight());
+      //  mFullScreenMediaController.show();
+
+        adjustAspectRatio( this, mMainVideoContainer, player.getVideoWidth(), player.getVideoHeight());
         adjustAspectRatio(mTextureView, player.getVideoWidth(), player.getVideoHeight());
+        if(mControlsContainer != null) {
+            mControlsContainer.updateControls();
+        }
         invalidate();
         requestLayout();
         if(mRichVideoViewListener != null){
             mRichVideoViewListener.onVideoReady(this);
         }
+
     }
 
     public int getVideoWidth(){
@@ -264,7 +317,17 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
     }
 
 
-    private static void adjustAspectRatio(TextureView textureView, int videoWidth, int videoHeight) {
+    public static void adjustAspectRatio(View parentView , FrameLayout layout, double videoWidth, double videoHeight) {
+
+       double width  = layout.getMeasuredWidth();
+        double newHeight = videoHeight / videoWidth * width;
+
+        FrameLayout.LayoutParams newParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int)newHeight);
+        layout.setLayoutParams(newParams);
+
+        parentView.requestLayout();
+    }
+    public static void adjustAspectRatio(TextureView textureView, int videoWidth, int videoHeight) {
 
 
         int viewWidth = textureView.getWidth();
@@ -296,12 +359,15 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
 
     @Override
     public void onCompletion(RichMediaPlayer mp) {
-        onFirstFrameAvailable(mp);
+        if(mControlsContainer != null) {
+            mControlsContainer.updateControls();
+        }
     }
 
     @Override
     public void onVideoSizeChanged(RichMediaPlayer mp) {
-        mMainVideoContainer.setRatio(mp.getVideoWidth(), mp.getVideoHeight());
+
+        adjustAspectRatio(this, mMainVideoContainer, mp.getVideoWidth(), mp.getVideoHeight());
         adjustAspectRatio(mTextureView, mp.getVideoWidth(), mp.getVideoHeight());
         requestLayout();
         if(mRichVideoViewListener != null){
@@ -310,14 +376,36 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
 
     }
 
-    public boolean videSizeKnown(){
+    public boolean videoSizeKnown(){
         return mMediaPlayer == null ? false : mMediaPlayer.getVideoWidth() != NumberUtils.INVALID;
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        //the MediaController will hide after 3 seconds - tap the screen to make it appear again
-        mFullScreenMediaController.show();
-        return false;
+        if(mControlsContainer != null) {
+            mControlsContainer.showControls();
+        }
+        return super.onTouchEvent(event);
+    }
+
+    public void release(){
+        try{
+        if(mMediaPlayer != null){
+            mMediaPlayer.release();
+        }
+        }catch (Exception e){}
+    }
+
+
+    public void openFullScreen() {
+
+//        Context context = getContext();
+//        if(context instanceof Activity){
+//
+//            Activity activity = (Activity)context;
+//            FullScreenVideoFragment fullScreenVideoFragment = new FullScreenVideoFragment();
+//            fullScreenVideoFragment.presentVideoFullScreen(activity , this);
+//        }
+
     }
 }

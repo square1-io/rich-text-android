@@ -19,27 +19,19 @@
 
 package io.square1.richtext.io.square1.richtext.sample;
 
-import android.app.Activity;
-import android.content.res.AssetManager;
+
 import android.net.Uri;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.support.v4.widget.DrawerLayout;
-import android.widget.ListView;
 
 import io.square1.richtext.R;
-import io.square1.richtextlib.v2.RichTextV2;
-import io.square1.richtextlib.v2.content.RichDocument;
+
 
 public class MainActivity extends ActionBarActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks ,VideoListFragment.OnListFragmentInteractionListener {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -62,8 +54,7 @@ public class MainActivity extends ActionBarActivity
 
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
-                R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));
+                R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
     }
 
     @Override
@@ -81,7 +72,7 @@ public class MainActivity extends ActionBarActivity
 
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, VideoTestFragment.newInstance())
+                    .replace(R.id.container, VideoListFragment.newInstance(1))
                     .commit();
 
         }
@@ -99,5 +90,8 @@ public class MainActivity extends ActionBarActivity
     }
 
 
+    @Override
+    public void onListFragmentInteraction(String item) {
 
+    }
 }

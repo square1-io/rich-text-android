@@ -177,7 +177,7 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
 
         if(mRef != null && mRef.get() != null){
 
-            RichContentViewDisplay display = mRef.get();
+            RichContentView display = mRef.get();
 
             int measured = display.getMeasuredWidth() -
                     display.getPaddingLeft() -
@@ -327,13 +327,15 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
 
         if(view != null){
 
-            Toast.makeText(view.getContext(), " updatedBitmap called", Toast.LENGTH_LONG).show();
 
-            if(needsLayout == true || bitmapUpdated){
-                view.performLayout();
-            }else {
-                view.invalidate();
-            }
+
+//            if(needsLayout == true || bitmapUpdated){
+//                view.performLayout();
+//            }else {
+//                view.invalidate();
+//            }
+
+            view.spanUpdated(this);
         }
 
     }
@@ -380,7 +382,7 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
     @Override
     public void onViewAttachedToWindow(View view) {
 
-        Toast.makeText(view.getContext(), "onAttachedToWindow", Toast.LENGTH_LONG).show();
+
         loadImage();
         ensureDrawableIsAttached();
 
@@ -395,9 +397,7 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
     @Override
     public void onViewDetachedFromWindow(View viewDisplay) {
 
-        Toast.makeText(viewDisplay.getContext(), "onDetachedFromWindow", Toast.LENGTH_LONG).show();
           if (mBitmap != null && mBitmap.getCallback() == viewDisplay) {
-
               mBitmap.setCallback(null);
           }
     }

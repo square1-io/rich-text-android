@@ -36,10 +36,12 @@ import io.square1.richtext.R;
 import io.square1.richtextlib.spans.RemoteBitmapSpan;
 import io.square1.richtextlib.spans.UrlBitmapDownloader;
 import io.square1.richtextlib.ui.RichContentView;
+import io.square1.richtextlib.ui.video.RichVideoView;
 import io.square1.richtextlib.v2.content.ImageDocumentElement;
 import io.square1.richtextlib.v2.content.OembedDocumentElement;
 import io.square1.richtextlib.v2.content.RichDocument;
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
+import io.square1.richtextlib.v2.content.VideoDocumentElement;
 
 /**
  * Created by roberto on 22/12/2015.
@@ -123,6 +125,15 @@ public class ContentAdapter extends BaseAdapter  {
             OembedDocumentElement oembedElement = (OembedDocumentElement)item;
             ((TextView)convertView).setText(oembedElement.getType() + " " + oembedElement.getContent());
         }
+        else if(item instanceof VideoDocumentElement){
+
+            if(convertView == null){
+                RichVideoView text = new RichVideoView(parent.getContext());
+                convertView = text;
+            }
+            VideoDocumentElement oembedElement = (VideoDocumentElement)item;
+            ((RichVideoView)convertView).setData(oembedElement.getContent());
+        }
 
         return convertView;
     }
@@ -131,12 +142,14 @@ public class ContentAdapter extends BaseAdapter  {
     public int getItemViewType(int position) {
         Object item = getItem(position);
         if(item instanceof RichTextDocumentElement) return 0;
-        return 1;
+        if(item instanceof OembedDocumentElement) return 1;
+        if(item instanceof VideoDocumentElement) return 2;
+        return 3;
     }
 
     @Override
     public int getViewTypeCount() {
-        return 2;
+        return 4;
     }
 
 }

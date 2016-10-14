@@ -223,6 +223,10 @@ public class RichTextDocumentElement extends DocumentElement implements CharSequ
         return mSpannableString.getSpans(0, length(), RichTextSpan.class);
     }
 
+    public <T> T[]  getSpans(Class<T> kind) {
+        return mSpannableString.getSpans(0, length(), kind);
+    }
+
     public  <T>  T getLastSpan(Class<T> kind) {
         /*
          * This knows that the last returned object from getSpans()

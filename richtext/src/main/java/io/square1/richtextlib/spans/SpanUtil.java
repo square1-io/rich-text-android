@@ -33,7 +33,7 @@ public class SpanUtil {
 
         if(viewWeakReference == null) return null;
 
-        RichContentViewDisplay view = viewWeakReference.get();
+        RichContentView view = viewWeakReference.get();
 
         if(view != null) return view.getDownloader();
 

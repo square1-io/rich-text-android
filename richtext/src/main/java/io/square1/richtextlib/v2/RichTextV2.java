@@ -43,6 +43,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Stack;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 import io.square1.richtextlib.EmbedUtils;
@@ -134,6 +135,10 @@ public class RichTextV2 {
             return false;
         }
 
+        @Override
+        public boolean extractVideos(){
+            return true;
+        }
     }
 
 
@@ -343,8 +348,16 @@ public class RichTextV2 {
                 }
             }) == false){
 
-                if(TextUtils.isEmpty(link) == false) {
+                //is there any white space here ??
+                Pattern pattern = Pattern.compile("\\s");
+                Matcher matcher = pattern.matcher(link);
+                boolean found = matcher.find();
+
+                // is not empty and the string doesn't contain empty spaces !
+                if(TextUtils.isEmpty(link) == false && found == false) {
                     SpannedBuilderUtils.makeLink(link.toString(), null, mOutput);
+                }else if(TextUtils.isEmpty(link) == false) {
+                    mOutput.append(link);
                 }
 
             }
@@ -362,7 +375,7 @@ public class RichTextV2 {
         splitDocument(OembedDocumentElement.newInstance(type, content));
     }
 
-    public void splitDocument(DocumentElement element){
+    public void splitDocument( DocumentElement element){
 
         mOembedCount ++;
 

@@ -33,12 +33,17 @@ import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
+import android.text.DynamicLayout;
 import android.text.Layout;
+import android.text.SpanWatcher;
+import android.text.SpannableStringBuilder;
 import android.text.StaticLayout;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
@@ -74,7 +79,8 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
 
     private Appearance mAppearance;
 
-    private Layout mLayout;
+    private DynamicLayout mLayout;
+
 
     private int mLastMeasuredWidth;
 
@@ -155,12 +161,35 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
 
     @Override
     public void performLayout(){
-        if (mLayout != null) {
-            mLayout = null;
+
+            invalidate();
             forceLayout();
             requestLayout();
-            invalidate();
+    }
+
+    public void spanUpdated(RichTextSpan richTextSpan){
+
+        if(mText == null || mLayout == null){
+            return;
         }
+        final int previousSize = mLayout.getHeight();
+
+        int start = mText.getSpanStart(richTextSpan);
+        int end = mText.getSpanEnd(richTextSpan);
+
+        SpanWatcher[] watchers = mText.getSpans(SpanWatcher.class);
+        for(SpanWatcher watcher : watchers){
+            watcher.onSpanChanged(mText, richTextSpan, start, end, start, end);
+        }
+
+        final int afterUpdate = mLayout.getHeight();
+
+        invalidate();
+       // if(previousSize != afterUpdate){
+            forceLayout();
+            requestLayout();
+       // }
+
     }
 
     @Override
@@ -240,9 +269,9 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
     }
 
 
-    private Layout makeLayout(int width){
+    private DynamicLayout makeLayout(int width){
 
-        StaticLayout result = new StaticLayout(mText,
+        DynamicLayout result = new DynamicLayout(mText,
                 mAppearance.textPaint(null),
                 width,
                 Layout.Alignment.ALIGN_NORMAL,
@@ -396,7 +425,9 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
                     this.getContext().
                             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
                 }catch (Exception exc){
-                    Toast.makeText(getContext(), R.string.error_opening_message, Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(),
+                            R.string.error_opening_message,
+                            Toast.LENGTH_LONG).show();
                 }
 
             }else if (span instanceof UnsupportedContentSpan){

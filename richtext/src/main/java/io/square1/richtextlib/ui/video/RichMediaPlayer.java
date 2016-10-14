@@ -24,6 +24,7 @@ import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.media.session.MediaController;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
@@ -32,8 +33,13 @@ import io.square1.richtextlib.util.NumberUtils;
 /**
  * Created by roberto on 12/10/15.
  */
-public class RichMediaPlayer implements MediaPlayer.OnPreparedListener, android.widget.MediaController.MediaPlayerControl {
+public class RichMediaPlayer implements MediaPlayer.OnPreparedListener, android.widget.MediaController.MediaPlayerControl, MediaPlayer.OnErrorListener {
 
+
+    @Override
+    public boolean onError(MediaPlayer mp, int what, int extra) {
+        return false;
+    }
 
     public interface OnVideoSizeListener {
         void onVideoSizeChanged(RichMediaPlayer mp);
@@ -135,6 +141,7 @@ public class RichMediaPlayer implements MediaPlayer.OnPreparedListener, android.
 
         MediaState(Uri uri){
             this.uri = uri;
+            this.currentPosition = 0;
             this.state = MEDIA_WAITING;
             this.playbackState = PLAYBACK_SHOW_FIRST_FRAME;
             this.duration = 0;
@@ -165,6 +172,7 @@ public class RichMediaPlayer implements MediaPlayer.OnPreparedListener, android.
 
             mMediaPlayer = new InternalMediaPlayer();
             mMediaPlayer.setOnPreparedListener(this);
+            mMediaPlayer.setOnErrorListener(this);
 
             mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
@@ -236,6 +244,10 @@ public class RichMediaPlayer implements MediaPlayer.OnPreparedListener, android.
 
         initMediaPlayer();
 
+        if(TextUtils.isEmpty(uri)){
+            return false;
+        }
+
         MediaState mediaState = new MediaState(Uri.parse(uri));
 
         if(mediaState.equals(mCurrentMedia) == false) {
@@ -269,7 +281,7 @@ public class RichMediaPlayer implements MediaPlayer.OnPreparedListener, android.
     /**
      * Will play the media if all conditions are met
      */
-    private void syncMediaState(){
+     void syncMediaState(){
 
         if(mCurrentMedia.playbackState == PLAYBACK_SHOW_FIRST_FRAME &&
                 mediaPrepared() &&
@@ -283,7 +295,12 @@ public class RichMediaPlayer implements MediaPlayer.OnPreparedListener, android.
                 hasSurface() &&
                 isPlaying() == false) {
 
-            new ShowFrameSeekCompleteListener(0, false, this);
+            if(mCurrentMedia.currentPosition != 0 &&
+                    mMediaPlayer != null){
+                mMediaPlayer.start();
+            }else {
+                new ShowFrameSeekCompleteListener(0, false, this);
+            }
 
         }else if(mCurrentMedia.playbackState == PLAYBACK_STOP){
             if(mMediaPlayer != null) {
@@ -294,6 +311,7 @@ public class RichMediaPlayer implements MediaPlayer.OnPreparedListener, android.
         }
 
     }
+
 
     public void setOnBufferingUpdateListener(MediaPlayer.OnBufferingUpdateListener listener){
         if(mMediaPlayer != null) {

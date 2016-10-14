@@ -10,4 +10,7 @@
 &lt;span style=&quot;font-size:12px;color:orange;&quot;&gt;Colored font&lt;/span&gt;
 &lt;span style=&quot;font-size:12px;font-weight:bold;&quot;&gt;Bold font&lt;/span&gt;
 &lt;span style=&quot;font-size:12px;font-style:italic;&quot;&gt;Italic font&lt;/span&gt; and more...&lt;/p&gt;</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -53,12 +53,13 @@ public class VideoTestFragment extends Fragment implements UrlBitmapDownloader {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View  contentView = inflater.inflate(R.layout.fragment_video_test, container, false);
-        mContentView =  (RichContentView)contentView.findViewById(R.id.content);
-        mContentView.setUrlBitmapDownloader(this);
+       // View  contentView = inflater.inflate(R.layout.fragment_video_test, container, false);
+       // mContentView =  (RichContentView)contentView.findViewById(R.id.content);
+       // mContentView.setUrlBitmapDownloader(this);
 
+        mVideoView = new RichVideoView(getActivity());
 
-        return contentView;
+        return mVideoView;
     }
 
     @Override
@@ -68,10 +69,12 @@ public class VideoTestFragment extends Fragment implements UrlBitmapDownloader {
         String html = Utils.readFromfile(getActivity(),
                 NavigationDrawerFragment.SAMPLES_FOLDER +"/single_video.html");
 
-        RichDocument result = RichTextV2.fromHtml(getActivity(), html);
-        mContentView.setText(result);
+        if(mContentView != null) {
+            RichDocument result = RichTextV2.fromHtml(getActivity(), html);
+            mContentView.setText(result);
+        }
 
-         mVideoView = new RichVideoView(getActivity());
+
          mVideoView.setRichVideoViewListener(new RichVideoView.RichVideoViewListener() {
              @Override
              public void onVideoReady(RichVideoView videoView) {

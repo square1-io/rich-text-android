@@ -23,49 +23,54 @@ public final class R {
 		public static final int richTextSize = 0x7f01000f;
 	}
 	public static final class dimen {
-		public static final int post_details_content_padding = 0x7f070048;
-		public static final int post_details_content_padding_2dip = 0x7f070049;
+		public static final int post_details_content_padding = 0x7f070056;
+		public static final int post_details_content_padding_2dip = 0x7f070057;
 	}
 	public static final class drawable {
-		public static final int close = 0x7f02003b;
-		public static final int fa_play_circle = 0x7f02003d;
-		public static final int fullscreen_enter = 0x7f02003e;
-		public static final int fullscreen_exit = 0x7f02003f;
-		public static final int image = 0x7f020041;
-		public static final int place_holder_twitter = 0x7f020042;
-		public static final int place_holder_twitter_xml = 0x7f020043;
-		public static final int quote = 0x7f020044;
-		public static final int youtube_play = 0x7f020046;
+		public static final int close = 0x7f020053;
+		public static final int fa_play_circle = 0x7f020055;
+		public static final int fullscreen_enter = 0x7f020056;
+		public static final int fullscreen_exit = 0x7f020057;
+		public static final int image = 0x7f020059;
+		public static final int place_holder_twitter = 0x7f02005a;
+		public static final int place_holder_twitter_xml = 0x7f02005b;
+		public static final int quote = 0x7f02005c;
+		public static final int youtube_play = 0x7f02005e;
 	}
 	public static final class id {
-		public static final int ffwd = 0x7f0c006a;
-		public static final int internal_aspect_ratio_view = 0x7f0c0057;
-		public static final int internal_progress = 0x7f0c0059;
-		public static final int internal_texture_view = 0x7f0c0058;
-		public static final int mediacontroller_progress = 0x7f0c006c;
-		public static final int pause = 0x7f0c0069;
-		public static final int play = 0x7f0c0068;
-		public static final int rew = 0x7f0c0067;
-		public static final int time = 0x7f0c0060;
-		public static final int time_current = 0x7f0c006b;
-		public static final int tweetContainer = 0x7f0c006d;
+		public static final int controls_container = 0x7f0b005e;
+		public static final int ffwd = 0x7f0b0073;
+		public static final int full_screen = 0x7f0b0061;
+		public static final int internal_aspect_ratio_view = 0x7f0b0062;
+		public static final int internal_progress = 0x7f0b0064;
+		public static final int internal_texture_view = 0x7f0b0063;
+		public static final int mediacontroller_progress = 0x7f0b0075;
+		public static final int pause = 0x7f0b0060;
+		public static final int play = 0x7f0b005f;
+		public static final int rew = 0x7f0b0072;
+		public static final int time = 0x7f0b006b;
+		public static final int time_current = 0x7f0b0074;
+		public static final int tweetContainer = 0x7f0b0076;
 	}
 	public static final class layout {
-		public static final int internal_rich_text_video_controller = 0x7f040020;
-		public static final int rich_text_embed_layout_audio_player = 0x7f040029;
-		public static final int rich_text_embed_layout_twitter_container = 0x7f04002a;
-		public static final int test_rich_video_view = 0x7f04002f;
+		public static final int internal_richtext_fragment_full_screen_video = 0x7f040024;
+		public static final int internal_richtext_video_controller = 0x7f040025;
+		public static final int internal_richtext_video_display = 0x7f040026;
+		public static final int rich_text_embed_layout_media_player = 0x7f04002f;
+		public static final int rich_text_embed_layout_twitter_container = 0x7f040030;
+		public static final int test_rich_video_view = 0x7f040035;
 	}
 	public static final class string {
-		public static final int app_name = 0x7f060013;
-		public static final int audio_media_player = 0x7f060014;
-		public static final int error_opening_message = 0x7f060015;
-		public static final int loading = 0x7f060018;
-		public static final int sample_html_tags = 0x7f06001b;
-		public static final int zero_time = 0x7f060022;
+		public static final int app_name = 0x7f060023;
+		public static final int audio_media_player = 0x7f060024;
+		public static final int error_opening_message = 0x7f060025;
+		public static final int hello_blank_fragment = 0x7f060026;
+		public static final int loading = 0x7f060028;
+		public static final int sample_html_tags = 0x7f06002b;
+		public static final int zero_time = 0x7f060031;
 	}
 	public static final class style {
-		public static final int full_screen_dialog = 0x7f080125;
+		public static final int full_screen_dialog = 0x7f08014c;
 	}
 	public static final class styleable {
 		public static final int[] RichContentView = { 0x01010095, 0x01010098, 0x0101009b, 0x0101014f, 0x010103ac, 0x7f010004, 0x7f010005, 0x7f010006, 0x7f010007, 0x7f010008, 0x7f010009, 0x7f01000a, 0x7f01000b };

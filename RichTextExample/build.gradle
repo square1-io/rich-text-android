@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "21.1.2"
+    compileSdkVersion 24
+    buildToolsVersion "24.0.3"
 
     defaultConfig {
         applicationId "io.square1.richtext"
@@ -24,10 +24,16 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':richtext')
     compile 'org.ccil.cowan.tagsoup:tagsoup:1.2'
-    compile 'com.android.support:appcompat-v7:22.2.0'
+    //   compile 'com.android.support:support-v7:24'
+    //    compile "com.android.support:support-core-utils:24.2.1"
+    //    compile "com.android.support:support-core-ui:24.2.1"
+    //    compile "com.android.support:support-compat:24.2.1"
+    //    compile "com.android.support:appcompat-v7:24.2.1"
     compile 'com.github.bumptech.glide:glide:3.6.0'
-    compile 'com.android.support:support-v4:21.0.3'
+    compile 'com.android.support:support-v4:24.2.1'
+    compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'com.android.support:recyclerview-v7:24.2.1'
 }

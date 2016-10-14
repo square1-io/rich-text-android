@@ -57,31 +57,39 @@ public class AspectRatioFrameLayout extends FrameLayout {
     public void setRatio(double scalingFactor){
         if(mRatio != scalingFactor){
             mRatio = scalingFactor;
+            forceLayout();
             requestLayout();
         }
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-
         if(mRatio.isNaN()){
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             return;
         }
 
-        int measuredWidth = MeasureSpec.getSize(widthMeasureSpec) -
+        final int initialMeasuredWidth = MeasureSpec.getSize(widthMeasureSpec) -
                 (getPaddingLeft() + getPaddingRight());
 
-        int measuredHeight = MeasureSpec.getSize(heightMeasureSpec) -
+        final int initialMeasuredHeight = MeasureSpec.getSize(heightMeasureSpec) -
                 (getPaddingTop() + getPaddingBottom());
 
-        double current = (double)measuredWidth / (double) measuredHeight;
+        double current = (double)initialMeasuredWidth / (double) initialMeasuredHeight;
 
         //if not right just yet
         if(mRatio - current != 0){
-            measuredHeight = (int)(measuredWidth / mRatio) + getPaddingTop() + getPaddingBottom();
-            measuredWidth = measuredWidth + getPaddingLeft() + getPaddingRight();
-            setMeasuredDimension(measuredWidth,measuredHeight);
+            double measuredHeight = (int)(initialMeasuredWidth / mRatio) + getPaddingTop() + getPaddingBottom();
+            double measuredWidth = initialMeasuredWidth + getPaddingLeft() + getPaddingRight();
+
+            if(MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.EXACTLY  &&
+                    MeasureSpec.getSize(heightMeasureSpec) < measuredHeight) {
+                measuredWidth = Math.min ( (initialMeasuredHeight * mRatio) + getPaddingLeft() + getPaddingRight() , measuredWidth );
+                /// we need to reduce the width otherwise it is too high
+                measuredHeight = (int)(initialMeasuredWidth / mRatio) + getPaddingTop() + getPaddingBottom();
+            }
+
+            setMeasuredDimension((int)measuredWidth,(int)measuredHeight);
 
         }else {// nothing to do
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);

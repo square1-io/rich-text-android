@@ -149,7 +149,7 @@ public class VideoPlayerSpan extends ReplacementSpan implements  ClickableSpan, 
 
     private int containerViewHasMeasure(){
         if(mRef != null && mRef.get() != null){
-            RichContentViewDisplay display = mRef.get();
+            RichContentView display = mRef.get();
 
             int measured = display.getMeasuredWidth() -
                     display.getPaddingLeft() -
@@ -207,7 +207,7 @@ public class VideoPlayerSpan extends ReplacementSpan implements  ClickableSpan, 
 
 
         if(mVideoPlayer == null ||
-                mVideoPlayer.videSizeKnown() == false) {
+                mVideoPlayer.videoSizeKnown() == false) {
 
             int maxAvailableWidth = containerViewHasMeasure();
             if(maxAvailableWidth == NumberUtils.INVALID){
@@ -301,7 +301,7 @@ public class VideoPlayerSpan extends ReplacementSpan implements  ClickableSpan, 
         mImageWidth = mVideoPlayer.getVideoWidth();
         mImageHeight = mVideoPlayer.getVideoHeight();
 
-        final RichContentViewDisplay view = mRef.get();
+        final RichContentView view = mRef.get();
         Rect newRect = getBitmapBounds();
 
         boolean needsLayout = (newRect.equals(mRect) == false);

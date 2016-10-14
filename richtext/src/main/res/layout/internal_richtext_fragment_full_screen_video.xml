@@ -1,0 +1,11 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="io.square1.richtextlib.ui.video.FullScreenVideoFragment">
+
+    <include android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        layout="@layout/internal_richtext_video_display"/>
+
+</FrameLayout>

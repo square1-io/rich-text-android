@@ -23,9 +23,16 @@ ADDED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.x
 		ADDED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.xml:6:22-75
 application
 ADDED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.xml:8:5-24:19
-MERGED from [io.square1:richtext:2.0.6] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/io.square1/richtext/2.0.6/AndroidManifest.xml:11:5-14:19
-MERGED from [com.android.support:appcompat-v7:22.2.0] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/AndroidManifest.xml:22:5-20
-MERGED from [com.android.support:support-v4:22.2.0] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.0/AndroidManifest.xml:22:5-20
+MERGED from [io.square1:richtext:2.0.16] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/io.square1/richtext/2.0.16/AndroidManifest.xml:11:5-14:19
+MERGED from [com.android.support:support-v4:24.2.1] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/com.android.support/support-v4/24.2.1/AndroidManifest.xml:25:5-20
+MERGED from [com.android.support:support-compat:24.2.1] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/com.android.support/support-compat/24.2.1/AndroidManifest.xml:25:5-20
+MERGED from [com.android.support:support-media-compat:24.2.1] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/com.android.support/support-media-compat/24.2.1/AndroidManifest.xml:25:5-20
+MERGED from [com.android.support:support-core-utils:24.2.1] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/com.android.support/support-core-utils/24.2.1/AndroidManifest.xml:25:5-20
+MERGED from [com.android.support:support-core-ui:24.2.1] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/com.android.support/support-core-ui/24.2.1/AndroidManifest.xml:25:5-20
+MERGED from [com.android.support:support-fragment:24.2.1] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/com.android.support/support-fragment/24.2.1/AndroidManifest.xml:25:5-20
+MERGED from [com.android.support:appcompat-v7:24.2.1] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/24.2.1/AndroidManifest.xml:25:5-20
+MERGED from [com.android.support:support-vector-drawable:24.2.1] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/com.android.support/support-vector-drawable/24.2.1/AndroidManifest.xml:23:5-20
+MERGED from [com.android.support:animated-vector-drawable:24.2.1] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/24.2.1/AndroidManifest.xml:22:5-20
 	android:label
 		ADDED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.xml:11:9-41
 	android:allowBackup
@@ -58,9 +65,19 @@ ADDED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.x
 		ADDED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.xml:23:13-69
 uses-sdk
 INJECTED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.xml reason: use-sdk injection requested
-MERGED from [io.square1:richtext:2.0.6] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/io.square1/richtext/2.0.6/AndroidManifest.xml:7:5-9:41
-MERGED from [com.android.support:appcompat-v7:22.2.0] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/AndroidManifest.xml:20:5-43
-MERGED from [com.android.support:support-v4:22.2.0] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.0/AndroidManifest.xml:20:5-43
+MERGED from [io.square1:richtext:2.0.16] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/io.square1/richtext/2.0.16/AndroidManifest.xml:7:5-9:41
+MERGED from [com.android.support:support-v4:24.2.1] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/com.android.support/support-v4/24.2.1/AndroidManifest.xml:21:5-23:54
+MERGED from [com.android.support:support-compat:24.2.1] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/com.android.support/support-compat/24.2.1/AndroidManifest.xml:21:5-23:58
+MERGED from [com.android.support:support-media-compat:24.2.1] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/com.android.support/support-media-compat/24.2.1/AndroidManifest.xml:21:5-23:63
+MERGED from [com.android.support:support-core-utils:24.2.1] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/com.android.support/support-core-utils/24.2.1/AndroidManifest.xml:21:5-23:61
+MERGED from [com.android.support:support-core-ui:24.2.1] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/com.android.support/support-core-ui/24.2.1/AndroidManifest.xml:21:5-23:58
+MERGED from [com.android.support:support-fragment:24.2.1] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/com.android.support/support-fragment/24.2.1/AndroidManifest.xml:21:5-23:60
+MERGED from [com.android.support:appcompat-v7:24.2.1] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/24.2.1/AndroidManifest.xml:21:5-23:78
+MERGED from [com.android.support:support-vector-drawable:24.2.1] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/com.android.support/support-vector-drawable/24.2.1/AndroidManifest.xml:21:5-43
+MERGED from [com.android.support:animated-vector-drawable:24.2.1] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/24.2.1/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:recyclerview-v7:24.2.1] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/24.2.1/AndroidManifest.xml:20:5-43
+	tools:overrideLibrary
+		ADDED from [com.android.support:support-v4:24.2.1] /projects/Android/RichText/RichTextExample/build/intermediates/exploded-aar/com.android.support/support-v4/24.2.1/AndroidManifest.xml:23:9-51
 	android:targetSdkVersion
 		INJECTED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.xml
 		INJECTED from /projects/Android/RichText/RichTextExample/src/main/AndroidManifest.xml
