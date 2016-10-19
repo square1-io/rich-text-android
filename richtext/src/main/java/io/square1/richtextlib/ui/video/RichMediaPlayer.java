@@ -33,12 +33,18 @@ import io.square1.richtextlib.util.NumberUtils;
 /**
  * Created by roberto on 12/10/15.
  */
-public class RichMediaPlayer implements MediaPlayer.OnPreparedListener, android.widget.MediaController.MediaPlayerControl, MediaPlayer.OnErrorListener {
+public class RichMediaPlayer implements MediaPlayer.OnPreparedListener, android.widget.MediaController.MediaPlayerControl, MediaPlayer.OnErrorListener, MediaPlayer.OnBufferingUpdateListener {
 
 
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
         return false;
+    }
+
+
+    @Override
+    public void onBufferingUpdate(MediaPlayer mp, int percent) {
+
     }
 
     public interface OnVideoSizeListener {
@@ -173,7 +179,7 @@ public class RichMediaPlayer implements MediaPlayer.OnPreparedListener, android.
             mMediaPlayer = new InternalMediaPlayer();
             mMediaPlayer.setOnPreparedListener(this);
             mMediaPlayer.setOnErrorListener(this);
-
+            mMediaPlayer.setOnBufferingUpdateListener(this);
             mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mp) {

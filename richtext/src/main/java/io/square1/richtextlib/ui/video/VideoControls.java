@@ -25,6 +25,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 
 import io.square1.richtextlib.R;
 
@@ -35,14 +36,29 @@ import io.square1.richtextlib.R;
 class VideoControls {
 
     private FrameLayout mControlsContainer;
+
     private View mPlayButton;
     private View mPauseButton;
+    private ImageButton mFullScreenButton;
+
     private RichVideoView mVideoView;
+    private boolean mIsVideoFullScreen;
+
+    private View.OnClickListener mOverrideFullScreenListener;
+
 
     public VideoControls(Context context,
                          RichVideoView display, FrameLayout container){
 
+        this(context, display, container, false);
+    }
+    public VideoControls(Context context,
+                         RichVideoView display,
+                         FrameLayout container,
+                         boolean isVideoFullScreen){
+
         mVideoView = display;
+        mIsVideoFullScreen = isVideoFullScreen;
 
         mControlsContainer = (FrameLayout) LayoutInflater.from(context)
                 .inflate(R.layout.internal_richtext_video_controller,
@@ -57,8 +73,18 @@ class VideoControls {
         container.addView(mControlsContainer, params);
 
         mControlsContainer.setVisibility(View.INVISIBLE);
+
         mPlayButton = mControlsContainer.findViewById(R.id.play);
         mPauseButton = mControlsContainer.findViewById(R.id.pause);
+        mFullScreenButton = (ImageButton)mControlsContainer.findViewById(R.id.full_screen);
+
+        if(mIsVideoFullScreen == true){
+            mFullScreenButton.setImageResource(R.drawable.fullscreen_exit);
+        }else {
+            mFullScreenButton.setImageResource(R.drawable.fullscreen_enter);
+        }
+
+        mFullScreenButton.setVisibility(View.GONE);
 
         View.OnClickListener controlsClickListener = new View.OnClickListener() {
 
@@ -73,7 +99,11 @@ class VideoControls {
                         mVideoView.pause();
                     }
                 }else if(v.getId() == R.id.full_screen){
-                    mVideoView.openFullScreen();
+                    if(mOverrideFullScreenListener == null) {
+                        mVideoView.toggleFullScreen(mIsVideoFullScreen == false);
+                    }else {
+                        mOverrideFullScreenListener.onClick(v);
+                    }
                 }
 
                 updateControls();
@@ -83,9 +113,7 @@ class VideoControls {
 
         mPlayButton.setOnClickListener(controlsClickListener);
         mPauseButton.setOnClickListener(controlsClickListener);
-
-        mControlsContainer.findViewById(R.id.full_screen)
-                .setOnClickListener(controlsClickListener);
+        mFullScreenButton.setOnClickListener(controlsClickListener);
 
     }
     public VideoControls(Context context, RichVideoView parent){
@@ -114,10 +142,17 @@ class VideoControls {
 
     }
 
+    public void setFullScreenButtonVisible(boolean visible){
+        mFullScreenButton.setVisibility(visible ? View.VISIBLE : View.GONE);
+    }
 
     void updateControls(){
         mPauseButton.setVisibility(mVideoView.isPlaying() ? View.VISIBLE : View.GONE);
         mPlayButton.setVisibility(!mVideoView.isPlaying() ? View.VISIBLE : View.GONE);
+    }
+
+    public void setOverrideFullScreenListener(View.OnClickListener listener){
+        mOverrideFullScreenListener = listener;
     }
 
 }

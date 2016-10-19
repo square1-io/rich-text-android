@@ -3,9 +3,15 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_gravity="center"
+    android:padding="0dip"
+    android:background="#000000"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<FrameLayout
+    android:layout_gravity="center"
     android:id="@+id/internal_aspect_ratio_view"
-    android:padding="1dip"
-    android:background="#ffffff"
+    android:layout_margin="0dip"
+    android:background="#000000"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -22,4 +28,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+</FrameLayout>
 </FrameLayout>

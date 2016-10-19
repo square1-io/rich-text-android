@@ -62,11 +62,11 @@ public class IMGHandler extends TagHandler {
 
         int len = out.length();
         out.append(SpannedBuilderUtils.NO_SPACE);
-
         out.setSpan(imageDrawable,
                 len,
                 out.length(),
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        SpannedBuilderUtils.ensureAtLeastThoseNewLines(out, 1);
 
     }
 

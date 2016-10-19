@@ -20,16 +20,19 @@
 package io.square1.richtextlib.ui.video;
 
 import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
+import android.content.pm.ActivityInfo;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
-import android.os.Bundle;
+
+import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Size;
+import android.util.SizeF;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -41,7 +44,6 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
-import java.util.ArrayList;
 
 import io.square1.richtextlib.R;
 import io.square1.richtextlib.util.NumberUtils;
@@ -65,8 +67,8 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
 
     public interface  RichVideoViewListener {
 
-        public void onVideoReady(RichVideoView videoView);
-        public void onVideoSizeAvailable(RichVideoView videoView);
+         void onVideoReady(RichVideoView videoView);
+         void onVideoSizeAvailable(RichVideoView videoView);
 
     }
 
@@ -79,12 +81,17 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
     private FrameLayout mMainVideoContainer;
     private TextureView mTextureView;
     private RichMediaPlayer mMediaPlayer;
-    private SurfaceTexture mSurface;
 
-    //private ImageView mPlayButton;
+    private SurfaceTexture mSurface;
+    private int mSurfaceWidth;
+    private int mSurfaceHeight;
+
+
     private ProgressBar mLoadingProgress;
     private String mCurrentUri;
 
+    private int mOrientationSettingBeforeFullScreen;
+    private int mConfigurationChanges;
 
     public RichVideoView(Context context) {
         super(context);
@@ -127,6 +134,7 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
 
     }
     public void init(){
+
 
         initMediaPlayer();
 
@@ -216,6 +224,8 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
             mSurface = surface;
+            mSurfaceWidth = width;
+            mSurfaceHeight = height;
             mMediaPlayer.setSurfaceTexture(mSurface);
             mMediaPlayer.setData(mCurrentUri);
 
@@ -224,6 +234,8 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
         @Override
         public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
             mSurface = surface;
+            mSurfaceWidth = width;
+            mSurfaceHeight = height;
             mMediaPlayer.setSurfaceTexture(mSurface);
         }
 
@@ -271,11 +283,12 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
     }
 
     public void setData(String videoUri) {
-        mLoadingProgress.setVisibility(View.VISIBLE);
-        mCurrentUri = videoUri;
-        initMediaPlayer();
-        mMediaPlayer.setData(videoUri);
-
+        if(TextUtils.equals(videoUri,mCurrentUri) == false) {
+            mLoadingProgress.setVisibility(View.VISIBLE);
+            mCurrentUri = videoUri;
+            initMediaPlayer();
+            mMediaPlayer.setData(videoUri);
+        }
     }
 
     public void setRichVideoViewListener(RichVideoViewListener listener){
@@ -284,17 +297,24 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
 
     @Override
     public void onFirstFrameAvailable(RichMediaPlayer player) {
+
         mLoadingProgress.setVisibility(GONE);
 
-        //mPlayButton.setVisibility(player.isPlaying() ? View.GONE : View.VISIBLE);
-       // mPlayButton.setVisibility(View.VISIBLE);
-      //  mFullScreenMediaController.show();
-
-        adjustAspectRatio( this, mMainVideoContainer, player.getVideoWidth(), player.getVideoHeight());
-        adjustAspectRatio(mTextureView, player.getVideoWidth(), player.getVideoHeight());
         if(mControlsContainer != null) {
             mControlsContainer.updateControls();
+            mControlsContainer.showControls();
+            mControlsContainer.setFullScreenButtonVisible(true);
         }
+
+        adjustAspectRatio( this,
+                mMainVideoContainer,
+                player.getVideoWidth(),
+                player.getVideoHeight());
+
+        adjustAspectRatio(mTextureView,
+                player.getVideoWidth(),
+                player.getVideoHeight());
+
         invalidate();
         requestLayout();
         if(mRichVideoViewListener != null){
@@ -322,7 +342,10 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
        double width  = layout.getMeasuredWidth();
         double newHeight = videoHeight / videoWidth * width;
 
-        FrameLayout.LayoutParams newParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int)newHeight);
+        FrameLayout.LayoutParams newParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                (int)newHeight ,
+                Gravity.CENTER);
+
         layout.setLayoutParams(newParams);
 
         parentView.requestLayout();
@@ -397,15 +420,28 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
     }
 
 
-    public void openFullScreen() {
+    public boolean toggleFullScreen(boolean fullscreen) {
 
-//        Context context = getContext();
-//        if(context instanceof Activity){
-//
-//            Activity activity = (Activity)context;
-//            FullScreenVideoFragment fullScreenVideoFragment = new FullScreenVideoFragment();
-//            fullScreenVideoFragment.presentVideoFullScreen(activity , this);
-//        }
+        final Context context = getContext();
 
+        if(!(context instanceof Activity)){
+            return false;
+        }
+
+        Activity activity = (Activity)context;
+
+        // Your code to handle the full-screen change, for example showing and hiding the title bar. Example:
+        if (fullscreen) {
+            FullScreenVideoFragment fullScreenVideoFragment = new FullScreenVideoFragment();
+            fullScreenVideoFragment.presentVideoFullScreen(activity , this);
+        }else {
+            //mSurface
+            mSurfaceTextureListener.onSurfaceTextureAvailable(mSurface, mSurfaceWidth, mSurfaceHeight);
+            if(mControlsContainer != null) {
+                mControlsContainer.updateControls();
+            }
+        }
+
+        return true;
     }
 }

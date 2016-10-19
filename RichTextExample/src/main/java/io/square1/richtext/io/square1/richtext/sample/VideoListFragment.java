@@ -94,7 +94,9 @@ public class VideoListFragment extends Fragment {
 
             //videos.add("http://techslides.com/demos/sample-videos/small.webm");
             videos.add("https://media.businesspost.ie/uploads/inline/video/2016/06/24/41495769CommercialPropertySupercut2kh264.mp4");
-            //videos.add("http://techslides.com/demos/sample-videos/small.mp4");
+            videos.add("http://techslides.com/demos/sample-videos/small.mp4");
+            videos.add("http://html5demos.com/assets/dizzy.mp4");
+            videos.add("http://www.w3schools.com/html/mov_bbb.mp4");
 
 
             recyclerView.setAdapter(new MyVideoRecyclerViewAdapter( videos, mListener));
