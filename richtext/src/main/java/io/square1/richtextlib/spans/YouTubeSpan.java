@@ -94,12 +94,13 @@ public class YouTubeSpan extends UrlBitmapSpan {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        DynamicParcelableCreator.writeType(dest, this);
-        dest.writeParcelable(mImage,0);
+        super.writeToParcel(dest, flags);
+//        DynamicParcelableCreator.writeType(dest, this);
+//        dest.writeParcelable(mImage,0);
         dest.writeString(mYoutubeId);
-        dest.writeInt(mImageWidth);
-        dest.writeInt(mImageHeight);
-        dest.writeInt(mMaxImageWidth);
+//        dest.writeInt(mImageWidth);
+//        dest.writeInt(mImageHeight);
+//        dest.writeInt(mMaxImageWidth);
     }
 
 
