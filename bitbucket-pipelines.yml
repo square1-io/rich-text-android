@@ -16,5 +16,6 @@ pipelines:
            - mkdir -p "$ANDROID_HOME/licenses"
            - echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > "$ANDROID_HOME/licenses/android-sdk-license"
            - echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
-           - echo y | android update sdk --all --filter build-tools-24.0.0,extra-android-support --no-ui
+           - echo y | android update sdk --all --filter build-tools-24.0.0 --no-ui
+           - echo y | android update sdk --filter "extra-android-m2repository" --no-ui -a
            - ./gradlew clean assemble --stacktrace
