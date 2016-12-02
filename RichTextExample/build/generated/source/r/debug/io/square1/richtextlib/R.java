@@ -42,7 +42,7 @@ public final class R {
 		public static final int youtube_play = 0x7f020062;
 	}
 	public static final class id {
-		public static final int actionButton = 0x7f0b0077;
+		public static final int actionButton = 0x7f0b0076;
 		public static final int controls_container = 0x7f0b005e;
 		public static final int ffwd = 0x7f0b0073;
 		public static final int full_screen = 0x7f0b0061;
@@ -52,9 +52,9 @@ public final class R {
 		public static final int mediacontroller_progress = 0x7f0b0075;
 		public static final int pause = 0x7f0b0060;
 		public static final int play = 0x7f0b005f;
-		public static final int providerLogo = 0x7f0b0078;
+		public static final int providerLogo = 0x7f0b0077;
 		public static final int rew = 0x7f0b0072;
-		public static final int thumbNail = 0x7f0b0076;
+		public static final int thumbNail = 0x7f0b0078;
 		public static final int time = 0x7f0b006b;
 		public static final int time_current = 0x7f0b0074;
 		public static final int tweetContainer = 0x7f0b0079;

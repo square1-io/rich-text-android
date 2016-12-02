@@ -523,7 +523,7 @@ int drawable vimeo_play 0x7f020060
 int drawable vine_logo 0x7f020061
 int drawable youtube_play 0x7f020062
 int id action0 0x7f0b0065
-int id actionButton 0x7f0b0077
+int id actionButton 0x7f0b0076
 int id action_bar 0x7f0b0046
 int id action_bar_activity_content 0x7f0b0000
 int id action_bar_container 0x7f0b0045
@@ -599,7 +599,7 @@ int id pause 0x7f0b0060
 int id play 0x7f0b005f
 int id progress_circular 0x7f0b0006
 int id progress_horizontal 0x7f0b0007
-int id providerLogo 0x7f0b0078
+int id providerLogo 0x7f0b0077
 int id radio 0x7f0b003f
 int id rew 0x7f0b0072
 int id screen 0x7f0b0016
@@ -634,7 +634,7 @@ int id text 0x7f0b006f
 int id text2 0x7f0b006d
 int id textSpacerNoButtons 0x7f0b0038
 int id textView 0x7f0b0059
-int id thumbNail 0x7f0b0076
+int id thumbNail 0x7f0b0078
 int id time 0x7f0b006b
 int id time_current 0x7f0b0074
 int id title 0x7f0b002e

@@ -1941,7 +1941,7 @@ containing a value of this type.
     }
     public static final class id {
         public static final int action0=0x7f0b0065;
-        public static final int actionButton=0x7f0b0077;
+        public static final int actionButton=0x7f0b0076;
         public static final int action_bar=0x7f0b0046;
         public static final int action_bar_activity_content=0x7f0b0000;
         public static final int action_bar_container=0x7f0b0045;
@@ -2017,7 +2017,7 @@ containing a value of this type.
         public static final int play=0x7f0b005f;
         public static final int progress_circular=0x7f0b0006;
         public static final int progress_horizontal=0x7f0b0007;
-        public static final int providerLogo=0x7f0b0078;
+        public static final int providerLogo=0x7f0b0077;
         public static final int radio=0x7f0b003f;
         public static final int rew=0x7f0b0072;
         public static final int screen=0x7f0b0016;
@@ -2052,7 +2052,7 @@ containing a value of this type.
         public static final int text2=0x7f0b006d;
         public static final int textSpacerNoButtons=0x7f0b0038;
         public static final int textView=0x7f0b0059;
-        public static final int thumbNail=0x7f0b0076;
+        public static final int thumbNail=0x7f0b0078;
         public static final int time=0x7f0b006b;
         public static final int time_current=0x7f0b0074;
         public static final int title=0x7f0b002e;
