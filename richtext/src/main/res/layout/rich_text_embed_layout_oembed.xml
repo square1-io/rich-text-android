@@ -6,20 +6,6 @@
     android:layout_height="wrap_content">
 
     <ImageView
-        android:layout_centerInParent="true"
-        android:id="@+id/actionButton"
-        android:scaleType="centerInside"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    <ImageView
-        android:padding="5dip"
-        android:id="@+id/providerLogo"
-        android:layout_alignBottom="@+id/thumbNail"
-        android:layout_alignRight="@+id/thumbNail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <ImageView
         android:scaleType="fitStart"
         android:adjustViewBounds="true"
         android:src="@drawable/placeholder"
@@ -29,4 +15,20 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+    <ImageView
+        android:src="@drawable/vimeo_play"
+        android:layout_centerInParent="true"
+        android:id="@+id/actionButton"
+        android:scaleType="centerInside"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <ImageView
+        android:src="@drawable/instagram_logo"
+        android:padding="5dip"
+        android:id="@+id/providerLogo"
+        android:layout_alignBottom="@+id/thumbNail"
+        android:layout_alignRight="@+id/thumbNail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 </RelativeLayout>
