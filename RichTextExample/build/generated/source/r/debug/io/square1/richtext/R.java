@@ -1928,15 +1928,20 @@ containing a value of this type.
         public static final int fullscreen_exit=0x7f020057;
         public static final int ic_drawer=0x7f020058;
         public static final int image=0x7f020059;
-        public static final int notification_template_icon_bg=0x7f02005f;
-        public static final int place_holder_twitter=0x7f02005a;
-        public static final int place_holder_twitter_xml=0x7f02005b;
-        public static final int quote=0x7f02005c;
-        public static final int quote2=0x7f02005d;
-        public static final int youtube_play=0x7f02005e;
+        public static final int instagram_logo=0x7f02005a;
+        public static final int notification_template_icon_bg=0x7f020063;
+        public static final int place_holder_twitter=0x7f02005b;
+        public static final int place_holder_twitter_xml=0x7f02005c;
+        public static final int placeholder=0x7f02005d;
+        public static final int quote=0x7f02005e;
+        public static final int quote2=0x7f02005f;
+        public static final int vimeo_play=0x7f020060;
+        public static final int vine_logo=0x7f020061;
+        public static final int youtube_play=0x7f020062;
     }
     public static final class id {
         public static final int action0=0x7f0b0065;
+        public static final int actionButton=0x7f0b0077;
         public static final int action_bar=0x7f0b0046;
         public static final int action_bar_activity_content=0x7f0b0000;
         public static final int action_bar_container=0x7f0b0045;
@@ -1946,13 +1951,13 @@ containing a value of this type.
         public static final int action_bar_title=0x7f0b0025;
         public static final int action_context_bar=0x7f0b0047;
         public static final int action_divider=0x7f0b0069;
-        public static final int action_example=0x7f0b0078;
+        public static final int action_example=0x7f0b007b;
         public static final int action_menu_divider=0x7f0b0002;
         public static final int action_menu_presenter=0x7f0b0003;
         public static final int action_mode_bar=0x7f0b0043;
         public static final int action_mode_bar_stub=0x7f0b0042;
         public static final int action_mode_close_button=0x7f0b0027;
-        public static final int action_settings=0x7f0b0077;
+        public static final int action_settings=0x7f0b007a;
         public static final int activity_chooser_view_content=0x7f0b0028;
         public static final int add=0x7f0b0014;
         public static final int alertTitle=0x7f0b0034;
@@ -2012,6 +2017,7 @@ containing a value of this type.
         public static final int play=0x7f0b005f;
         public static final int progress_circular=0x7f0b0006;
         public static final int progress_horizontal=0x7f0b0007;
+        public static final int providerLogo=0x7f0b0078;
         public static final int radio=0x7f0b003f;
         public static final int rew=0x7f0b0072;
         public static final int screen=0x7f0b0016;
@@ -2046,13 +2052,14 @@ containing a value of this type.
         public static final int text2=0x7f0b006d;
         public static final int textSpacerNoButtons=0x7f0b0038;
         public static final int textView=0x7f0b0059;
+        public static final int thumbNail=0x7f0b0076;
         public static final int time=0x7f0b006b;
         public static final int time_current=0x7f0b0074;
         public static final int title=0x7f0b002e;
         public static final int title_template=0x7f0b0033;
         public static final int top=0x7f0b0024;
         public static final int topPanel=0x7f0b0032;
-        public static final int tweetContainer=0x7f0b0076;
+        public static final int tweetContainer=0x7f0b0079;
         public static final int up=0x7f0b0009;
         public static final int useLogo=0x7f0b0013;
         public static final int withText=0x7f0b0022;
@@ -2113,13 +2120,14 @@ containing a value of this type.
         public static final int notification_template_part_chronometer=0x7f04002d;
         public static final int notification_template_part_time=0x7f04002e;
         public static final int rich_text_embed_layout_media_player=0x7f04002f;
-        public static final int rich_text_embed_layout_twitter_container=0x7f040030;
-        public static final int select_dialog_item_material=0x7f040031;
-        public static final int select_dialog_multichoice_material=0x7f040032;
-        public static final int select_dialog_singlechoice_material=0x7f040033;
-        public static final int support_simple_spinner_dropdown_item=0x7f040034;
-        public static final int test_rich_video_view=0x7f040035;
-        public static final int text_view=0x7f040036;
+        public static final int rich_text_embed_layout_oembed=0x7f040030;
+        public static final int rich_text_embed_layout_twitter_container=0x7f040031;
+        public static final int select_dialog_item_material=0x7f040032;
+        public static final int select_dialog_multichoice_material=0x7f040033;
+        public static final int select_dialog_singlechoice_material=0x7f040034;
+        public static final int support_simple_spinner_dropdown_item=0x7f040035;
+        public static final int test_rich_video_view=0x7f040036;
+        public static final int text_view=0x7f040037;
     }
     public static final class menu {
         public static final int global=0x7f0d0000;

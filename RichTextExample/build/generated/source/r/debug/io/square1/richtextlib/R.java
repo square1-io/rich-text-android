@@ -32,12 +32,17 @@ public final class R {
 		public static final int fullscreen_enter = 0x7f020056;
 		public static final int fullscreen_exit = 0x7f020057;
 		public static final int image = 0x7f020059;
-		public static final int place_holder_twitter = 0x7f02005a;
-		public static final int place_holder_twitter_xml = 0x7f02005b;
-		public static final int quote = 0x7f02005c;
-		public static final int youtube_play = 0x7f02005e;
+		public static final int instagram_logo = 0x7f02005a;
+		public static final int place_holder_twitter = 0x7f02005b;
+		public static final int place_holder_twitter_xml = 0x7f02005c;
+		public static final int placeholder = 0x7f02005d;
+		public static final int quote = 0x7f02005e;
+		public static final int vimeo_play = 0x7f020060;
+		public static final int vine_logo = 0x7f020061;
+		public static final int youtube_play = 0x7f020062;
 	}
 	public static final class id {
+		public static final int actionButton = 0x7f0b0077;
 		public static final int controls_container = 0x7f0b005e;
 		public static final int ffwd = 0x7f0b0073;
 		public static final int full_screen = 0x7f0b0061;
@@ -47,18 +52,21 @@ public final class R {
 		public static final int mediacontroller_progress = 0x7f0b0075;
 		public static final int pause = 0x7f0b0060;
 		public static final int play = 0x7f0b005f;
+		public static final int providerLogo = 0x7f0b0078;
 		public static final int rew = 0x7f0b0072;
+		public static final int thumbNail = 0x7f0b0076;
 		public static final int time = 0x7f0b006b;
 		public static final int time_current = 0x7f0b0074;
-		public static final int tweetContainer = 0x7f0b0076;
+		public static final int tweetContainer = 0x7f0b0079;
 	}
 	public static final class layout {
 		public static final int internal_richtext_fragment_full_screen_video = 0x7f040024;
 		public static final int internal_richtext_video_controller = 0x7f040025;
 		public static final int internal_richtext_video_display = 0x7f040026;
 		public static final int rich_text_embed_layout_media_player = 0x7f04002f;
-		public static final int rich_text_embed_layout_twitter_container = 0x7f040030;
-		public static final int test_rich_video_view = 0x7f040035;
+		public static final int rich_text_embed_layout_oembed = 0x7f040030;
+		public static final int rich_text_embed_layout_twitter_container = 0x7f040031;
+		public static final int test_rich_video_view = 0x7f040036;
 	}
 	public static final class string {
 		public static final int app_name = 0x7f060023;
