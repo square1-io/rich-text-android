@@ -33,4 +33,10 @@ local.properties
 proguard/
 
 # Log Files
-*.log
+*.logRichTextExample/build/generated RichTextExample/build/intermediates RichTextExample/build/outputs RichTextExample/build/tmp
+RichTextExample/build
+.idea
+richtext/richtext.iml
+RichTextExample/build/
+.idea/
+RichTextExample/RichTextExample.iml
