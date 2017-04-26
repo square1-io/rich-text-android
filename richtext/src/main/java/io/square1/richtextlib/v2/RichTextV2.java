@@ -47,6 +47,7 @@ import java.util.regex.Pattern;
 
 
 import io.square1.richtextlib.EmbedUtils;
+import io.square1.richtextlib.v2.content.IframeDocumentElement;
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 import io.square1.richtextlib.R;
 import io.square1.richtextlib.v2.content.DocumentElement;
@@ -66,6 +67,7 @@ import io.square1.richtextlib.v2.utils.SpannedBuilderUtils;
 public class RichTextV2 {
 
     public static final String TAG = "RICHTXT";
+
 
     public static class DefaultStyle implements  Style {
 
@@ -374,6 +376,11 @@ public class RichTextV2 {
     public void onEmbedFound(EmbedUtils.TEmbedType type, String content){
         splitDocument(OembedDocumentElement.newInstance(type, content));
     }
+
+    public void onIframeFound(String url, int width, int height) {
+        splitDocument(IframeDocumentElement.newInstance(url, width, height));
+    }
+
 
     public void splitDocument( DocumentElement element){
 

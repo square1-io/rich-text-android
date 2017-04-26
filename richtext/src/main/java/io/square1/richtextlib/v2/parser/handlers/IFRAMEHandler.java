@@ -20,6 +20,7 @@
 package io.square1.richtextlib.v2.parser.handlers;
 
 import io.square1.richtextlib.EmbedUtils;
+import io.square1.richtextlib.util.NumberUtils;
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 import io.square1.richtextlib.v2.parser.MarkupContext;
 import io.square1.richtextlib.v2.parser.MarkupTag;
@@ -59,8 +60,11 @@ public class IFRAMEHandler extends TagHandler  {
             }
 
         }) == false) {
-            //
-            SpannedBuilderUtils.makeUnsupported(href, null, out);
+            //USE IFRAME CELL
+            int w =  NumberUtils.parseImageDimension(tag.attributes.getValue("width"),0);
+            int h =  NumberUtils.parseImageDimension(tag.attributes.getValue("height"),0);
+            context.getRichText().onIframeFound(href,w, h);
+            //SpannedBuilderUtils.makeUnsupported(href, null, out);
         }
 
 

@@ -36,7 +36,9 @@ import io.square1.richtext.R;
 import io.square1.richtextlib.spans.RemoteBitmapSpan;
 import io.square1.richtextlib.spans.UrlBitmapDownloader;
 import io.square1.richtextlib.ui.RichContentView;
+import io.square1.richtextlib.ui.iframe.IframeHolder;
 import io.square1.richtextlib.ui.video.RichVideoView;
+import io.square1.richtextlib.v2.content.IframeDocumentElement;
 import io.square1.richtextlib.v2.content.ImageDocumentElement;
 import io.square1.richtextlib.v2.content.OembedDocumentElement;
 import io.square1.richtextlib.v2.content.RichDocument;
@@ -92,7 +94,16 @@ public class ContentAdapter extends BaseAdapter  {
 
         Object item = getItem(position);
 
-        if(item instanceof RichTextDocumentElement){
+        if(item instanceof IframeDocumentElement){
+
+            if(convertView == null){
+                convertView =  LayoutInflater.from(parent.getContext()).inflate(R.layout.rich_text_embed_layout_webview,parent,false);
+                new IframeHolder(convertView);
+            }
+            IframeHolder holder = (IframeHolder) convertView.getTag();
+            holder.setIframe( (IframeDocumentElement) item);
+        }
+        else if(item instanceof RichTextDocumentElement){
 
             RichContentView view = (RichContentView)convertView;
             if(convertView == null){
@@ -144,12 +155,13 @@ public class ContentAdapter extends BaseAdapter  {
         if(item instanceof RichTextDocumentElement) return 0;
         if(item instanceof OembedDocumentElement) return 1;
         if(item instanceof VideoDocumentElement) return 2;
-        return 3;
+        if(item instanceof IframeDocumentElement) return 3;
+        return 4;
     }
 
     @Override
     public int getViewTypeCount() {
-        return 4;
+        return 5;
     }
 
 }
