@@ -19,77 +19,56 @@
 
 package io.square1.richtextlib.v2.content;
 
-import android.net.Uri;
 import android.os.Parcel;
 
 /**
  * Created by roberto on 10/09/15.
  */
-public class IframeDocumentElement extends DocumentElement {
+public class WebDocumentElement extends DocumentElement {
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        IframeDocumentElement that = (IframeDocumentElement) o;
-
-        if (mWidth != that.mWidth) return false;
-        if (mHeight != that.mHeight) return false;
-        if (!mIframeURL.equals(that.mIframeURL)) return false;
-        return true;
-
+    public enum ContentType {
+        EUrl,
+        EHtml
     }
 
-    @Override
-    public int hashCode() {
-        int result = mIframeURL.hashCode();
-        result = 31 * result + mWidth;
-        result = 31 * result + mHeight;
-        return result;
-    }
 
-    private String mIframeURL;
-
+    private String mContent;
+    private ContentType mType;
 
     private int mWidth = -1;
     private int mHeight  = -1;
 
-    public IframeDocumentElement(){
+    public WebDocumentElement(){
      super();
     }
 
-    public IframeDocumentElement(String imageUrl,
-                                 int width,
-                                 int height){
+    public WebDocumentElement(String content,
+                              ContentType type,
+                              int width,
+                              int height){
         super();
-
-
+        mType = type;
         mWidth = width;
         mHeight = height;
-        mIframeURL = imageUrl;
+        mContent = content;
 
 
 
     }
 
-
-    public String getIframeURL(){
-        return mIframeURL;
+    public ContentType getType(){
+        return mType;
     }
-
-    public static IframeDocumentElement newInstance(String url ,
-                                                    int width,
-                                                    int height){
-       return new IframeDocumentElement(url, width, height);
+    public String getContent(){
+        return mContent;
     }
-
-
 
 
     @Override
     public void readFromParcel(Parcel source) {
-        mIframeURL = source.readString();
+        mContent = source.readString();
+        int tmpMType = source.readInt();
+        this.mType = tmpMType == -1 ? null : ContentType.values()[tmpMType];
         mWidth = source.readInt();
         mHeight = source.readInt();
     }
@@ -109,10 +88,12 @@ public class IframeDocumentElement extends DocumentElement {
 
     @Override
     public void write(Parcel dest, int flags) {
-        dest.writeString(this.mIframeURL);
+        dest.writeString(this.mContent);
+        dest.writeInt(this.mType == null ? -1 : this.mType.ordinal());
         dest.writeInt(this.mWidth);
         dest.writeInt(this.mHeight);
     }
+
 
 
 

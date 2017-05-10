@@ -19,16 +19,12 @@
 
 package io.square1.richtextlib.v2.parser.handlers;
 
-import android.net.Uri;
 import android.text.Spannable;
 
 import org.xml.sax.Attributes;
 
-import io.square1.richtextlib.spans.URLSpan;
-import io.square1.richtextlib.spans.UrlBitmapSpan;
 import io.square1.richtextlib.spans.VideoPlayerSpan;
 import io.square1.richtextlib.util.NumberUtils;
-import io.square1.richtextlib.v2.content.ImageDocumentElement;
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 import io.square1.richtextlib.v2.content.VideoDocumentElement;
 import io.square1.richtextlib.v2.parser.MarkupContext;
@@ -50,8 +46,8 @@ public class VIDEOHandler extends TagHandler {
         if(context.getStyle().extractVideos() == true){
 
             SpannedBuilderUtils.trimTrailNewlines(out, 0);
-            int w =  NumberUtils.parseImageDimension(attributes.getValue("width"),0);
-            int h =  NumberUtils.parseImageDimension(attributes.getValue("height"),0);
+            int w =  NumberUtils.parseAttributeDimension(attributes.getValue("width"),0);
+            int h =  NumberUtils.parseAttributeDimension(attributes.getValue("height"),0);
             context.getRichText().splitDocument(VideoDocumentElement.newInstance(src,w,h));
             return;
         }
@@ -64,8 +60,8 @@ public class VIDEOHandler extends TagHandler {
 
         int maxSize = context.getStyle().maxImageWidth();
         VideoPlayerSpan videoPlayerSpan = new VideoPlayerSpan(src,
-                NumberUtils.parseImageDimension(attributes.getValue("width"), maxSize),
-                NumberUtils.parseImageDimension(attributes.getValue("height"),0),
+                NumberUtils.parseAttributeDimension(attributes.getValue("width"), maxSize),
+                NumberUtils.parseAttributeDimension(attributes.getValue("height"),0),
                 context.getStyle().maxImageWidth() );
 
       //  URLSpan videoPlayerSpan = new URLSpan(src);

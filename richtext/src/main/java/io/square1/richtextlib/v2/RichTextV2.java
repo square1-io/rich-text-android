@@ -23,11 +23,8 @@ package io.square1.richtextlib.v2;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
-import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
@@ -47,9 +44,8 @@ import java.util.regex.Pattern;
 
 
 import io.square1.richtextlib.EmbedUtils;
-import io.square1.richtextlib.v2.content.IframeDocumentElement;
+import io.square1.richtextlib.v2.content.WebDocumentElement;
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
-import io.square1.richtextlib.R;
 import io.square1.richtextlib.v2.content.DocumentElement;
 import io.square1.richtextlib.v2.content.OembedDocumentElement;
 import io.square1.richtextlib.v2.content.RichDocument;
@@ -378,7 +374,9 @@ public class RichTextV2 {
     }
 
     public void onIframeFound(String url, int width, int height) {
-        splitDocument(IframeDocumentElement.newInstance(url, width, height));
+        splitDocument(new WebDocumentElement(url,
+                WebDocumentElement.ContentType.EUrl,
+                width, height));
     }
 
 
