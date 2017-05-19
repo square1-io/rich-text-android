@@ -46,8 +46,8 @@ public class IMGHandler extends TagHandler {
 
         if(context.getStyle().extractImages() == true){
             SpannedBuilderUtils.trimTrailNewlines(out, 0);
-            int w =  NumberUtils.parseImageDimension(attributes.getValue("width"),0);
-            int h =  NumberUtils.parseImageDimension(attributes.getValue("height"),0);
+            int w =  NumberUtils.parseAttributeDimension(attributes.getValue("width"),0);
+            int h =  NumberUtils.parseAttributeDimension(attributes.getValue("height"),0);
             context.getRichText().splitDocument(ImageDocumentElement.newInstance(src,null,w,h));
             return;
         }
@@ -56,8 +56,8 @@ public class IMGHandler extends TagHandler {
         SpannedBuilderUtils.ensureAtLeastThoseNewLines(out, 1);
         int maxSize = context.getStyle().maxImageWidth();
         UrlBitmapSpan imageDrawable = new UrlBitmapSpan(Uri.parse(src),
-                NumberUtils.parseImageDimension(attributes.getValue("width"), maxSize),
-                NumberUtils.parseImageDimension(attributes.getValue("height"),0),
+                NumberUtils.parseAttributeDimension(attributes.getValue("width"), maxSize),
+                NumberUtils.parseAttributeDimension(attributes.getValue("height"),0),
                 context.getStyle().maxImageWidth() );
 
         int len = out.length();

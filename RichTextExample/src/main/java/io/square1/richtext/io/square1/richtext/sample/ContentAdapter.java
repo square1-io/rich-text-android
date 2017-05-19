@@ -21,7 +21,6 @@ package io.square1.richtext.io.square1.richtext.sample;
 
 
 import android.graphics.Color;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,10 +32,11 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import io.square1.richtext.R;
-import io.square1.richtextlib.spans.RemoteBitmapSpan;
 import io.square1.richtextlib.spans.UrlBitmapDownloader;
 import io.square1.richtextlib.ui.RichContentView;
+import io.square1.richtextlib.ui.web.WebContentHolder;
 import io.square1.richtextlib.ui.video.RichVideoView;
+import io.square1.richtextlib.v2.content.WebDocumentElement;
 import io.square1.richtextlib.v2.content.ImageDocumentElement;
 import io.square1.richtextlib.v2.content.OembedDocumentElement;
 import io.square1.richtextlib.v2.content.RichDocument;
@@ -92,7 +92,16 @@ public class ContentAdapter extends BaseAdapter  {
 
         Object item = getItem(position);
 
-        if(item instanceof RichTextDocumentElement){
+        if(item instanceof WebDocumentElement){
+
+            if(convertView == null){
+                convertView =  LayoutInflater.from(parent.getContext()).inflate(R.layout.rich_text_embed_layout_webview,parent,false);
+                new WebContentHolder(convertView);
+            }
+            WebContentHolder holder = (WebContentHolder) convertView.getTag();
+            holder.setWebContent( (WebDocumentElement) item);
+        }
+        else if(item instanceof RichTextDocumentElement){
 
             RichContentView view = (RichContentView)convertView;
             if(convertView == null){
@@ -144,12 +153,13 @@ public class ContentAdapter extends BaseAdapter  {
         if(item instanceof RichTextDocumentElement) return 0;
         if(item instanceof OembedDocumentElement) return 1;
         if(item instanceof VideoDocumentElement) return 2;
-        return 3;
+        if(item instanceof WebDocumentElement) return 3;
+        return 4;
     }
 
     @Override
     public int getViewTypeCount() {
-        return 4;
+        return 5;
     }
 
 }

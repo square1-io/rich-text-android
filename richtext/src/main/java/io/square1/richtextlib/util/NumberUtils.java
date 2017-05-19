@@ -19,6 +19,10 @@
 
 package io.square1.richtextlib.util;
 
+import android.text.TextUtils;
+
+import java.util.Arrays;
+
 /**
  * Created by roberto on 30/06/15.
  */
@@ -26,7 +30,7 @@ public class NumberUtils {
 
     public static final int INVALID = -1;
 
-    public static int parseImageDimension(String in, int maxSize){
+    public static int parseAttributeDimension(String in, int maxSize){
         try {
             if( in.indexOf(in.length() - 1 , '%') >= 0){
                 //percentage
@@ -38,6 +42,26 @@ public class NumberUtils {
         }catch (Exception e){
             return INVALID;
         }
+    }
+
+    public static int parseInt(String input){
+
+        if(TextUtils.isEmpty(input) == true){
+            return -1;
+        }
+        try{
+            return Integer.parseInt(input);
+        }catch (Exception e){}
+
+        return -1;
+    }
+
+    public static int max(int... values){
+        if(values == null || values.length == 0){
+            return  -1;
+        }
+        Arrays.sort(values);
+        return values[values.length - 1];
     }
 
 }

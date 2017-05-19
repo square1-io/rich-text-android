@@ -19,7 +19,12 @@
 
 package io.square1.richtextlib.v2.parser.handlers;
 
+import android.text.TextUtils;
+import android.webkit.URLUtil;
+
 import io.square1.richtextlib.EmbedUtils;
+import io.square1.richtextlib.util.NumberUtils;
+import io.square1.richtextlib.util.WebAddress;
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 import io.square1.richtextlib.v2.parser.MarkupContext;
 import io.square1.richtextlib.v2.parser.MarkupTag;
@@ -59,8 +64,18 @@ public class IFRAMEHandler extends TagHandler  {
             }
 
         }) == false) {
-            //
-            SpannedBuilderUtils.makeUnsupported(href, null, out);
+            //USE IFRAME CELL
+            WebAddress webAddress = WebAddress.parseWebAddress(href);
+            if(webAddress != null) {
+                //ensure we have a scheme here
+                if(TextUtils.isEmpty(webAddress.getScheme())){
+                    webAddress.setScheme("http");
+                }
+                int w = NumberUtils.parseAttributeDimension(tag.attributes.getValue("width"), 16);
+                int h = NumberUtils.parseAttributeDimension(tag.attributes.getValue("height"), 9);
+                context.getRichText().onIframeFound(webAddress.toString(), w, h);
+            }
+            //SpannedBuilderUtils.makeUnsupported(href, null, out);
         }
 
 
