@@ -47,7 +47,7 @@ public class WebContentHolder {
 //            // Otherwise, the link is not for a page on my site, so launch another Activity that handles URLs
 //            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
 //
-            return true;
+            return false;
         }
     }
 
@@ -64,6 +64,10 @@ public class WebContentHolder {
 
     }
 
+
+    public final WrapContentWebView getWebView(){
+        return mWebView;
+    }
 
     public void setWebContent(WebDocumentElement item) {
         //mContainer.setRatio(item.getWidth(), item.getHeight());
