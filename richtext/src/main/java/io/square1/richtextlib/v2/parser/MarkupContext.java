@@ -85,7 +85,6 @@ public class MarkupContext {
 
             TagHandler handler =  tagHandlerClass.newInstance();
             handler.replaceContext(this);
-            tag.setTagHandler(handler);
             return handler;
 
         }catch (Exception e){
@@ -97,18 +96,17 @@ public class MarkupContext {
 
     }
 
-    public TagHandler tagHandlerInstance(MarkupTag tag){
+    public final TagHandler tagHandlerInstance(MarkupTag tag){
 
-        if(tag.getTagHandler() == null){
+        TagHandler handler = getTagHandler(tag);
+        tag.setTagHandler(handler);
 
-        }
-
-        return tag.getTagHandler();
+        return handler;
     }
 
     public final MarkupContext onTagOpen(MarkupTag current, RichTextDocumentElement builder, boolean newOutput) {
         builder = replaceBuilder(builder);
-        TagHandler handler = getTagHandler(current);
+        TagHandler handler = tagHandlerInstance(current);
         if( (newOutput && handler.openWhenSplitting()) || !newOutput ) {
             handler.onTagOpen(this, current, builder);
             return handler.replaceContext(this);
