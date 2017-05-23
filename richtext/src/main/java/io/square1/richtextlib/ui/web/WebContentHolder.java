@@ -39,6 +39,14 @@ public class WebContentHolder {
     private class WebContentClient extends WebViewClient {
 
         @Override
+        public void onPageFinished(WebView view, String url) {
+
+            super.onPageFinished(view, url);
+
+            mWebView.setEnableResize(true);
+        }
+
+        @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
 //            if (Uri.parse(url).getHost().equals("www.example.com")) {
 //                // This is my web site, so do not override; let my WebView load the page
@@ -52,26 +60,26 @@ public class WebContentHolder {
     }
 
     private WrapContentWebView mWebView;
-    private FrameLayout mContainer;
 
-    public WebContentHolder(View view){
+    public WebContentHolder(View view) {
+
         view.setTag(this);
-        mContainer = (FrameLayout)view;
         mWebView = (WrapContentWebView) view.findViewById(R.id.webView);
-       // mWebView.setWebChromeClient(new WebContentClient());
         mWebView.setWebViewClient(new WebContentClient());
-
-
     }
 
-
     public void setWebContent(WebDocumentElement item) {
-        //mContainer.setRatio(item.getWidth(), item.getHeight());
-        if(item.getType() == WebDocumentElement.ContentType.EHtml ) {
+
+        if (item.getType() == WebDocumentElement.ContentType.EHtml) {
             mWebView.loadData(item.getContent(), "text/html", "utf-8");
-        }else {
+        }
+        else {
             mWebView.loadUrl(item.getContent());
         }
-        mWebView.setEnableResize(true);
+    }
+
+    public void reload() {
+
+        mWebView.reload();
     }
 }
