@@ -82,4 +82,9 @@ public class WebContentHolder {
 
         mWebView.reload();
     }
+
+    public WrapContentWebView getWebView() {
+
+        return mWebView;
+    }
 }
