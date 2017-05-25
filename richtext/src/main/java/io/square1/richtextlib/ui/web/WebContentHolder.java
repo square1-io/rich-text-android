@@ -43,7 +43,8 @@ public class WebContentHolder {
 
             super.onPageFinished(view, url);
 
-            mWebView.setEnableResize(true);
+            //only if is enabled
+            mWebView.resize();
         }
 
         @Override
@@ -76,6 +77,11 @@ public class WebContentHolder {
         else {
             mWebView.loadUrl(item.getContent());
         }
+    }
+
+    public void setEnableResize(boolean enableResize) {
+
+        mWebView.setEnableResize(enableResize);
     }
 
     public void reload() {
