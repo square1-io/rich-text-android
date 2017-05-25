@@ -14,7 +14,8 @@ ext {
     siteUrl = 'https://bitbucket.org/square1mobileteam/rich-content-android'
     gitUrl = 'https://bitbucket.org/square1mobileteam/rich-content-android'
 
-    libraryVersion = '4.0.3'
+
+    libraryVersion = '4.0.7'
 
     developerId = 'square1io'
     developerName = 'Roberto Prato'
