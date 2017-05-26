@@ -37,7 +37,6 @@ public class WrapContentWebView extends WebView {
         init();
     }
 
-
     private void init() {
 
         mEnableResize = false;
@@ -106,17 +105,15 @@ public class WrapContentWebView extends WebView {
                     getScaleY() *
                     getResources().getDisplayMetrics().density);
 
-            if (getLayoutParams().height != newHeight) {
-                mMainLoopHandler.post(new Runnable() {
+            mMainLoopHandler.post(new Runnable() {
 
-                    @Override
-                    public void run() {
+                @Override
+                public void run() {
 
-                        getLayoutParams().height = newHeight;
-                        requestLayout();
-                    }
-                });
-            }
+                    getLayoutParams().height = newHeight;
+                    requestLayout();
+                }
+            });
         }
     }
 }
