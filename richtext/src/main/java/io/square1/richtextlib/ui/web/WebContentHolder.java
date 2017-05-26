@@ -20,11 +20,13 @@
 package io.square1.richtextlib.ui.web;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 
 import io.square1.richtextlib.R;
 import io.square1.richtextlib.ui.AspectRatioFrameLayout;
@@ -39,39 +41,98 @@ public class WebContentHolder {
     private class WebContentClient extends WebViewClient {
 
         @Override
-        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-//            if (Uri.parse(url).getHost().equals("www.example.com")) {
-//                // This is my web site, so do not override; let my WebView load the page
-//                return false;
-//            }
-//            // Otherwise, the link is not for a page on my site, so launch another Activity that handles URLs
-//            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-//
-            return true;
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+
+            super.onPageStarted(view, url, favicon);
+
+            if (mProgressBar != null) {
+                mProgressBar.setVisibility(View.VISIBLE);
+                view.setVisibility(View.GONE);
+            }
         }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+
+            super.onPageFinished(view, url);
+
+            if (mProgressBar != null) {
+                view.setVisibility(View.VISIBLE);
+                mProgressBar.setVisibility(View.GONE);
+            }
+            //only if is enabled
+            mWebView.resize();
+        }
+
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+
+            //let WebView load the page return false;
+
+            if (!mShouldOverrideUrlLoading) {
+                WebContentHolder.this.shouldOverrideUrlLoading(view, url);
+            }
+
+            return mShouldOverrideUrlLoading;
+        }
+    }
+
+    protected void shouldOverrideUrlLoading(WebView view, String url) {
+
     }
 
     private WrapContentWebView mWebView;
-    private FrameLayout mContainer;
+    private ProgressBar mProgressBar;
+    private Boolean mShouldOverrideUrlLoading;
 
-    public WebContentHolder(View view){
+    public WebContentHolder(View view) {
+
         view.setTag(this);
-        mContainer = (FrameLayout)view;
         mWebView = (WrapContentWebView) view.findViewById(R.id.webView);
-       // mWebView.setWebChromeClient(new WebContentClient());
+        mProgressBar = (ProgressBar) view.findViewById(R.id.progressBar);
         mWebView.setWebViewClient(new WebContentClient());
-
-
+        mShouldOverrideUrlLoading = true;
     }
 
-
     public void setWebContent(WebDocumentElement item) {
-        //mContainer.setRatio(item.getWidth(), item.getHeight());
-        if(item.getType() == WebDocumentElement.ContentType.EHtml ) {
+
+        clearContent();
+
+        if (item.getType() == WebDocumentElement.ContentType.EHtml) {
             mWebView.loadData(item.getContent(), "text/html", "utf-8");
-        }else {
+        }
+        else {
             mWebView.loadUrl(item.getContent());
         }
-        mWebView.setEnableResize(true);
+    }
+
+    public void clearContent() {
+
+        mWebView.loadUrl("about:blank");
+    }
+
+    public void resize() {
+
+        mWebView.resize();
+    }
+
+    public void setShouldOverrideUrlLoading(boolean shouldOverrideUrlLoading) {
+
+        mShouldOverrideUrlLoading = shouldOverrideUrlLoading;
+    }
+
+    public void setEnableResize(boolean enableResize) {
+
+        mWebView.setEnableResize(enableResize);
+    }
+
+    public void reload() {
+
+        mWebView.reload();
+    }
+
+    public WrapContentWebView getWebView() {
+
+        return mWebView;
     }
 }
