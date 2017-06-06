@@ -172,17 +172,17 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
         if(mText == null || mLayout == null){
             return;
         }
-        final int previousSize = mLayout.getHeight();
 
         int start = mText.getSpanStart(richTextSpan);
         int end = mText.getSpanEnd(richTextSpan);
+        int length = mText.length();
 
-        SpanWatcher[] watchers = mText.getSpans(SpanWatcher.class);
-        for(SpanWatcher watcher : watchers){
-            watcher.onSpanChanged(mText, richTextSpan, start, end, start, end);
+        if(start >= 0 && end < length) {//http://crashes.to/s/97526bcc474
+            SpanWatcher[] watchers = mText.getSpans(SpanWatcher.class);
+            for (SpanWatcher watcher : watchers) {
+                watcher.onSpanChanged(mText, richTextSpan, start, end, start, end);
+            }
         }
-
-        final int afterUpdate = mLayout.getHeight();
 
         invalidate();
        // if(previousSize != afterUpdate){

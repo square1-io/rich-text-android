@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/RichText.iml" filepath="$PROJECT_DIR$/RichText.iml" />
       <module fileurl="file://$PROJECT_DIR$/RichTextExample/RichTextExample.iml" filepath="$PROJECT_DIR$/RichTextExample/RichTextExample.iml" />
-      <module fileurl="file://$PROJECT_DIR$/rich-content-android.iml" filepath="$PROJECT_DIR$/rich-content-android.iml" />
       <module fileurl="file://$PROJECT_DIR$/richtext/richtext.iml" filepath="$PROJECT_DIR$/richtext/richtext.iml" />
     </modules>
   </component>
