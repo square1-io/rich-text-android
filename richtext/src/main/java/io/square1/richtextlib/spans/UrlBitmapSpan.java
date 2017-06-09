@@ -19,7 +19,6 @@
 
 package io.square1.richtextlib.spans;
 
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -36,7 +35,6 @@ import android.text.style.UpdateAppearance;
 import android.view.View;
 import android.widget.Toast;
 
-
 import java.lang.ref.WeakReference;
 
 import io.square1.parcelable.DynamicParcelableCreator;
@@ -48,9 +46,9 @@ import io.square1.richtextlib.util.UniqueId;
 /**
  * Created by roberto on 23/06/15.
  */
-public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, ClickableSpan, UpdateAppearance, RichTextSpan   {
+public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, ClickableSpan, UpdateAppearance, RichTextSpan {
 
-    public static final Creator<UrlBitmapSpan> CREATOR  = DynamicParcelableCreator.getInstance(UrlBitmapSpan.class);
+    public static final Creator<UrlBitmapSpan> CREATOR = DynamicParcelableCreator.getInstance(UrlBitmapSpan.class);
     public static final int TYPE = UniqueId.getType();
 
     /**
@@ -68,30 +66,33 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
 
     protected final int mVerticalAlignment;
 
-     int mMaxImageWidth;
-     int mImageWidth;
-     int mImageHeight;
+    int mMaxImageWidth;
+    int mImageWidth;
+    int mImageHeight;
 
-     Uri mImage;
+    Uri mImage;
 
-     Drawable mBitmap;
+    Drawable mBitmap;
 
-    public UrlBitmapSpan(){
+    public UrlBitmapSpan() {
+
         mVerticalAlignment = ALIGN_BOTTOM;
     }
 
-    public UrlBitmapSpan(Uri image,  int imageWidth, int imageHeight, int maxImageWidth){
-        this(null,image, imageWidth,imageHeight,maxImageWidth,ALIGN_BOTTOM);
+    public UrlBitmapSpan(Uri image, int imageWidth, int imageHeight, int maxImageWidth) {
+
+        this(null, image, imageWidth, imageHeight, maxImageWidth, ALIGN_BOTTOM);
 
     }
+
     public UrlBitmapSpan(Bitmap bitmap,
                          Uri image,
-                         int  imageWidth,
+                         int imageWidth,
                          int imageHeight,
                          int maxImageWidth,
-                         int alignment){
-        super();
+                         int alignment) {
 
+        super();
 
         mImage = image;
         mMaxImageWidth = maxImageWidth;
@@ -100,22 +101,27 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
 
         mVerticalAlignment = alignment;
 
-        if(bitmap != null) {
+        if (bitmap != null) {
             mBitmap = new BitmapDrawable(bitmap);
             mBitmap.setBounds(estimateSize());
         }
 
-
     }
 
+    public Uri getUri() {
+
+        return mImage;
+    }
 
     @Override
     public int getType() {
+
         return TYPE;
     }
 
     @Override
     public void readFromParcel(Parcel src) {
+
         mImage = src.readParcelable(Uri.class.getClassLoader());
         mMaxImageWidth = src.readInt();
         mImageWidth = src.readInt();
@@ -124,9 +130,9 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
 
     WeakReference<RichContentView> mRef;
 
-    RichContentView getCurrentRichContentView(){
+    RichContentView getCurrentRichContentView() {
 
-        if(mRef == null){
+        if (mRef == null) {
             return null;
         }
         return mRef.get();
@@ -137,7 +143,7 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
 
         RichContentView current = getCurrentRichContentView();
 
-        if(current != null){
+        if (current != null) {
             current.removeOnAttachStateChangeListener(this);
         }
 
@@ -149,33 +155,36 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
 
     @Override
     public void onAttachedToWindow(RichContentViewDisplay view) {
+
         onViewAttachedToWindow(getCurrentRichContentView());
     }
 
     @Override
     public void onDetachedFromWindow(RichContentViewDisplay view) {
+
         onViewDetachedFromWindow(getCurrentRichContentView());
     }
 
     @Override
     public int describeContents() {
+
         return 0;
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+
         DynamicParcelableCreator.writeType(dest, this);
-        dest.writeParcelable(mImage,0);
+        dest.writeParcelable(mImage, 0);
         dest.writeInt(mMaxImageWidth);
         dest.writeInt(mImageWidth);
         dest.writeInt(mImageHeight);
 
     }
 
+    private int containerViewHasMeasure() {
 
-    private int containerViewHasMeasure(){
-
-        if(mRef != null && mRef.get() != null){
+        if (mRef != null && mRef.get() != null) {
 
             RichContentView display = mRef.get();
 
@@ -183,8 +192,9 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
                     display.getPaddingLeft() -
                     display.getPaddingRight();
 
-
-            if(measured > 0) return measured;
+            if (measured > 0) {
+                return measured;
+            }
         }
 
         return NumberUtils.INVALID;
@@ -195,52 +205,53 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
         int maxAvailableWidth = containerViewHasMeasure();
 
         //taking a guess here
-        if(maxAvailableWidth == NumberUtils.INVALID) {
+        if (maxAvailableWidth == NumberUtils.INVALID) {
             maxAvailableWidth = mMaxImageWidth;
         }
 
         //we know the image size
-        if(mImageWidth  !=  NumberUtils.INVALID){
+        if (mImageWidth != NumberUtils.INVALID) {
 
             int imageHeight = mImageHeight != NumberUtils.INVALID ?
-                    mImageHeight : (int)(mImageWidth*0.3);
+                    mImageHeight : (int) (mImageWidth * 0.3);
 
-            double rate = (double)maxAvailableWidth / (double)mImageWidth;
-            return new Rect(0, 0, maxAvailableWidth, (int)(imageHeight * rate));
+            double rate = (double) maxAvailableWidth / (double) mImageWidth;
+            return new Rect(0, 0, maxAvailableWidth, (int) (imageHeight * rate));
         }
 
-        return new Rect(0, 0, maxAvailableWidth, (int)(maxAvailableWidth * 0.3));
+        return new Rect(0, 0, maxAvailableWidth, (int) (maxAvailableWidth * 0.3));
     }
 
-    private  Rect evaluateBitmapBounds(int bitmabW, int bitmapH) {
+    private Rect evaluateBitmapBounds(int bitmabW, int bitmapH) {
 
         int maxAvailableWidth = containerViewHasMeasure();
 
         //taking a guess here
-        if(maxAvailableWidth == NumberUtils.INVALID) {
+        if (maxAvailableWidth == NumberUtils.INVALID) {
             maxAvailableWidth = mMaxImageWidth;
         }
 
         //we know the image size
-        if(bitmabW  !=  NumberUtils.INVALID){
+        if (bitmabW != NumberUtils.INVALID) {
 
             int imageHeight = bitmapH != NumberUtils.INVALID ?
-                    bitmapH : (int)(bitmabW*0.3);
+                    bitmapH : (int) (bitmabW * 0.3);
 
-            double rate = (double)maxAvailableWidth / (double)bitmabW;
-            return new Rect(0, 0, maxAvailableWidth, (int)(imageHeight * rate));
+            double rate = (double) maxAvailableWidth / (double) bitmabW;
+            return new Rect(0, 0, maxAvailableWidth, (int) (imageHeight * rate));
         }
 
-        return new Rect(0, 0, maxAvailableWidth, (int)(maxAvailableWidth * 0.3));
+        return new Rect(0, 0, maxAvailableWidth, (int) (maxAvailableWidth * 0.3));
     }
 
-    private Rect getBitmapBounds(){
+    private Rect getBitmapBounds() {
 
-        if(mBitmap == null) {
+        if (mBitmap == null) {
             return estimateSize();
-        }else{
-           return evaluateBitmapBounds(mBitmap.getIntrinsicWidth(),
-                   mBitmap.getIntrinsicHeight());
+        }
+        else {
+            return evaluateBitmapBounds(mBitmap.getIntrinsicWidth(),
+                    mBitmap.getIntrinsicHeight());
         }
     }
 
@@ -250,7 +261,6 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
                        Paint.FontMetricsInt fm) {
 
         Rect rect = getBitmapBounds();
-
 
         if (fm != null) {
             fm.ascent = -rect.bottom;
@@ -265,20 +275,21 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
         return rect.right;
     }
 
-    Drawable getBitmap(){
+    Drawable getBitmap() {
+
         return mBitmap;
     }
 
     @Override
     public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
 
-        if(mBitmap == null) return;
+        if (mBitmap == null) {
+            return;
+        }
 
         final Rect bitmapBounds = getBitmapBounds();
 
         int transY = bottom - bitmapBounds.bottom;
-
-
 
         canvas.save();
         //center
@@ -288,7 +299,7 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
         x = x - mRef.get().getPaddingLeft();
         canvas.translate(x, transY);
 
-        if(mBitmap != null) {
+        if (mBitmap != null) {
             mBitmap.setBounds(bitmapBounds);
             mBitmap.draw(canvas);
         }
@@ -301,13 +312,10 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
 
     private boolean mLoading = false;
 
-
-
     @Override
-    public void updateBitmap(Context context, Drawable bitmap){
+    public void updateBitmap(Context context, Drawable bitmap) {
 
         mLoading = !(bitmap != null);
-
 
         boolean bitmapUpdated = ((mBitmap == null) || mBitmap != bitmap);
         mBitmap = bitmap;
@@ -315,7 +323,7 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
         mImageWidth = bitmap.getIntrinsicWidth();
         mImageHeight = bitmap.getIntrinsicHeight();
 
-        mBitmap.setBounds(0,0,mImageWidth,mImageHeight);
+        mBitmap.setBounds(0, 0, mImageWidth, mImageHeight);
 
         final RichContentView view = mRef.get();
         Rect newRect = getBitmapBounds();
@@ -325,9 +333,7 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
 
         ensureDrawableIsAttached();
 
-        if(view != null){
-
-
+        if (view != null) {
 
 //            if(needsLayout == true || bitmapUpdated){
 //                view.performLayout();
@@ -340,54 +346,51 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
 
     }
 
-    private void ensureDrawableIsAttached(){
+    private void ensureDrawableIsAttached() {
 
         final RichContentView viewDisplay = mRef.get();
 
-        if(viewDisplay == null ||
-                viewDisplay.viewAttachedToWindow() == false){
+        if (viewDisplay == null ||
+                viewDisplay.viewAttachedToWindow() == false) {
             return;
         }
 
-        if(mBitmap != null) {
+        if (mBitmap != null) {
             mBitmap.setCallback(viewDisplay);
             mBitmap.invalidateSelf();
-            if(mBitmap instanceof Animatable){
-                Animatable animatable = (Animatable)mBitmap;
+            if (mBitmap instanceof Animatable) {
+                Animatable animatable = (Animatable) mBitmap;
                 animatable.start();
             }
         }
     }
 
-
     @Override
     public Rect getPossibleSize() {
+
         return getBitmapBounds();
     }
 
+    private void loadImage() {
 
-    private void loadImage(){
-
-        if(mLoading == false && mBitmap == null){
+        if (mLoading == false && mBitmap == null) {
             mLoading = true;
             UrlBitmapDownloader downloader = SpanUtil.get(mRef);
-            if(downloader != null){
+            if (downloader != null) {
                 //acquire one from the view
                 downloader.downloadImage(this, mImage);
             }
         }
     }
 
-
     @Override
     public void onViewAttachedToWindow(View view) {
-
 
         loadImage();
         ensureDrawableIsAttached();
 
         //redownloaded from earlier
-        if(mBitmap != null){
+        if (mBitmap != null) {
             Drawable cached = mBitmap;
             mBitmap = null;
             updateBitmap(view.getContext(), cached);
@@ -397,9 +400,9 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
     @Override
     public void onViewDetachedFromWindow(View viewDisplay) {
 
-          if (mBitmap != null && mBitmap.getCallback() == viewDisplay) {
-              mBitmap.setCallback(null);
-          }
+        if (mBitmap != null && mBitmap.getCallback() == viewDisplay) {
+            mBitmap.setCallback(null);
+        }
     }
 
 }
