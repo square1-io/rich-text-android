@@ -40,74 +40,76 @@ public class SpannedBuilderUtils {
     public static final String BULLET = "•";
     public static final String SPACE = " ";
 
-    public static void trimLeadingNewlines(RichTextDocumentElement text){
+    public static void trimLeadingNewlines(RichTextDocumentElement text) {
 
         int len = text.length();
         int index = 0;
         boolean found = false;
-        for(index = 0; index < len; index ++){
+        for (index = 0; index < len; index++) {
 
-            if( text.charAt(index) != '\n'){
+            if (text.charAt(index) != '\n') {
                 break;
             }
             found = true;
         }
 
-        if(found == true){
-            text.delete(0,index);
+        if (found == true) {
+            text.delete(0, index);
         }
 
     }
-    public static void trimTrailNewlines(RichTextDocumentElement text, int newLinesCountAfter){
+
+    public static void trimTrailNewlines(RichTextDocumentElement text, int newLinesCountAfter) {
 
         int len = text.length();
 
         int currentNewLines = 0;
 
-        while(len > 0){
-            if( text.charAt(len - 1) == '\n'){
-                currentNewLines ++;
-            }else{
+        while (len > 0) {
+            if (text.charAt(len - 1) == '\n') {
+                currentNewLines++;
+            }
+            else {
                 break;
             }
-            len --;
+            len--;
         }
 
         ///at the end of the process the string must end with
         //at max newLinesCount
         // if there are more new lines than what we want
-        if(newLinesCountAfter < currentNewLines){
+        if (newLinesCountAfter < currentNewLines) {
             text.trim(currentNewLines - newLinesCountAfter);
         }
 
     }
 
-    public static int ensureAtLeastThoseNewLines(RichTextDocumentElement text, int newLines){
+    public static int ensureAtLeastThoseNewLines(RichTextDocumentElement text, int newLines) {
 
         int len = text.length();
 
         int currentNewLines = 0;
 
-        while(len > 0){
-            if( text.charAt(len - 1) == '\n'){
-                currentNewLines ++;
-            }else{
+        while (len > 0) {
+            if (text.charAt(len - 1) == '\n') {
+                currentNewLines++;
+            }
+            else {
                 break;
             }
-            len --;
+            len--;
         }
 
         newLines = newLines - currentNewLines;
 
-
-        for(int index = 0; index < newLines; index ++){
+        for (int index = 0; index < newLines; index++) {
             text.append('\n');
         }
 
         return newLines;
     }
 
-    public static void makeYoutube(String youtubeId, int maxImageWidth, RichTextDocumentElement builder){
+    public static void makeYoutube(String youtubeId, int maxImageWidth, RichTextDocumentElement builder) {
 
         ensureAtLeastThoseNewLines(builder, 1);
         int len = builder.length();
@@ -119,12 +121,12 @@ public class SpannedBuilderUtils {
 
     }
 
-    public static void makeUnsupported(String link,String text,RichTextDocumentElement builder){
+    public static void makeUnsupported(String link, String text, RichTextDocumentElement builder) {
         //clean the link:
-        if(link.indexOf("//") == 0){
+        if (link.indexOf("//") == 0) {
             link = "http:" + link;
         }
-        if(TextUtils.isEmpty(text) == true){
+        if (TextUtils.isEmpty(text) == true) {
             text = link;
         }
         int len = builder.length();
@@ -132,12 +134,12 @@ public class SpannedBuilderUtils {
         builder.setSpan(new UnsupportedContentSpan(link), len, len + text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
-    public static void makeLink(String link, String text, RichTextDocumentElement builder){
+    public static void makeLink(String link, String text, RichTextDocumentElement builder) {
         //clean the link:
-        if(link.indexOf("//") == 0){
+        if (link.indexOf("//") == 0) {
             link = "http:" + link;
         }
-        if(TextUtils.isEmpty(text) == true){
+        if (TextUtils.isEmpty(text) == true) {
             text = link;
         }
         int len = builder.length();
@@ -146,6 +148,7 @@ public class SpannedBuilderUtils {
     }
 
     public static void startSpan(RichTextDocumentElement text, Object mark) {
+
         int len = text.length();
         text.setSpan(mark, len, len, Spannable.SPAN_MARK_MARK);
     }
@@ -163,7 +166,7 @@ public class SpannedBuilderUtils {
         }
     }
 
-    public static void fixFlags(RichTextDocumentElement builder){
+    public static void fixFlags(RichTextDocumentElement builder) {
 
         // Fix flags and range for paragraph-type markup.
         ParagraphStyle[] obj = builder.getSpans(0, builder.length(), ParagraphStyle.class);
@@ -181,8 +184,15 @@ public class SpannedBuilderUtils {
 
             if (end == start) {
                 builder.removeSpan(obj[i]);
-            } else {
-                builder.setSpan(obj[i], start, end, Spannable.SPAN_PARAGRAPH);
+            }
+            else {
+
+                try {
+                    builder.setSpan(obj[i], start, end, Spannable.SPAN_PARAGRAPH);
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
 
