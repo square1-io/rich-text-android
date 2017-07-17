@@ -133,7 +133,7 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
     public void setText(RichTextDocumentElement builder){
 
         if(mText != builder) {
-
+            mLayout = null;
             mText = builder;
 
             mEmptyText = TextUtils.isEmpty(mText);

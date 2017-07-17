@@ -176,16 +176,24 @@ public class AudioPlayerHolder {
 
     protected void showAudioNotAvailable() {
 
-        mNotAvailable.setVisibility(View.VISIBLE);
-        mPlayerLayout.setVisibility(View.INVISIBLE);
+        if (mNotAvailable != null) {
+            mNotAvailable.setVisibility(View.VISIBLE);
+        }
+        if (mPlayerLayout != null) {
+            mPlayerLayout.setVisibility(View.INVISIBLE);
+        }
     }
 
     public void setAudioFile(String audioFileId) {
 
         if (TextUtils.equals(mCurrentFile, audioFileId) == false) {
 
-            mNotAvailable.setVisibility(View.INVISIBLE);
-            mPlayerLayout.setVisibility(View.VISIBLE);
+            if (mNotAvailable != null) {
+                mNotAvailable.setVisibility(View.INVISIBLE);
+            }
+            if (mPlayerLayout != null) {
+                mPlayerLayout.setVisibility(View.VISIBLE);
+            }
             mAudioPlayerProvider.registerHolder(audioFileId, this);
             mCurrentFile = audioFileId;
             mTimeLabel.setText(ZERO_TIME);

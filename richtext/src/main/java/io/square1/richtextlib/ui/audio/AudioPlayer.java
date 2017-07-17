@@ -344,7 +344,7 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider, Media
 
         Set<Map.Entry<AudioPlayerHolder, String>> entries = mAudioToPlayer.entrySet();
         for (Map.Entry<AudioPlayerHolder, String> entry : entries) {
-            if (TextUtils.equals(entry.getValue(), mCurrentFile)) {
+            if (TextUtils.equals(entry.getValue(), mPendingFile)) {
                 entry.getKey().showAudioNotAvailable();
             }
         }
