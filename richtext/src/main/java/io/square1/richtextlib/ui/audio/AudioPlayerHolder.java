@@ -19,21 +19,20 @@
 
 package io.square1.richtextlib.ui.audio;
 
-
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-
 
 import io.square1.richtextlib.R;
 
 /**
-* Created by roberto on 05/03/15.
-*/
+ * Created by roberto on 05/03/15.
+ */
 public class AudioPlayerHolder {
 
-    public static String formatTime(int time){
+    public static String formatTime(int time) {
 
         int minutes = time > 0 ? time / (60 * 1000) : 0;
         int seconds = time > 0 ? (time / 1000) % 60 : 0;
@@ -43,28 +42,35 @@ public class AudioPlayerHolder {
     public interface AudioPlayerProvider {
 
         void registerHolder(String audio, AudioPlayerHolder holder);
+
         void deregisterHolder(AudioPlayerHolder holder);
 
         void onPlay(String audio);
+
         void onStop(String audio);
+
         void onRew(String audio);
+
         void onFwd(String audio);
 
         int getDuration(String audio);
+
         int getProgress(String audio);
+
         boolean isPlaying(String audio);
 
         String getLabelForProgress(int progress, String audio);
 
         //follows Activity Lifecycle
-         void onCreate();
-         void onResume();
-         void onPause();
-         void onDestroy();
+        void onCreate();
 
+        void onResume();
+
+        void onPause();
+
+        void onDestroy();
 
     }
-
 
     private View mRewButton;
     private View mPauseButton;
@@ -73,78 +79,82 @@ public class AudioPlayerHolder {
     private TextView mTimeLabel;
     private TextView mTimeCurrentLabel;
     private SeekBar mProgress;
+    private TextView mNotAvailable;
+    private LinearLayout mPlayerLayout;
 
     private String mCurrentFile;
 
     private AudioPlayerProvider mAudioPlayerProvider;
 
     private View.OnClickListener mInternalClickListener = new View.OnClickListener() {
+
         @Override
         public void onClick(View view) {
 
-            if(R.id.play == view.getId()){
+            if (R.id.play == view.getId()) {
                 mAudioPlayerProvider.onPlay(mCurrentFile);
-                if(ZERO_TIME.equalsIgnoreCase(mTimeLabel.getText().toString())) {
+                if (ZERO_TIME.equalsIgnoreCase(mTimeLabel.getText().toString())) {
                     mTimeLabel.setText(R.string.loading);
                 }
             }
-            else if(R.id.pause == view.getId()){
+            else if (R.id.pause == view.getId()) {
                 mAudioPlayerProvider.onStop(mCurrentFile);
             }
-            else if(R.id.rew == view.getId()){
+            else if (R.id.rew == view.getId()) {
                 mAudioPlayerProvider.onRew(mCurrentFile);
             }
-            else if(R.id.ffwd == view.getId()){
+            else if (R.id.ffwd == view.getId()) {
                 mAudioPlayerProvider.onFwd(mCurrentFile);
             }
         }
     };
 
+    final String ZERO_TIME;
 
-    final String ZERO_TIME ;
-
-    private  View mView;
+    private View mView;
 
     public AudioPlayerHolder(View v, AudioPlayerProvider provider) {
+
         mView = v;
         mAudioPlayerProvider = provider;
 
         ZERO_TIME = v.getContext().getString(R.string.zero_time);
 
+        mProgress = (SeekBar) v.findViewById(R.id.mediacontroller_progress);
+        mTimeLabel = (TextView) v.findViewById(R.id.time);
+        mTimeCurrentLabel = (TextView) v.findViewById(R.id.time_current);
 
-        mProgress = (SeekBar)v.findViewById(R.id.mediacontroller_progress);
-        mTimeLabel = (TextView)v.findViewById(R.id.time);
-        mTimeCurrentLabel = (TextView)v.findViewById(R.id.time_current);
+        mPlayerLayout = (LinearLayout) v.findViewById(R.id.playerContent);
+        mNotAvailable = (TextView) v.findViewById(R.id.audioNotAvailable);
 
-        (mRewButton = v.findViewById(R.id.rew) ).setOnClickListener(mInternalClickListener);
+        (mRewButton = v.findViewById(R.id.rew)).setOnClickListener(mInternalClickListener);
         (mPauseButton = v.findViewById(R.id.pause)).setOnClickListener(mInternalClickListener);
         (mPlayButton = v.findViewById(R.id.play)).setOnClickListener(mInternalClickListener);
         (mFfwdButton = v.findViewById(R.id.ffwd)).setOnClickListener(mInternalClickListener);
     }
 
-    protected void synchronizeState(){
-
+    protected void synchronizeState() {
 
         int duration = mAudioPlayerProvider.getDuration(mCurrentFile);
         //is duration available ?
-        if(duration > 0) {
+        if (duration > 0) {
             mTimeLabel.setText(mAudioPlayerProvider.getLabelForProgress(duration, mCurrentFile));
             mProgress.setMax(duration);
         }
 
         int progress = mAudioPlayerProvider.getProgress(mCurrentFile);
         //is progress available ?
-        if(progress >= 0){
+        if (progress >= 0) {
             mTimeCurrentLabel.setText(mAudioPlayerProvider.getLabelForProgress(progress, mCurrentFile));
             mProgress.setProgress(progress);
         }
 
-
-        if(mAudioPlayerProvider.isPlaying(mCurrentFile) == false){
+        if (mAudioPlayerProvider.isPlaying(mCurrentFile) == false) {
             mPlayButton.setVisibility(View.VISIBLE);
             mPauseButton.setVisibility(View.GONE);
 
-        }else{
+        }
+        else {
             mPlayButton.setVisibility(View.GONE);
             mPauseButton.setVisibility(View.VISIBLE);
         }
@@ -162,25 +172,40 @@ public class AudioPlayerHolder {
 //            mPauseButton.setVisibility(View.GONE);
 //        }
 
-
     }
 
+    protected void showAudioNotAvailable() {
+
+        if (mNotAvailable != null) {
+            mNotAvailable.setVisibility(View.VISIBLE);
+        }
+        if (mPlayerLayout != null) {
+            mPlayerLayout.setVisibility(View.INVISIBLE);
+        }
+    }
 
     public void setAudioFile(String audioFileId) {
 
-       if(TextUtils.equals(mCurrentFile,audioFileId) == false){
-           mAudioPlayerProvider.registerHolder(audioFileId,this);
-           mCurrentFile = audioFileId;
-           mTimeLabel.setText(ZERO_TIME);
-           mTimeCurrentLabel.setText(ZERO_TIME);
-           mProgress.setProgress(0);
-           synchronizeState();
+        if (TextUtils.equals(mCurrentFile, audioFileId) == false) {
 
-       }
+            if (mNotAvailable != null) {
+                mNotAvailable.setVisibility(View.INVISIBLE);
+            }
+            if (mPlayerLayout != null) {
+                mPlayerLayout.setVisibility(View.VISIBLE);
+            }
+            mAudioPlayerProvider.registerHolder(audioFileId, this);
+            mCurrentFile = audioFileId;
+            mTimeLabel.setText(ZERO_TIME);
+            mTimeCurrentLabel.setText(ZERO_TIME);
+            mProgress.setProgress(0);
+            synchronizeState();
+        }
 
     }
 
-    public void destroy(){
+    public void destroy() {
+
         mView.setTag(null);
         mAudioPlayerProvider.onStop(mCurrentFile);
         mAudioPlayerProvider = null;
