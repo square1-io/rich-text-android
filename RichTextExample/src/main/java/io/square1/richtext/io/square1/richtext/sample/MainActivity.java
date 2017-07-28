@@ -20,6 +20,7 @@
 package io.square1.richtext.io.square1.richtext.sample;
 
 
+import android.graphics.Color;
 import android.net.Uri;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
@@ -28,6 +29,7 @@ import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 
 import io.square1.richtext.R;
+import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 
 
 public class MainActivity extends ActionBarActivity
@@ -55,6 +57,15 @@ public class MainActivity extends ActionBarActivity
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        RichTextDocumentElement.TextBuilder builder = new RichTextDocumentElement.TextBuilder("sample");
+
+        RichTextDocumentElement element = builder.background(Color.BLUE)
+                .foreground(Color.RED)
+                .strikethrough(true)
+                .strikethrough(false)
+                .build();
+        //set element to RichTextView
     }
 
     @Override
