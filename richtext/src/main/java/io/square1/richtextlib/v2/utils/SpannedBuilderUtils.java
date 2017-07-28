@@ -147,7 +147,7 @@ public class SpannedBuilderUtils {
         builder.setSpan(new URLSpan(link), len, len + text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
-    public static void startSpan(RichTextDocumentElement text, Object mark) {
+    public static void startSpan(Spannable text, Object mark) {
 
         int len = text.length();
         text.setSpan(mark, len, len, Spannable.SPAN_MARK_MARK);
@@ -166,7 +166,7 @@ public class SpannedBuilderUtils {
         }
     }
 
-    public static void fixFlags(RichTextDocumentElement builder) {
+    public static void fixFlags(Spannable builder) {
 
         // Fix flags and range for paragraph-type markup.
         ParagraphStyle[] obj = builder.getSpans(0, builder.length(), ParagraphStyle.class);
