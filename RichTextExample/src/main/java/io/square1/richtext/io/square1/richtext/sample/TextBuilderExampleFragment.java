@@ -64,7 +64,7 @@ public class TextBuilderExampleFragment extends Fragment {
                 .underline(true)
                 .sizeChange(1.5f)
                 .center()
-                .append("\n")
+                .newLine()
                 .paragraph(paragraph)
                 .left()
                 .append("It has survived not only five centuries,")

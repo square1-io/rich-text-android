@@ -107,6 +107,11 @@ public class RichTextDocumentElement extends DocumentElement implements CharSequ
             return this;
         }
 
+        public TextBuilder newLine(){
+           return append("\n");
+        }
+
+
         public TextBuilder paragraph(String text) {
             StringBuilder builder = new StringBuilder(text);
             SpannedBuilderUtils.ensureBeginsWithAtLeastThoseNewLines(builder, 1);
