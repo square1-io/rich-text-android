@@ -405,4 +405,9 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
         }
     }
 
+    @Override
+    public String getAction() {
+        return "";
+    }
+
 }

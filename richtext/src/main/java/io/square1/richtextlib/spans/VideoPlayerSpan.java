@@ -347,4 +347,9 @@ public class VideoPlayerSpan extends ReplacementSpan implements  ClickableSpan, 
 
     }
 
+    @Override
+    public String getAction() {
+        return mVideoPath;
+    }
+
 }

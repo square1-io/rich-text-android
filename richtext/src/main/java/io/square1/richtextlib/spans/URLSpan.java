@@ -115,4 +115,9 @@ public class URLSpan extends ClickableSpan implements io.square1.richtextlib.spa
     public void onViewDetachedFromWindow(View v) {
 
     }
+
+    @Override
+    public String getAction() {
+        return mURL;
+    }
 }

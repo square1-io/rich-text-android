@@ -49,6 +49,7 @@ import io.square1.richtextlib.spans.RichTextSpan;
 import io.square1.richtextlib.spans.StrikethroughSpan;
 import io.square1.richtextlib.spans.StyleSpan;
 import io.square1.richtextlib.spans.TypefaceSpan;
+import io.square1.richtextlib.spans.URLSpan;
 import io.square1.richtextlib.spans.UnderlineSpan;
 import io.square1.richtextlib.spans.UrlBitmapSpan;
 import io.square1.richtextlib.util.NumberUtils;
@@ -120,6 +121,11 @@ public class RichTextDocumentElement extends DocumentElement implements CharSequ
             return this;
         }
 
+        public TextBuilder click(String action) {
+            getCurrent().addSpan(new URLSpan(action));
+            return this;
+        }
+
         private StringSpans getCurrent(){
             return mSpans.get(mSpans.size() - 1);
         }
@@ -147,7 +153,7 @@ public class RichTextDocumentElement extends DocumentElement implements CharSequ
             return this;
         }
 
-        public TextBuilder foreground(@ColorInt int color){
+        public TextBuilder color(@ColorInt int color){
             getCurrent().addSpan(  new ForegroundColorSpan(color));
             return this;
         }
@@ -181,6 +187,18 @@ public class RichTextDocumentElement extends DocumentElement implements CharSequ
             getCurrent().addSpan(new RelativeSizeSpan(change));
             return this;
         }
+
+        public TextBuilder image(String imageUrl){
+            return image(imageUrl,NumberUtils.INVALID, NumberUtils.INVALID );
+        }
+
+        public TextBuilder image(String imageUrl, int w, int h){
+            append(SpannedBuilderUtils.NO_SPACE);
+            getCurrent().addSpan( new UrlBitmapSpan(Uri.parse(imageUrl),
+                    w, h, w));
+            return this;
+        }
+
 
         public RichTextDocumentElement build(RichTextDocumentElement textDocumentElement){
 

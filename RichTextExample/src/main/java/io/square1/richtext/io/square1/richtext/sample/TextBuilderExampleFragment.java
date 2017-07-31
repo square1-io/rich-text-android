@@ -21,15 +21,25 @@ package io.square1.richtext.io.square1.richtext.sample;
 
 
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import io.square1.richtext.R;
+import io.square1.richtextlib.spans.ClickableSpan;
+import io.square1.richtextlib.spans.RemoteBitmapSpan;
+import io.square1.richtextlib.spans.UrlBitmapDownloader;
 import io.square1.richtextlib.ui.RichContentView;
+import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 
 /**
@@ -56,26 +66,56 @@ public class TextBuilderExampleFragment extends Fragment {
 
         RichContentView contentView = (RichContentView)view.findViewById(R.id.richTextView);
 
+        contentView.setOnSpanClickedObserver(new RichContentViewDisplay.OnSpanClickedObserver() {
+            @Override
+            public boolean onSpanClicked(ClickableSpan span) {
+                String action = span.getAction();
+                action = TextUtils.isEmpty(action) ? " no action" : action;
+                Toast.makeText(getContext(), action, Toast.LENGTH_LONG).show();
+                return true;
+            }
+        });
+
+        contentView.setUrlBitmapDownloader(new UrlBitmapDownloader() {
+
+            @Override
+            public void downloadImage(RemoteBitmapSpan urlBitmapSpan, Uri image) {
+                    Glide.with(getActivity())
+                            .load(image)
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .skipMemoryCache(true)
+                            .into(new GlideTarget(getActivity(),urlBitmapSpan));
+                }
+
+        });
+
         String paragraph = getResources().getString(R.string.sample_text);
         RichTextDocumentElement element = new RichTextDocumentElement
                 .TextBuilder("What is Lorem Ipsum")
                 .bold()
-                .foreground(Color.BLUE)
+                .color(Color.BLUE)
                 .underline(true)
                 .sizeChange(1.5f)
                 .center()
                 .newLine()
+                .image("http://random-ize.com/lorem-ipsum-generators/lorem-ipsum/lorem-ipsum.jpg",50,50)
+                .click("You have clicked on the image at the top!")
                 .paragraph(paragraph)
                 .left()
+                .image("http://random-ize.com/lorem-ipsum-generators/lorem-ipsum/lorem-ipsum.jpg")
+                .click("You have clicked on the  image in the middle of the text")
                 .append("It has survived not only five centuries,")
-                .strikethrough(true)
-                .foreground(Color.GRAY)
-                .sizeChange(1.5f)
+                .color(Color.GRAY)
+                .sizeChange(2.5f)
+                .center()
                 .append("but also the leap into electronic typesetting,")
+                .strikethrough(true)
                 .append("remaining essentially unchanged.")
+                .click("Hello you have clicked on the text")
                 .bold()
                 .italic()
                 .build();
+
 
         contentView.setText(element);
 

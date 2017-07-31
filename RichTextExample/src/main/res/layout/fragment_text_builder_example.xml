@@ -23,12 +23,14 @@
     android:layout_height="match_parent"
     tools:context="io.square1.richtext.io.square1.richtext.sample.TextBuilderExampleFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <io.square1.richtextlib.ui.RichContentView
         android:padding="10dip"
         android:id="@+id/richTextView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:text="@string/hello_blank_fragment" />
-
+</ScrollView>
 </FrameLayout>
