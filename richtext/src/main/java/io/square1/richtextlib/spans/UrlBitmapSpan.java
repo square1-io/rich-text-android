@@ -46,7 +46,7 @@ import io.square1.richtextlib.util.UniqueId;
 /**
  * Created by roberto on 23/06/15.
  */
-public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, ClickableSpan, UpdateAppearance, RichTextSpan {
+public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan,  UpdateAppearance, RichTextSpan {
 
     public static final Creator<UrlBitmapSpan> CREATOR = DynamicParcelableCreator.getInstance(UrlBitmapSpan.class);
     public static final int TYPE = UniqueId.getType();
@@ -405,9 +405,5 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
         }
     }
 
-    @Override
-    public String getAction() {
-        return "";
-    }
 
 }
