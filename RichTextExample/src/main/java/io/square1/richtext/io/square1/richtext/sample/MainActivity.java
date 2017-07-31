@@ -58,14 +58,6 @@ public class MainActivity extends ActionBarActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
 
-        RichTextDocumentElement.TextBuilder builder = new RichTextDocumentElement.TextBuilder("sample");
-
-        RichTextDocumentElement element = builder.background(Color.BLUE)
-                .foreground(Color.RED)
-                .strikethrough(true)
-                .strikethrough(false)
-                .build();
-        //set element to RichTextView
     }
 
     @Override
@@ -86,6 +78,12 @@ public class MainActivity extends ActionBarActivity
                     .replace(R.id.container, VideoListFragment.newInstance(1))
                     .commit();
 
+        }else if("text_builder".equalsIgnoreCase(uri.getScheme())){
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, new TextBuilderExampleFragment())
+                    .commit();
         }
     }
 

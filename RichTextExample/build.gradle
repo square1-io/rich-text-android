@@ -26,12 +26,12 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':richtext')
-    compile 'org.ccil.cowan.tagsoup:tagsoup:1.2'
     //   compile 'com.android.support:support-v7:24'
     //    compile "com.android.support:support-core-utils:24.2.1"
     //    compile "com.android.support:support-core-ui:24.2.1"
     //    compile "com.android.support:support-compat:24.2.1"
     //    compile "com.android.support:appcompat-v7:24.2.1"
+    compile 'org.ccil.cowan.tagsoup:tagsoup:1.2'
     compile 'com.github.bumptech.glide:glide:3.6.0'
     compile 'com.android.support:support-v4:24.2.1'
     compile 'com.android.support:appcompat-v7:24.2.1'

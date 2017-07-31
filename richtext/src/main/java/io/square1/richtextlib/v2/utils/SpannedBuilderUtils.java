@@ -109,6 +109,60 @@ public class SpannedBuilderUtils {
         return newLines;
     }
 
+    public static int ensureBeginsWithAtLeastThoseNewLines(StringBuilder text, int newLines) {
+
+        int len = text.length();
+
+        int currentNewLines = 0;
+
+        for(int index = 0; index < len; index ++){
+
+            if (text.charAt(index) == '\n') {
+                currentNewLines++;
+            }else {
+                break;
+            }
+
+            if(currentNewLines == newLines){
+                break;
+            }
+
+        }
+
+        newLines = newLines - currentNewLines;
+
+        for (int index = 0; index < newLines; index++) {
+            text.insert(0, '\n');
+        }
+
+        return newLines;
+    }
+
+    public static int ensureAtLeastThoseNewLines(StringBuilder text, int newLines) {
+
+        int len = text.length();
+
+        int currentNewLines = 0;
+
+        while (len > 0) {
+            if (text.charAt(len - 1) == '\n') {
+                currentNewLines++;
+            }
+            else {
+                break;
+            }
+            len--;
+        }
+
+        newLines = newLines - currentNewLines;
+
+        for (int index = 0; index < newLines; index++) {
+            text.append('\n');
+        }
+
+        return newLines;
+    }
+
     public static void makeYoutube(String youtubeId, int maxImageWidth, RichTextDocumentElement builder) {
 
         ensureAtLeastThoseNewLines(builder, 1);

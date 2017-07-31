@@ -24,11 +24,14 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.support.annotation.ColorInt;
 import android.text.GetChars;
+import android.text.Layout;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.style.TtsSpan;
 
 
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,8 +40,11 @@ import java.util.HashMap;
 
 import io.square1.parcelable.DynamicParcelableCreator;
 import io.square1.richtextlib.spans.BackgroundColorSpan;
+import io.square1.richtextlib.spans.BoldSpan;
 import io.square1.richtextlib.spans.ForegroundColorSpan;
+import io.square1.richtextlib.spans.ItalicSpan;
 import io.square1.richtextlib.spans.RelativeSizeSpan;
+import io.square1.richtextlib.spans.RichAlignmentSpan;
 import io.square1.richtextlib.spans.RichTextSpan;
 import io.square1.richtextlib.spans.StrikethroughSpan;
 import io.square1.richtextlib.spans.StyleSpan;
@@ -54,36 +60,122 @@ import io.square1.richtextlib.v2.utils.SpannedBuilderUtils;
  */
 public class RichTextDocumentElement extends DocumentElement implements CharSequence, GetChars, Spannable, Appendable {
 
+    private static final class StringSpans {
+
+        private HashMap<Class,RichTextSpan> mSpans;
+        private String mString;
+
+        private StringSpans(String string){
+            mString = string;
+            mSpans = new HashMap<>();
+        }
+
+        public void addSpan(RichTextSpan span){
+            mSpans.put(span.getClass(), span);
+        }
+
+        public void removeSpan(Class span){
+            mSpans.remove(span);
+        }
+
+        private RichTextDocumentElement append(RichTextDocumentElement text){
+
+            int bounds[] = text.appendText(mString);
+
+            for(RichTextSpan span : mSpans.values()){
+
+                text.setSpan(span, bounds[0],
+                        bounds[1], Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+
+            return text;
+        }
+
+    }
 
     public static final class TextBuilder {
 
-        private HashMap<Class,RichTextSpan> mSpans;
-        private String mAppend;
+        private ArrayList<StringSpans> mSpans;
 
         public TextBuilder(String append){
-            mAppend = append;
-            mSpans = new HashMap<>();
+            mSpans = new ArrayList<>();
+            mSpans.add( new StringSpans(append));
+        }
+
+        public TextBuilder append(String text){
+            mSpans.add( new StringSpans(text));
+            return this;
+        }
+
+        public TextBuilder paragraph(String text) {
+            StringBuilder builder = new StringBuilder(text);
+            SpannedBuilderUtils.ensureBeginsWithAtLeastThoseNewLines(builder, 1);
+            SpannedBuilderUtils.ensureAtLeastThoseNewLines(builder, 1);
+            mSpans.add( new StringSpans(builder.toString()));
+            return this;
+        }
+
+        private StringSpans getCurrent(){
+            return mSpans.get(mSpans.size() - 1);
         }
 
         public TextBuilder strikethrough(boolean set){
             if(set == true) {
-                mSpans.put(StrikethroughSpan.class, new StrikethroughSpan());
+                getCurrent().addSpan( new StrikethroughSpan());
             }else {
-                mSpans.remove(StrikethroughSpan.class);
+                getCurrent().removeSpan(StrikethroughSpan.class);
+            }
+            return this;
+        }
+
+        public TextBuilder underline(boolean set){
+            if(set == true) {
+                getCurrent().addSpan( new UnderlineSpan());
+            }else {
+                getCurrent().removeSpan(UnderlineSpan.class);
             }
             return this;
         }
 
         public TextBuilder background(@ColorInt int color){
-                mSpans.put(BackgroundColorSpan.class, new BackgroundColorSpan(color));
+            getCurrent().addSpan( new BackgroundColorSpan(color));
             return this;
         }
 
         public TextBuilder foreground(@ColorInt int color){
-            mSpans.put(ForegroundColorSpan.class, new ForegroundColorSpan(color));
+            getCurrent().addSpan(  new ForegroundColorSpan(color));
             return this;
         }
 
+        public TextBuilder center(){
+            getCurrent().addSpan(  new RichAlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER));
+            return this;
+        }
+
+        public TextBuilder left(){
+            getCurrent().addSpan(  new RichAlignmentSpan.Standard(Layout.Alignment.ALIGN_NORMAL));
+            return this;
+        }
+
+        public TextBuilder right(){
+            getCurrent().addSpan(  new RichAlignmentSpan.Standard(Layout.Alignment.ALIGN_OPPOSITE));
+            return this;
+        }
+
+        public TextBuilder bold() {
+            getCurrent().addSpan( new BoldSpan());
+            return this;
+        }
+
+        public TextBuilder italic() {
+            getCurrent().addSpan( new ItalicSpan());
+            return this;
+        }
+
+        public TextBuilder sizeChange(float change){
+            getCurrent().addSpan(new RelativeSizeSpan(change));
+            return this;
+        }
 
         public RichTextDocumentElement build(RichTextDocumentElement textDocumentElement){
 
@@ -91,12 +183,8 @@ public class RichTextDocumentElement extends DocumentElement implements CharSequ
                 textDocumentElement = new RichTextDocumentElement();
             }
 
-            int bounds[] = textDocumentElement.appendText(mAppend);
-
-            for(RichTextSpan span : mSpans.values()){
-
-                textDocumentElement.setSpan(span, bounds[0],
-                        bounds[1], Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            for(StringSpans span : mSpans){
+                span.append(textDocumentElement);
             }
 
             return textDocumentElement;
@@ -105,6 +193,7 @@ public class RichTextDocumentElement extends DocumentElement implements CharSequ
         public RichTextDocumentElement build(){
             return build(null);
         }
+
 
     }
 
@@ -379,6 +468,20 @@ public class RichTextDocumentElement extends DocumentElement implements CharSequ
      }
 
     /**
+     *  apply a size change to the current string as a % of the current sie
+     * @param relativeSizeChange
+     * @param start
+     * @param length
+     * @return
+     */
+    public RichTextDocumentElement setFontSizeChange(float relativeSizeChange, int start, int length){
+        mSpannableString.setSpan(new RelativeSizeSpan(relativeSizeChange),
+                start, length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return this;
+    }
+
+    /**
      * Set the color of the background for the range specified between start and length
      * @param color
      * @param start the starting point in the current string
@@ -438,6 +541,15 @@ public class RichTextDocumentElement extends DocumentElement implements CharSequ
     public RichTextDocumentElement setStrikethrough(int start, int length){
 
         mSpannableString.setSpan(new StrikethroughSpan(),
+                start,
+                length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return this;
+    }
+
+
+    public RichTextDocumentElement setAlignment(int start, int length, Layout.Alignment alignment){
+
+        mSpannableString.setSpan(new RichAlignmentSpan.Standard(alignment),
                 start,
                 length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         return this;
@@ -504,7 +616,7 @@ public class RichTextDocumentElement extends DocumentElement implements CharSequ
         return setBackgroundColor(color, bounds[0], bounds[1]);
     }
 
-    public RichTextDocumentElement appendFontSizeChange(CharSequence text, @ColorInt int color){
+    public RichTextDocumentElement appendFontSizeChange(CharSequence text, int color){
         int[] bounds =  appendText(text);
         return setFontColor(color, bounds[0], bounds[1]);
     }
@@ -518,7 +630,7 @@ public class RichTextDocumentElement extends DocumentElement implements CharSequ
          int[] startEnd = new int[2];
          startEnd[0] = mSpannableString.length();
          mSpannableString.append(sequence);
-         startEnd[0] = mSpannableString.length() - 1;
+         startEnd[1] = mSpannableString.length();
          return startEnd;
      }
 
