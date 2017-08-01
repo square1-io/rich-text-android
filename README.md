@@ -3,12 +3,64 @@
 
 [ ![Download](https://api.bintray.com/packages/square1io/maven/richtext/images/download.svg) ](https://bintray.com/square1io/maven/richtext/_latestVersion)
 
-###Features
+### Features
 - Display rich text using a fluent interface.
 - Support Image loading from network.
 
+#### Setup a RichContentView
 
-####Sample Fluent Interface 
+Add a RichContentView to an xml layout, wrap around a ScrollView to enable content scrolling.
+
+```xml 
+ <ScrollView
+     android:layout_width="match_parent"
+     android:layout_height="match_parent">
+     <io.square1.richtextlib.ui.RichContentView
+         android:padding="10dip"
+         android:id="@+id/richTextView"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:text="@string/hello_blank_fragment" />
+ </ScrollView>
+ </FrameLayout>
+```
+#### Enable Image download 
+
+Supply an instance of a class that implements UrlImageDownloader instance and can download images
+from the network: 
+
+```java
+       contentView.setUrlBitmapDownloader(new UrlBitmapDownloader() {
+
+            @Override
+            public void downloadImage(RemoteBitmapSpan urlBitmapSpan, Uri image) {
+                    Glide.with(getActivity())
+                            .load(image)
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .skipMemoryCache(true)
+                            .into(new GlideTarget(getActivity(),urlBitmapSpan));
+                }
+
+        });
+```
+
+#### Enable click events  
+
+Supply an instance of a clicked observer to receive on click events on parts of the content: 
+
+```java
+        contentView.setOnSpanClickedObserver(new RichContentViewDisplay.OnSpanClickedObserver() {
+            @Override
+            public boolean onSpanClicked(ClickableSpan span) {
+                String action = span.getAction();
+                action = TextUtils.isEmpty(action) ? " no action" : action;
+                Toast.makeText(getContext(), action, Toast.LENGTH_LONG).show();
+                return true;
+            }
+        });
+```
+
+#### Sample Fluent Interface to create formatted text 
 ```java
  String paragraph = getResources().getString(R.string.sample_text);
  RichTextDocumentElement element = new RichTextDocumentElement
