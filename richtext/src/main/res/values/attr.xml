@@ -12,7 +12,7 @@
     <attr name="richQuoteTextColor" format="color" />
     <attr name="richHeaderTextColor" format="color" />
     <attr name="richLineSpacingMultiplier" format="float"/>
-    <attr name="richLineSpacingExtra" format="float"/>
+    <attr name="richLineSpacingExtra" format="dimension"/>
     <declare-styleable name="RichContentView">
         <attr name="android:text"/>
         <attr name="android:fontFamily"/>

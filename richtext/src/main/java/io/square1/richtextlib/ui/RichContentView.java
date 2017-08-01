@@ -669,5 +669,11 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
         return mAppearance;
     }
 
+    @Override
+    public void videoSizeUpdated() {
+        mLayout = null;
+        requestLayout();
+
+    }
 
 }

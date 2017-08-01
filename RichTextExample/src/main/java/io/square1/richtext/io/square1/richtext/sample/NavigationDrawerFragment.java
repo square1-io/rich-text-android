@@ -108,7 +108,14 @@ public class NavigationDrawerFragment extends Fragment {
         Uri openBuilder = new Uri.Builder()
                 .scheme("text_builder")
                 .appendPath("builder")
-                .appendEncodedPath("fragment").build();
+                .appendEncodedPath("Fluent - Sample").build();
+
+        mSampleFiles.add(openBuilder);
+
+         openBuilder = new Uri.Builder()
+                .scheme("html5")
+                .appendPath("html5")
+                .appendEncodedPath("Html5").build();
 
         mSampleFiles.add(openBuilder);
 

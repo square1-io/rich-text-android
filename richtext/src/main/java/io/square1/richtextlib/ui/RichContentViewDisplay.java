@@ -62,6 +62,8 @@ public interface RichContentViewDisplay extends Drawable.Callback {
      void performLayout();
     Context getContext();
 
+    void videoSizeUpdated();
+
     public int getPaddingLeft();
     public int getPaddingRight();
 
