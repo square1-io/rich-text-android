@@ -128,14 +128,7 @@ public class RichTextDocumentElement extends DocumentElement implements CharSequ
             return this;
         }
 
-        public TextBuilder click() {
-            StringSpans stringSpan = getCurrent();
-            if(TextUtils.isEmpty(stringSpan.mString)){
-                return click(stringSpan.mString);
-            }
 
-            return click(getCurrent().mString);
-        }
 
         private StringSpans getCurrent(){
             return mSpans.get(mSpans.size() - 1);
