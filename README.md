@@ -63,7 +63,7 @@ Supply an instance of a clicked observer to receive on click events on parts of 
 #### Sample Fluent Interface to create formatted text 
 ```java
  String paragraph = getResources().getString(R.string.sample_text);
- RichTextDocumentElement element = new RichTextDocumentElement
+       RichTextDocumentElement element = new RichTextDocumentElement
                 .TextBuilder("What is Lorem Ipsum")
                 .bold()
                 .color(Color.BLUE)
@@ -75,6 +75,7 @@ Supply an instance of a clicked observer to receive on click events on parts of 
                 .click("You have clicked on the image at the top!")
                 .newLine()
                 .append("Click the Image above")
+                .font("fonts/SourceCodePro-Bold.ttf")
                 .center()
                 .bold()
                 .sizeChange(1.5f)
@@ -85,6 +86,7 @@ Supply an instance of a clicked observer to receive on click events on parts of 
                 .image("http://random-ize.com/lorem-ipsum-generators/lorem-ipsum/lorem-ipsum.jpg")
                 .click("You have clicked on the  image in the middle of the text")
                 .append("Click the lorem ipsum image")
+                .font("fonts/GreatVibes-Regular.otf")
                 .center()
                 .bold()
                 .sizeChange(1.5f)
@@ -92,7 +94,7 @@ Supply an instance of a clicked observer to receive on click events on parts of 
                 .newLine()
                 .append("It has survived not only five centuries,")
                 .color(Color.GRAY)
-                .sizeChange(2.5f)
+                .sizeChange(2.0f)
                 .center()
                 .append("but also the leap into electronic typesetting,")
                 .strikethrough(true)
@@ -103,7 +105,7 @@ Supply an instance of a clicked observer to receive on click events on parts of 
                 .build();
 
 
-        contentView.setText(element);
+    contentView.setText(element);
 ```
 
 ![sample](resources/sample-text-rendered.gif?raw=true)
