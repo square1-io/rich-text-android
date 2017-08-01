@@ -92,6 +92,8 @@ public class RichTextDocumentElement extends DocumentElement implements CharSequ
             return text;
         }
 
+
+
     }
 
     public static final class TextBuilder {
@@ -124,6 +126,15 @@ public class RichTextDocumentElement extends DocumentElement implements CharSequ
         public TextBuilder click(String action) {
             getCurrent().addSpan(new URLSpan(action));
             return this;
+        }
+
+        public TextBuilder click() {
+            StringSpans stringSpan = getCurrent();
+            if(TextUtils.isEmpty(stringSpan.mString)){
+                return click(stringSpan.mString);
+            }
+
+            return click(getCurrent().mString);
         }
 
         private StringSpans getCurrent(){

@@ -69,7 +69,7 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
     int mMaxImageWidth;
     int mImageWidth;
     int mImageHeight;
-
+    boolean mForceSize;
     Uri mImage;
 
     Drawable mBitmap;
@@ -93,13 +93,15 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
                          int alignment) {
 
         super();
-
         mImage = image;
         mMaxImageWidth = maxImageWidth;
         mImageWidth = imageWidth;
         mImageHeight = imageHeight;
 
         mVerticalAlignment = alignment;
+
+        mForceSize = mImageWidth != NumberUtils.INVALID &&
+                mImageHeight != NumberUtils.INVALID;
 
         if (bitmap != null) {
             mBitmap = new BitmapDrawable(bitmap);
@@ -108,8 +110,8 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
 
     }
 
-    public Uri getUri() {
 
+    public Uri getUri() {
         return mImage;
     }
 
@@ -202,6 +204,10 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
 
     private Rect estimateSize() {
 
+        if(mForceSize == true){
+            return new Rect(0, 0, mImageWidth, mImageHeight);
+        }
+
         int maxAvailableWidth = containerViewHasMeasure();
 
         //taking a guess here
@@ -219,10 +225,15 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
             return new Rect(0, 0, maxAvailableWidth, (int) (imageHeight * rate));
         }
 
+
         return new Rect(0, 0, maxAvailableWidth, (int) (maxAvailableWidth * 0.3));
     }
 
     private Rect evaluateBitmapBounds(int bitmabW, int bitmapH) {
+
+        if(mForceSize == true){
+            return new Rect(0, 0, mImageWidth, mImageHeight);
+        }
 
         int maxAvailableWidth = containerViewHasMeasure();
 
