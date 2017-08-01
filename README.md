@@ -54,8 +54,5 @@
         contentView.setText(element);
 ```
 
+![sample](resources/sample-text-rendered.gif?raw=true)
 
-
-<p align="center">
- <img src="resources/sample-text-rendered.gif?raw=true" />
-</p>
