@@ -55,4 +55,7 @@
 ```
 
 
-![](resources/giphy.gif?raw=true)
+
+<p align="center">
+ <img src="resources/giphy.gif?raw=true" />
+</p>
