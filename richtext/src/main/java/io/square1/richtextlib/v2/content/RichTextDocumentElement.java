@@ -203,6 +203,11 @@ public class RichTextDocumentElement extends DocumentElement implements CharSequ
             return this;
         }
 
+        public TextBuilder font(String family) {
+            getCurrent().addSpan( new TypefaceSpan(family) );
+            return this;
+        }
+
 
         public RichTextDocumentElement build(RichTextDocumentElement textDocumentElement){
 

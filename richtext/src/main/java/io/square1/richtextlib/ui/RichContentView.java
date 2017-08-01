@@ -560,9 +560,11 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
         return true;
     }
 
-    private Typeface getTypeFace(String customTypeFace){
+    public Typeface getTypeFace(String customTypeFace){
 
-        if(TextUtils.isEmpty(customTypeFace)){
+        if(TextUtils.isEmpty(customTypeFace) ||
+                getContext() == null){
+
             return null;
         }
 
@@ -572,9 +574,10 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
             return tf;
 
         } catch (Exception e) {
-            return null;
+             e.printStackTrace();
         }
 
+        return null;
     }
 
     public Point getSpanOrigin(Object span) {

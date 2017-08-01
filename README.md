@@ -57,5 +57,5 @@
 
 
 <p align="center">
- <img src="resources/giphy.gif?raw=true" />
+ <img src="resources/sample-text-rendered.gif?raw=true" />
 </p>
