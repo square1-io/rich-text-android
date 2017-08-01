@@ -54,4 +54,5 @@
         contentView.setText(element);
 ```
 
-[]()
+
+![](resources/giphy.gif?raw=true)
