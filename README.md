@@ -3,12 +3,29 @@
 
 [ ![Download](https://api.bintray.com/packages/square1io/maven/richtext/images/download.svg) ](https://bintray.com/square1io/maven/richtext/_latestVersion)
 
-### Features
+Features
+--------
 - Display rich text using a fluent interface.
 - Support Image loading from network.
+- Parse HTML, including images and video tag into displayable content.
 
-#### Setup a RichContentView
+Download
+--------
 
+Or use Gradle:
+
+```gradle
+repositories {
+   jcenter()
+}
+
+dependencies {
+  compile 'io.square1:richtext:x.x.x'
+}
+```
+
+Setup a RichContentView
+--------
 Add a RichContentView to an xml layout, wrap around a ScrollView to enable content scrolling.
 
 ```xml 
@@ -22,10 +39,9 @@ Add a RichContentView to an xml layout, wrap around a ScrollView to enable conte
          android:layout_height="wrap_content"
          android:text="@string/hello_blank_fragment" />
  </ScrollView>
- </FrameLayout>
 ```
-#### Enable Image download 
-
+Enable Image download 
+--------
 Supply an instance of a class that implements UrlImageDownloader instance and can download images
 from the network: 
 
@@ -44,8 +60,8 @@ from the network:
         });
 ```
 
-#### Enable click events  
-
+Enable click events  
+--------
 Supply an instance of a clicked observer to receive on click events on parts of the content: 
 
 ```java
@@ -59,8 +75,15 @@ Supply an instance of a clicked observer to receive on click events on parts of 
             }
         });
 ```
-
-#### Sample Fluent Interface to create formatted text 
+Parse and display of HTML  
+--------
+```java
+ String html = "<p><i>This text is italic</i></p>";
+ RichTextDocumentElement element = RichTextV2.textFromHtml(context, html);
+ contentView.setText(element);
+```
+Sample Fluent Interface to create formatted text 
+--------
 ```java
  String paragraph = getResources().getString(R.string.sample_text);
        RichTextDocumentElement element = new RichTextDocumentElement
