@@ -19,8 +19,10 @@
 
 package io.square1.richtextlib.v2.parser.handlers;
 
+import android.content.Context;
 import android.net.Uri;
 import android.text.Spannable;
+import android.util.DisplayMetrics;
 
 import org.xml.sax.Attributes;
 
@@ -44,21 +46,31 @@ public class IMGHandler extends TagHandler {
         Attributes attributes = tag.attributes;
         String src = attributes.getValue("", "src");
 
+        // translate those values based on screen density
+        Context applicationContext = context.getRichText().getCurrentStyle().getApplicationContext();
+
+        DisplayMetrics displayMetrics = applicationContext.getResources().getDisplayMetrics();
+
+        int w = NumberUtils.parseAttributeDimension(attributes.getValue("width"),0);
+        int h = NumberUtils.parseAttributeDimension(attributes.getValue("height"),0);
+
+        if(w != NumberUtils.INVALID) {
+            w = (int)(w * displayMetrics.density);
+        }
+
+        if(h != NumberUtils.INVALID) {
+            h = (int)(h * displayMetrics.density);
+        }
+
         if(context.getStyle().extractImages() == true){
             SpannedBuilderUtils.trimTrailNewlines(out, 0);
-            int w =  NumberUtils.parseAttributeDimension(attributes.getValue("width"),0);
-            int h =  NumberUtils.parseAttributeDimension(attributes.getValue("height"),0);
             context.getRichText().splitDocument(ImageDocumentElement.newInstance(src,null,w,h));
             return;
         }
 
 
         SpannedBuilderUtils.ensureAtLeastThoseNewLines(out, 1);
-        int maxSize = context.getStyle().maxImageWidth();
-        UrlBitmapSpan imageDrawable = new UrlBitmapSpan(Uri.parse(src),
-                NumberUtils.parseAttributeDimension(attributes.getValue("width"), maxSize),
-                NumberUtils.parseAttributeDimension(attributes.getValue("height"),0),
-                context.getStyle().maxImageWidth() );
+        UrlBitmapSpan imageDrawable = new UrlBitmapSpan(Uri.parse(src), w, h, context.getStyle().maxImageWidth() );
 
         int len = out.length();
         out.append(SpannedBuilderUtils.NO_SPACE);

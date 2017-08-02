@@ -303,20 +303,12 @@ public class RichVideoView extends FrameLayout implements RichMediaPlayer.FirstF
         if(mRichVideoViewListener != null){
             mRichVideoViewListener.onVideoReady(this);
         }
-
     }
 
-    public int getVideoWidth(){
-        return mMediaPlayer == null ? NumberUtils.INVALID : mMediaPlayer.getVideoWidth();
-    }
-
-    public int getVideoHeight(){
-        return mMediaPlayer == null ? NumberUtils.INVALID : mMediaPlayer.getVideoHeight();
-    }
 
     public Size getVideoSize(){
         if(mMediaPlayer != null){
-           return mMediaPlayer.getVideoSize()
+           return mMediaPlayer.getVideoSize();
         }
         return null;
     }

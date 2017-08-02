@@ -98,4 +98,6 @@ public interface Style {
      * @return true if the parser should parse embeds or not
      */
     boolean extractEmbeds();
+
+
 }

@@ -98,7 +98,7 @@ public class TextBuilderExampleFragment extends Fragment {
                 .sizeChange(1.5f)
                 .center()
                 .newLine()
-                .image("https://netdna.webdesignerdepot.com/uploads/2013/07/icons-animation.gif",10,10)
+                .image("https://netdna.webdesignerdepot.com/uploads/2013/07/icons-animation.gif",150,150)
                 .click("You have clicked on the image at the top!")
                 .newLine()
                 .append("Click the Image above")

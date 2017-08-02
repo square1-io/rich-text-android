@@ -21,7 +21,6 @@ package io.square1.richtextlib.spans;
 
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -66,13 +65,12 @@ public class VideoPlayerSpan extends ReplacementSpan implements  ClickableSpan, 
 
 
      int mMaxImageWidth;
-     int mImageWidth;
-     int mImageHeight;
 
-     String mVideoPath;
-
-
+    String mVideoPath;
+    Size mVideoSize;
     RichVideoView mVideoPlayer;
+
+    boolean mSizeHasChanged;
 
     public static final double RATIO =  9.0 / 16.0;
 
@@ -86,11 +84,11 @@ public class VideoPlayerSpan extends ReplacementSpan implements  ClickableSpan, 
     }
     public VideoPlayerSpan(String image, int  imageWidth, int imageHeight, int maxImageWidth, int alignment){
         super();
-
+        mSizeHasChanged = true;
         mVideoPath = image;
         mMaxImageWidth = maxImageWidth;
-        mImageWidth = imageWidth;
-        mImageHeight = imageHeight;
+        mVideoSize = new Size(imageWidth, imageHeight);
+
     }
 
     @Override
@@ -102,8 +100,7 @@ public class VideoPlayerSpan extends ReplacementSpan implements  ClickableSpan, 
     public void readFromParcel(Parcel src) {
         mVideoPath = src.readString();
         mMaxImageWidth = src.readInt();
-        mImageWidth = src.readInt();
-        mImageHeight = src.readInt();
+        mVideoSize = src.readParcelable(Size.class.getClassLoader());
     }
 
     WeakReference<RichContentView> mRef;
@@ -143,8 +140,8 @@ public class VideoPlayerSpan extends ReplacementSpan implements  ClickableSpan, 
         DynamicParcelableCreator.writeType(dest, this);
         dest.writeString(mVideoPath);
         dest.writeInt(mMaxImageWidth);
-        dest.writeInt(mImageWidth);
-        dest.writeInt(mImageHeight);
+        dest.writeParcelable(mVideoSize, 0);
+
 
     }
 
@@ -209,9 +206,10 @@ public class VideoPlayerSpan extends ReplacementSpan implements  ClickableSpan, 
 
 
     @Override
-    public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
+    public void draw(Canvas canvas, CharSequence text, int start, int end, float x,
+                     int top, int y, int bottom, Paint paint) {
 
-        if(mVideoPlayer == null) return;
+        if(mVideoPlayer == null ) return;
 
         final Rect videoPlayerBounds = getVideoPlayerBounds();
         int transY = bottom - videoPlayerBounds.bottom;
@@ -221,30 +219,32 @@ public class VideoPlayerSpan extends ReplacementSpan implements  ClickableSpan, 
         x = x + (mRef.get().getMeasuredWidth() - videoPlayerBounds.width()) / 2;
         x = x - mRef.get().getPaddingLeft();
 
-
-        canvas.save();
-        canvas.translate(x, transY);
-        // border
-        paint.setStyle(Paint.Style.FILL_AND_STROKE);
-        paint.setColor(Color.GREEN);
-        canvas.drawRect(videoPlayerBounds, paint);
-        canvas.restore();
-
+//        debug code
+//        canvas.save();
+//        canvas.translate(x, transY);
+//        // border
+//        paint.setStyle(Paint.Style.FILL_AND_STROKE);
+//        paint.setColor(Color.GREEN);
+//        canvas.drawRect(videoPlayerBounds, paint);
+//        canvas.restore();
 
         ensureViewIsAddedToParent(mVideoPlayer, mRef.get());
 
-        RichContentView view = (RichContentView)mVideoPlayer.getParent();
+        if(mSizeHasChanged == true) {
+            RichContentView view = (RichContentView) mVideoPlayer.getParent();
 
-        FrameLayout.LayoutParams current = (FrameLayout.LayoutParams) mVideoPlayer.getLayoutParams();
-        FrameLayout.LayoutParams newParams = view.generateDefaultLayoutParams(new Point((int) x, transY),
-                videoPlayerBounds.width(),
-                videoPlayerBounds.height());
+            FrameLayout.LayoutParams current = (FrameLayout.LayoutParams) mVideoPlayer.getLayoutParams();
+            FrameLayout.LayoutParams newParams = view.generateDefaultLayoutParams(new Point((int) x, transY),
+                    videoPlayerBounds.width(),
+                    videoPlayerBounds.height());
 
-        if (view.areLayoutParamsDifferent(current, newParams) == true) {
-            mVideoPlayer.setLayoutParams(newParams);
+            if (view.areLayoutParamsDifferent(current, newParams) == true) {
+                mVideoPlayer.setLayoutParams(newParams);
                 view.performLayout();
-        }
+            }
 
+            mSizeHasChanged = false;
+        }
 
     }
 
@@ -262,18 +262,16 @@ public class VideoPlayerSpan extends ReplacementSpan implements  ClickableSpan, 
     @Override
     public void onVideoSizeAvailable(RichVideoView videoView) {
 
-        mImageWidth = mVideoPlayer.getVideoWidth();
-        mImageHeight = mVideoPlayer.getVideoHeight();
+        mVideoSize = videoView.getVideoSize();
+        mSizeHasChanged = true;
         final RichContentView view = mRef.get();
         Rect newRect = getVideoPlayerBounds();
 
         boolean needsLayout = (newRect.equals(mRect) == false);
 
-
         if(view != null){
-
             if(needsLayout == true){
-                view.videoSizeUpdated();
+                view.mediaSizeUpdated();
             }else {
                 view.invalidate();
             }

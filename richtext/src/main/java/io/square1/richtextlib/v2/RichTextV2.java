@@ -281,6 +281,7 @@ public class RichTextV2 {
                     new RichTextV2(context) :
                     new RichTextV2(markupContext);
 
+
             richText.mCurrentContext.setStyle(style);
 
             reader.setContentHandler(new InternalContentHandler(richText));

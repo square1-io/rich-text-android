@@ -382,8 +382,10 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
     public boolean areLayoutParamsDifferent(FrameLayout.LayoutParams params1, FrameLayout.LayoutParams params2){
 
         if(params1 == null && params2 != null) return true;
-
         if(params2 == null && params1 != null) return true;
+
+        if(params1.height != params2.height) return true;
+        if(params1.width != params2.width) return true;
 
         if (params1.leftMargin != params2.leftMargin) return true;
         if (params1.topMargin != params2.topMargin) return true;
@@ -646,14 +648,14 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
     @Override
     public void invalidateDrawable(Drawable who) {
         super.invalidateDrawable(who);
-        this.invalidate();
+        invalidate();
     }
 
 
     @Override
     public void scheduleDrawable(Drawable who, Runnable what, long when) {
         super.scheduleDrawable(who,what,when);
-        this.invalidate();
+        invalidate();
 
     }
 
@@ -661,7 +663,7 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
     @Override
     public void unscheduleDrawable(Drawable who, Runnable what) {
         super.unscheduleDrawable(who, what);
-        this.invalidate();
+        invalidate();
     }
 
     @Override
@@ -670,7 +672,7 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
     }
 
     @Override
-    public void videoSizeUpdated() {
+    public void mediaSizeUpdated() {
         mLayout = null;
         requestLayout();
 

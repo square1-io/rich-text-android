@@ -85,10 +85,7 @@ public class VideoTestFragment extends Fragment implements UrlBitmapDownloader {
              @Override
              public void onVideoSizeAvailable(RichVideoView videoView) {
 
-                 Log.d("VIDEO", "size " +
-                         videoView.getVideoWidth() +
-                         " - " +
-                         videoView.getVideoHeight());
+                 Log.d("VIDEO", "size " + videoView.getVideoSize() );
              }
          });
          mVideoView.setData("http://www.w3schools.com/html/mov_bbb.mp4");
