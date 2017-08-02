@@ -79,11 +79,7 @@ public class FONTHandler extends TagHandler {
                     }
                 }
             }
-
-            if (f.mFace != null) {
-                out.setSpan(new TypefaceSpan(f.mFace), where, len,
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
+            out.setFontFamily(f.mFace, where, len);
         }
 
 

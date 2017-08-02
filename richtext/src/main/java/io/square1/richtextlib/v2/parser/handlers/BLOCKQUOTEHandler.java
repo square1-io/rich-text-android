@@ -58,12 +58,8 @@ public class BLOCKQUOTEHandler extends TagHandler {
         out.removeSpan(obj);
 
             if (where != len) {
-
-                Style style = context.getStyle();
-
                 StyleSpan styleSpan = new StyleSpan(Typeface.ITALIC);
                 out.setSpan(styleSpan, where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
                 QuoteSpan quoteSpan = new QuoteSpan();
                 out.setSpan(quoteSpan, where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             }

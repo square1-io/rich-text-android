@@ -29,6 +29,7 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 
 import io.square1.richtextlib.util.NumberUtils;
+import io.square1.richtextlib.util.Size;
 
 /**
  * Created by roberto on 12/10/15.
@@ -155,6 +156,16 @@ public class RichMediaPlayer implements MediaPlayer.OnPreparedListener, android.
             this.height = NumberUtils.INVALID;
         }
 
+        public final Size getSize(){
+            Size size = null;
+            if(this.width != NumberUtils.INVALID &&
+                    this.height != NumberUtils.INVALID) {
+                    size = new Size(width, height);
+            }
+
+            return size;
+        }
+
         final Uri uri;
         int state;
         int playbackState;
@@ -170,6 +181,10 @@ public class RichMediaPlayer implements MediaPlayer.OnPreparedListener, android.
         mApplicationContext = context.getApplicationContext();
         initMediaPlayer();
         mCurrentMedia = new MediaState(Uri.EMPTY);
+    }
+
+    public final Size getVideoSize(){
+        return mCurrentMedia.getSize();
     }
 
     private void initMediaPlayer(){

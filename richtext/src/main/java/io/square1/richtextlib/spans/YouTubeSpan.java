@@ -111,8 +111,8 @@ public class YouTubeSpan extends UrlBitmapSpan {
     @Override
     public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
         super.draw(canvas,text,start,end,x,top,y,bottom,paint);
-        if(mBitmap == null) return;
-        final Rect bitmapBounds = mBitmap.getBounds();
+        if(getBitmap() == null) return;
+        final Rect bitmapBounds = getBitmap().getBounds();
         drawBitmap(canvas, mYoutubeIcon, bitmapBounds, start, end, x, top, y, bottom, paint);
     }
 
