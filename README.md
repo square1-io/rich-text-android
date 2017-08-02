@@ -92,6 +92,7 @@ Supply an instance of a clicked observer to receive on click events on parts of 
                 .sizeChange(1.5f)
                 .color(Color.RED)
                 .newLine()
+                .video("http://html5demos.com/assets/dizzy.mp4")
                 .append("It has survived not only five centuries,")
                 .color(Color.GRAY)
                 .sizeChange(2.0f)
