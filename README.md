@@ -12,7 +12,7 @@ Features
 Download
 --------
 
-Or use Gradle:
+Use Gradle:
 
 ```gradle
 repositories {
