@@ -91,7 +91,14 @@ public class MainActivity extends ActionBarActivity
         fragmentManager.beginTransaction()
                 .replace(R.id.container, new HtmlParserExampleFragment())
                 .commit();
-    }
+         }
+        else if("html5-split".equalsIgnoreCase(uri.getScheme())){
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, new HtmlParserSplitElementsExampleFragment())
+                    .commit();
+        }
     }
 
     public void onSectionAttached(Uri fileName) {

@@ -119,6 +119,13 @@ public class NavigationDrawerFragment extends Fragment {
 
         mSampleFiles.add(openBuilder);
 
+        openBuilder = new Uri.Builder()
+                .scheme("html5-split")
+                .appendPath("html5")
+                .appendEncodedPath("html5 - split").build();
+
+        mSampleFiles.add(openBuilder);
+
 //        Uri openVideo = new Uri.Builder()
 //                .scheme("fragment")
 //                .appendPath("video")

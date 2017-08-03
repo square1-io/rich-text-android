@@ -24,7 +24,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.renderscript.RSInvalidStateException;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,9 +36,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import io.square1.parcelable.ParcelableUtil;
 import io.square1.richtext.R;
 import io.square1.richtextlib.spans.RemoteBitmapSpan;
-import io.square1.richtextlib.spans.Style;
 import io.square1.richtextlib.spans.UrlBitmapDownloader;
-import io.square1.richtextlib.ui.RichContentView;
 import io.square1.richtextlib.v2.RichTextV2;
 import io.square1.richtextlib.v2.content.RichDocument;
 
@@ -89,7 +86,7 @@ public  class ContentFragment extends Fragment implements UrlBitmapDownloader {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_list_main, container, false);
         mListView = (ListView)rootView.findViewById(R.id.list);
         mListView.setAdapter(mContentAdapter);
         mListView.setScrollingCacheEnabled(false);
