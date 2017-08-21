@@ -15,7 +15,7 @@ ext {
     gitUrl = 'https://bitbucket.org/square1mobileteam/rich-content-android'
 
 
-    libraryVersion = '4.1.7'
+    libraryVersion = '5.0.0'
 
     developerId = 'square1io'
     developerName = 'Roberto Prato'
