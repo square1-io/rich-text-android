@@ -58,10 +58,9 @@ public class VIDEOHandler extends TagHandler {
         }
 
 
-        int maxSize = context.getStyle().maxImageWidth();
         VideoPlayerSpan videoPlayerSpan = new VideoPlayerSpan(src,
-                NumberUtils.parseAttributeDimension(attributes.getValue("width"), maxSize),
-                NumberUtils.parseAttributeDimension(attributes.getValue("height"),0),
+                NumberUtils.parseAttributeDimension(attributes.getValue("width"), NumberUtils.INVALID),
+                NumberUtils.parseAttributeDimension(attributes.getValue("height"),NumberUtils.INVALID),
                 context.getStyle().maxImageWidth() );
 
       //  URLSpan videoPlayerSpan = new URLSpan(src);

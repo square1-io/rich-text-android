@@ -44,7 +44,7 @@ public class IFRAMEHandler extends TagHandler  {
 
         SpannedBuilderUtils.trimTrailNewlines(out, 0);
 
-        if( EmbedUtils.parseLink(context, href, new EmbedUtils.ParseLinkCallback() {
+        if( context.getStyle().extractEmbeds() == true && EmbedUtils.parseLink(context, href, new EmbedUtils.ParseLinkCallback() {
 
             @Override
             public void onLinkParsed(Object callingObject, String result, EmbedUtils.TEmbedType type) {
@@ -64,18 +64,22 @@ public class IFRAMEHandler extends TagHandler  {
             }
 
         }) == false) {
-            //USE IFRAME CELL
-            WebAddress webAddress = WebAddress.parseWebAddress(href);
-            if(webAddress != null) {
-                //ensure we have a scheme here
-                if(TextUtils.isEmpty(webAddress.getScheme())){
-                    webAddress.setScheme("http");
+
+            if(context.getStyle().extractEmbeds() == true) {
+                //USE IFRAME CELL
+                WebAddress webAddress = WebAddress.parseWebAddress(href);
+                if (webAddress != null) {
+                    //ensure we have a scheme here
+                    if (TextUtils.isEmpty(webAddress.getScheme())) {
+                        webAddress.setScheme("http");
+                    }
+                    int w = NumberUtils.parseAttributeDimension(tag.attributes.getValue("width"), 16);
+                    int h = NumberUtils.parseAttributeDimension(tag.attributes.getValue("height"), 9);
+                    context.getRichText().onIframeFound(webAddress.toString(), w, h);
                 }
-                int w = NumberUtils.parseAttributeDimension(tag.attributes.getValue("width"), 16);
-                int h = NumberUtils.parseAttributeDimension(tag.attributes.getValue("height"), 9);
-                context.getRichText().onIframeFound(webAddress.toString(), w, h);
+            }else {
+                SpannedBuilderUtils.makeUnsupported(href, null, out);
             }
-            //SpannedBuilderUtils.makeUnsupported(href, null, out);
         }
 
 

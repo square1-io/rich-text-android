@@ -248,4 +248,8 @@ public class VideoPlayerSpanOLD extends ReplacementSpan implements ClickableSpan
 
     }
 
+    @Override
+    public String getAction() {
+        return mVideoUri;
+    }
 }

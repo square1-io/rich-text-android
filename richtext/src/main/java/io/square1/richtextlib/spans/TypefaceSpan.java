@@ -48,6 +48,7 @@ public class TypefaceSpan extends MetricAffectingSpan implements RichTextSpan {
     }
 
     private  String mFamily;
+    private  Typeface mTypeFace;
 
     /**
      * @param family The font family for this typeface.  Examples include
@@ -82,15 +83,15 @@ public class TypefaceSpan extends MetricAffectingSpan implements RichTextSpan {
 
     @Override
     public void updateDrawState(TextPaint ds) {
-        apply(ds, mFamily);
+        apply(ds,mTypeFace, mFamily);
     }
 
     @Override
     public void updateMeasureState(TextPaint paint) {
-        apply(paint, mFamily);
+        apply(paint,mTypeFace, mFamily);
     }
 
-    private static void apply(Paint paint, String family) {
+    private static void apply(Paint paint, Typeface typeFace,  String family) {
         int oldStyle;
 
         Typeface old = paint.getTypeface();
@@ -100,8 +101,10 @@ public class TypefaceSpan extends MetricAffectingSpan implements RichTextSpan {
             oldStyle = old.getStyle();
         }
 
-        Typeface tf = Typeface.create(family, oldStyle);
-        int fake = oldStyle & ~tf.getStyle();
+        if(typeFace == null) {
+            typeFace = Typeface.create(family, oldStyle);
+        }
+        int fake = oldStyle & ~typeFace.getStyle();
 
         if ((fake & Typeface.BOLD) != 0) {
             paint.setFakeBoldText(true);
@@ -111,7 +114,7 @@ public class TypefaceSpan extends MetricAffectingSpan implements RichTextSpan {
             paint.setTextSkewX(-0.25f);
         }
 
-        paint.setTypeface(tf);
+        paint.setTypeface(typeFace);
     }
 
     @Override
@@ -131,7 +134,7 @@ public class TypefaceSpan extends MetricAffectingSpan implements RichTextSpan {
 
     @Override
     public void onSpannedSetToView(RichContentView view){
-
+        mTypeFace = view.getTypeFace(mFamily);
     }
 
     @Override

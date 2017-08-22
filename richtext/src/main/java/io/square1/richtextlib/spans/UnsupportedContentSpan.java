@@ -112,4 +112,9 @@ public class UnsupportedContentSpan extends android.text.style.ClickableSpan imp
 
     }
 
+    @Override
+    public String getAction() {
+        return mURL;
+    }
+
 }

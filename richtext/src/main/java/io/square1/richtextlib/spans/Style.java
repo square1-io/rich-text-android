@@ -93,4 +93,11 @@ public interface Style {
      * @return true if the parser should extract videos. False is videos are treated inside the content
      */
     boolean extractVideos();
+
+    /**
+     * @return true if the parser should parse embeds or not
+     */
+    boolean extractEmbeds();
+
+
 }

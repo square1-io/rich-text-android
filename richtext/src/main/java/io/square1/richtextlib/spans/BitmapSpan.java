@@ -189,4 +189,9 @@ public class BitmapSpan extends ReplacementSpan implements RichTextSpan, Clickab
 
     }
 
+    @Override
+    public String getAction() {
+        return "";
+    }
+
 }
