@@ -115,6 +115,17 @@ public class MarkupContext {
         return this;
     }
 
+    public final MarkupContext onTagOpenAfterSplit(MarkupTag current, RichTextDocumentElement builder, boolean newOutput) {
+        builder = replaceBuilder(builder);
+        TagHandler handler = tagHandlerInstance(current);
+        if( (newOutput && handler.openWhenSplitting()) || !newOutput ) {
+            handler.onTagOpenAfterSplit(this, current, builder);
+            return handler.replaceContext(this);
+        }
+
+        return this;
+    }
+
     public final MarkupContext onTagClose(MarkupTag tag, RichTextDocumentElement builder, boolean newOutput) {
         builder = replaceBuilder(builder);
         TagHandler handler = tag.getTagHandler();

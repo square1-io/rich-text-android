@@ -320,7 +320,7 @@ public class RichTextV2 {
 
     public void endElement(String uri, String localName, String textContent) {
 
-        MarkupTag tag = mStack.pop();
+        MarkupTag tag = mStack.get(0);
 
         if(tag.getTagHandler().processContent() == true) {
             processAccumulatedTextContent(textContent);
@@ -331,6 +331,8 @@ public class RichTextV2 {
                 mCurrentContext =  mCurrentContext.onTagClose(tag, mOutput, false);
             }
         }
+
+        mStack.pop();
 
         //mCurrentContext = mMarkupContextStack.pop();
     }
@@ -430,7 +432,7 @@ public class RichTextV2 {
 
             //create new Output
             for(int index = 0; index < mStack.size(); index ++){
-                mCurrentContext.onTagOpen(mStack.get(index), newOut, true );
+                mCurrentContext.onTagOpenAfterSplit(mStack.get(index), newOut, true );
             }
 
             mOutput = newOut;

@@ -54,6 +54,13 @@ public abstract class TagHandler {
         return true;
     }
 
+    public  void onTagOpenAfterSplit(MarkupContext context, MarkupTag tag , RichTextDocumentElement out) {
+        onTagOpen(context, tag, out);
+    }
+
+    public  void onTagCloseAfterSplit(MarkupContext context, MarkupTag tag , RichTextDocumentElement out) {
+        onTagClose(context, tag, out);
+    }
 
     public abstract void onTagOpen(MarkupContext context, MarkupTag tag , RichTextDocumentElement out);
     public abstract void onTagClose(MarkupContext context, MarkupTag tag , RichTextDocumentElement out);
