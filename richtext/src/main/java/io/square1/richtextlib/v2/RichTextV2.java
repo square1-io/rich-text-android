@@ -137,6 +137,11 @@ public class RichTextV2 {
         public boolean extractVideos(){
             return true;
         }
+
+        @Override
+        public boolean extractEmbeds(){
+            return true;
+        }
     }
 
 
@@ -187,15 +192,30 @@ public class RichTextV2 {
     }
 
 
-    /**
-     * Returns displayable styled text from the provided HTML string.
-     * Any &lt;img&gt; tags in the HTML will use the specified ImageGetter
-     * to request a representation of the image (use null if you don't
-     * want this) and the specified TagHandler to handle unknown tags
-     * (specify null if you don't want this).
-     *
-     * <p>This uses TagSoup to handle real HTML, including all of the brokenness found in the wild.
-     */
+    public static RichTextDocumentElement textFromHtml(Context context, String source) {
+
+        RichDocument document = fromHtmlImpl(context, source, null, new DefaultStyle(context){
+
+            @Override
+            public boolean extractVideos(){
+                return false;
+            }
+
+            @Override
+            public boolean extractEmbeds(){
+                return false;
+            }
+        } );
+        ArrayList<DocumentElement> elements = document.getElements();
+
+        for(DocumentElement element : elements){
+            if(element instanceof RichTextDocumentElement){
+                return (RichTextDocumentElement)element;
+            }
+        }
+        return null;
+
+    }
 
 
     public static RichDocument fromHtml(Context context, String source) {
@@ -260,6 +280,7 @@ public class RichTextV2 {
             RichTextV2 richText = markupContext == null ?
                     new RichTextV2(context) :
                     new RichTextV2(markupContext);
+
 
             richText.mCurrentContext.setStyle(style);
 
@@ -335,7 +356,9 @@ public class RichTextV2 {
 
             CharSequence link = accumulatedText.subSequence(matchStart, matchEnd);
 
-            if( EmbedUtils.parseLink(accumulatedText, String.valueOf(link), new EmbedUtils.ParseLinkCallback() {
+            if( getCurrentStyle().extractEmbeds() == true &&
+                    EmbedUtils.parseLink(accumulatedText, String.valueOf(link), new EmbedUtils.ParseLinkCallback() {
+
                 @Override
                 public void onLinkParsed(Object callingObject, String result, EmbedUtils.TEmbedType type) {
                     if(type == EmbedUtils.TEmbedType.EYoutube){

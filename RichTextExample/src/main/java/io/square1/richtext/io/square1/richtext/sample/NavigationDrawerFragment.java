@@ -104,40 +104,61 @@ public class NavigationDrawerFragment extends Fragment {
 
         mSampleFiles = new ArrayList<>();
 
-        Uri openVideo = new Uri.Builder()
-                .scheme("fragment")
-                .appendPath("video")
-                .appendEncodedPath("fragment").build();
 
+        Uri openBuilder = new Uri.Builder()
+                .scheme("text_builder")
+                .appendPath("builder")
+                .appendEncodedPath("Fluent - Sample").build();
 
-        mSampleFiles.add(openVideo);
+        mSampleFiles.add(openBuilder);
 
-        // Read in the flag indicating whether or not the user has demonstrated awareness of the
-        // drawer. See PREF_USER_LEARNED_DRAWER for details.
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        mUserLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false);
+         openBuilder = new Uri.Builder()
+                .scheme("html5")
+                .appendPath("html5")
+                .appendEncodedPath("Html5").build();
 
-        if (savedInstanceState != null) {
-            mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
-            mFromSavedInstanceState = true;
-        }
+        mSampleFiles.add(openBuilder);
 
-        try {
+        openBuilder = new Uri.Builder()
+                .scheme("html5-split")
+                .appendPath("html5")
+                .appendEncodedPath("html5 - split").build();
 
-            String[] files = getActivity().getAssets().list(SAMPLES_FOLDER);
-            for(String file : files){
+        mSampleFiles.add(openBuilder);
 
-                Uri current = new Uri.Builder()
-                        .scheme("file")
-                        .appendPath(SAMPLES_FOLDER)
-                        .appendEncodedPath(file).build();
-
-                mSampleFiles.add(current);
-
-            }
-        }catch (Exception ex){
-            mSampleFiles = new ArrayList<>();
-        }
+//        Uri openVideo = new Uri.Builder()
+//                .scheme("fragment")
+//                .appendPath("video")
+//                .appendEncodedPath("fragment").build();
+//
+//        mSampleFiles.add(openVideo);
+//
+//        // Read in the flag indicating whether or not the user has demonstrated awareness of the
+//        // drawer. See PREF_USER_LEARNED_DRAWER for details.
+//        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+//        mUserLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false);
+//
+//        if (savedInstanceState != null) {
+//            mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
+//            mFromSavedInstanceState = true;
+//        }
+//
+//        try {
+//
+//            String[] files = getActivity().getAssets().list(SAMPLES_FOLDER);
+//            for(String file : files){
+//
+//                Uri current = new Uri.Builder()
+//                        .scheme("file")
+//                        .appendPath(SAMPLES_FOLDER)
+//                        .appendEncodedPath(file).build();
+//
+//                mSampleFiles.add(current);
+//
+//            }
+//        }catch (Exception ex){
+//            mSampleFiles = new ArrayList<>();
+//        }
 
         // Select either the default item (0) or the last selected item.
         selectItem(mCurrentSelectedPosition);

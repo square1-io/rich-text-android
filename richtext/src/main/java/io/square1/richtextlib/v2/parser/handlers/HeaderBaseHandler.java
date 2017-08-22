@@ -71,9 +71,9 @@ public abstract class HeaderBaseHandler extends TagHandler {
                     len,
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-//            int foreground = context.getStyle().headerColor();
+//            int color = context.getStyle().headerColor();
 //
-//            out.setSpan(new ForegroundColorSpan(foreground),
+//            out.setSpan(new ForegroundColorSpan(color),
 //                    where,
 //                    len,
 //                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
