@@ -56,6 +56,18 @@ public class HtmlTestParseFragment extends Fragment {
 
     private RichContentView mContentView;
 
+    private static final String ARG_FILE_NAME = "FILE_NAME";
+    private static final String ARG_SPLIT = "SPLIT";
+
+    public static HtmlTestParseFragment getInstance(String fileName, boolean split){
+        HtmlTestParseFragment fragment = new HtmlTestParseFragment();
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(ARG_SPLIT, split);
+        bundle.putString(ARG_FILE_NAME, fileName);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
+
     public HtmlTestParseFragment() {
         // Required empty public constructor
     }
@@ -100,23 +112,28 @@ public class HtmlTestParseFragment extends Fragment {
 
         });
 
+        final String fileName = getArguments().getString(ARG_FILE_NAME);
+
         Uri html5File = new Uri.Builder()
                 .scheme("file")
                 .appendPath(NavigationDrawerFragment.SAMPLES_FOLDER)
-                .appendEncodedPath("test.html")
+                .appendEncodedPath(fileName)
                 .build();
 
-        new HtmlTestParseFragment.ParseContentTask(getContext()).execute(html5File);
+        new HtmlTestParseFragment.ParseContentTask(getContext(),
+                getArguments().getBoolean(ARG_SPLIT, false))
+                .execute(html5File);
     }
 
     private class ParseContentTask extends AsyncTask<Uri, Integer, RichTextDocumentElement> {
 
         private Context mApplicationContext;
+        private boolean mSplit;
         private String mHtml;
 
-        public ParseContentTask(Context context) {
-
+        public ParseContentTask(Context context, boolean split) {
             super();
+            mSplit = split;
             mApplicationContext = context.getApplicationContext();
         }
 
@@ -129,14 +146,12 @@ public class HtmlTestParseFragment extends Fragment {
 
                 @Override
                 public boolean extractVideos() {
-
-                    return false;
+                    return mSplit;
                 }
 
                 @Override
                 public boolean extractEmbeds() {
-
-                    return true;
+                    return mSplit;
                 }
             });
 

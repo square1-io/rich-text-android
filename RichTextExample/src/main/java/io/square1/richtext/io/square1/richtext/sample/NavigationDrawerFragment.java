@@ -126,6 +126,12 @@ public class NavigationDrawerFragment extends Fragment {
 
         mSampleFiles.add(openBuilder);
 
+        openBuilder = new Uri.Builder()
+                .scheme("test-split")
+                .appendPath("test")
+                .appendEncodedPath("Test-split").build();
+
+        mSampleFiles.add(openBuilder);
 
         openBuilder = new Uri.Builder()
                 .scheme("test")

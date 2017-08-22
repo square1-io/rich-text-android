@@ -100,11 +100,19 @@ public class MainActivity extends ActionBarActivity
                     .replace(R.id.container, new HtmlParserSplitElementsExampleFragment())
                     .commit();
         }
+        else if ("test-split".equalsIgnoreCase(uri.getScheme())) {
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container,
+                            HtmlTestParseFragment.getInstance("test.html", true))
+                    .commit();
+        }
         else if ("test".equalsIgnoreCase(uri.getScheme())) {
 
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, new HtmlTestParseFragment())
+                    .replace(R.id.container,  HtmlTestParseFragment.getInstance("test.html", false))
                     .commit();
         }
     }
