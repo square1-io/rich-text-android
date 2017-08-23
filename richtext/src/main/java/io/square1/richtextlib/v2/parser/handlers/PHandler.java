@@ -33,23 +33,34 @@ import io.square1.richtextlib.v2.utils.SpannedBuilderUtils;
  */
 public class PHandler extends TagHandler {
 
-    @Override
-    public void onTagOpen(MarkupContext context, MarkupTag tag, RichTextDocumentElement out) {
-    //    spare the new lines if starting at top
 
-//        MarkupTag previous = context.getRichText().getPrevious();
-//
-//       // if(previous != null && previous.tag.equalsIgnoreCase(tag.tag)){
-//       //     SpannedBuilderUtils.ensureAtLeastThoseNewLines(out, 1);
-//       //     return;
-//       // }
 
+    public void onTagOpenAfterSplit(MarkupContext context, MarkupTag tag , RichTextDocumentElement out) {
+
+        //we don't want any extra lines here
         String current = out.contentString();
-
 
         Markers.P marker = new Markers.P();
         SpannedBuilderUtils.startSpan(out, marker);
+        SpannedBuilderUtils.trimTrailNewlines(out, 0);
+        marker.newLinesAtStart = out.contentString().length();
+//        if(TextUtils.getTrimmedLength(current) > 0 ) {
+//
+//        }else {
+//            marker.newLinesAtStart = 1;
+//            ///just start with a new line should be fine
+//            out.append('\n');
+//        }
 
+    }
+
+    @Override
+    public void onTagOpen(MarkupContext context, MarkupTag tag, RichTextDocumentElement out) {
+
+        String current = out.contentString();
+
+        Markers.P marker = new Markers.P();
+        SpannedBuilderUtils.startSpan(out, marker);
 
         if(TextUtils.getTrimmedLength(current) > 0 ) {
           marker.newLinesAtStart = SpannedBuilderUtils.ensureAtLeastThoseNewLines(out, 2);
@@ -80,7 +91,7 @@ public class PHandler extends TagHandler {
 
     //don't add extra new lines when an OEMbed was found and the page continues
     public boolean openWhenSplitting(){
-        return false;
+        return true;
     }
 
     public boolean closeWhenSplitting(){

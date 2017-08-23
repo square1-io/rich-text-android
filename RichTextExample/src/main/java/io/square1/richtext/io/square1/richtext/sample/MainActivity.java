@@ -19,7 +19,6 @@
 
 package io.square1.richtext.io.square1.richtext.sample;
 
-
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.v4.widget.DrawerLayout;
@@ -31,9 +30,8 @@ import android.os.Bundle;
 import io.square1.richtext.R;
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 
-
 public class MainActivity extends ActionBarActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks ,VideoListFragment.OnListFragmentInteractionListener {
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks, VideoListFragment.OnListFragmentInteractionListener {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -47,6 +45,7 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -64,54 +63,72 @@ public class MainActivity extends ActionBarActivity
     public void onNavigationDrawerItemSelected(Uri uri) {
 
         // update the main content by replacing fragments
-        if("file".equalsIgnoreCase(uri.getScheme())) {
+        if ("file".equalsIgnoreCase(uri.getScheme())) {
 
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
                     .replace(R.id.container, ContentFragment.newInstance(uri))
                     .commit();
 
-        }else if("fragment".equalsIgnoreCase(uri.getScheme())){
+        }
+        else if ("fragment".equalsIgnoreCase(uri.getScheme())) {
 
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
                     .replace(R.id.container, VideoListFragment.newInstance(1))
                     .commit();
 
-        }else if("text_builder".equalsIgnoreCase(uri.getScheme())){
+        }
+        else if ("text_builder".equalsIgnoreCase(uri.getScheme())) {
 
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
                     .replace(R.id.container, new TextBuilderExampleFragment())
                     .commit();
         }
-         else if("html5".equalsIgnoreCase(uri.getScheme())){
+        else if ("html5".equalsIgnoreCase(uri.getScheme())) {
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, new HtmlParserExampleFragment())
-                .commit();
-         }
-        else if("html5-split".equalsIgnoreCase(uri.getScheme())){
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, new HtmlParserExampleFragment())
+                    .commit();
+        }
+        else if ("html5-split".equalsIgnoreCase(uri.getScheme())) {
 
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
                     .replace(R.id.container, new HtmlParserSplitElementsExampleFragment())
                     .commit();
         }
+        else if ("test-split".equalsIgnoreCase(uri.getScheme())) {
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container,
+                            HtmlTestParseFragment.getInstance("test.html", true))
+                    .commit();
+        }
+        else if ("test".equalsIgnoreCase(uri.getScheme())) {
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container,  HtmlTestParseFragment.getInstance("test.html", false))
+                    .commit();
+        }
     }
 
     public void onSectionAttached(Uri fileName) {
+
         mTitle = fileName.getLastPathSegment();
     }
 
     public void restoreActionBar() {
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setTitle(mTitle);
     }
-
 
     @Override
     public void onListFragmentInteraction(String item) {
