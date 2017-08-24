@@ -320,7 +320,7 @@ public class RichTextV2 {
 
     public void endElement(String uri, String localName, String textContent) {
 
-        MarkupTag tag = mStack.get(0);
+        MarkupTag tag = mStack.peek();
 
         if(tag.getTagHandler().processContent() == true) {
             processAccumulatedTextContent(textContent);
