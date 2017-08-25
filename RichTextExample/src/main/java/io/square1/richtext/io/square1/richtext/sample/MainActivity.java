@@ -115,6 +115,13 @@ public class MainActivity extends ActionBarActivity
                     .replace(R.id.container,  HtmlTestParseFragment.getInstance("test.html", false))
                     .commit();
         }
+        else if ("youtube_test".equalsIgnoreCase(uri.getScheme())) {
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container,  HtmlTestParseFragment.getInstance("youtube_test.html", false))
+                    .commit();
+        }
     }
 
     public void onSectionAttached(Uri fileName) {

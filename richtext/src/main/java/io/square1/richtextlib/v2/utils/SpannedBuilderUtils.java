@@ -175,6 +175,18 @@ public class SpannedBuilderUtils {
 
     }
 
+    public static void makeYoutube(String youtubeId,int width, int height, int maxImageWidth, RichTextDocumentElement builder) {
+
+        ensureAtLeastThoseNewLines(builder, 1);
+        int len = builder.length();
+        builder.append(NO_SPACE);
+        builder.setSpan(new YouTubeSpan(youtubeId, width,  height, maxImageWidth),
+                len,
+                builder.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+    }
+
     public static void makeUnsupported(String link, String text, RichTextDocumentElement builder) {
         //clean the link:
         if (link.indexOf("//") == 0) {
