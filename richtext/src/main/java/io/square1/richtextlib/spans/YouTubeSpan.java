@@ -25,6 +25,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Parcel;
 
@@ -35,30 +36,44 @@ import io.square1.richtextlib.EmbedUtils;
 import io.square1.richtextlib.R;
 import io.square1.richtextlib.ui.RichContentView;
 import io.square1.richtextlib.ui.RichContentViewDisplay;
+import io.square1.richtextlib.util.NumberUtils;
 import io.square1.richtextlib.util.UniqueId;
 
 /**
  * Created by roberto on 23/06/15.
  */
-public class YouTubeSpan extends UrlBitmapSpan {
+public class YouTubeSpan extends UrlBitmapSpan implements ClickableSpan {
+
+    public static final int DEFAULT_WIDTH = 480;
+    public static final int DEFAULT_HEIGHT = 360;
+
 
     public static final Creator<YouTubeSpan> CREATOR  = DynamicParcelableCreator.getInstance(YouTubeSpan.class);
     public static final int TYPE = UniqueId.getType();
 
-    private Bitmap mYoutubeIcon;
+    private Drawable mYoutubeIcon;
     private String mYoutubeId;
 
     public String getYoutubeId(){
         return mYoutubeId;
     }
 
-    public YouTubeSpan(){}
+    public YouTubeSpan(){
+        super();
+    }
 
     public YouTubeSpan(String youtubeId, int maxWidth){
-        super(Uri.parse(EmbedUtils.getYoutubeThumbnailUrl(youtubeId)),480,360,maxWidth);
+        this(youtubeId,DEFAULT_WIDTH,DEFAULT_HEIGHT,maxWidth);
         mYoutubeId = youtubeId;
     }
 
+    public YouTubeSpan(String youtubeId, int width, int height, int maxWidth){
+        super(Uri.parse(EmbedUtils.getYoutubeThumbnailUrl(youtubeId)),
+                NumberUtils.INVALID,
+                NumberUtils.INVALID,maxWidth);
+
+        mYoutubeId = youtubeId;
+    }
 
 
     @Override
@@ -73,16 +88,17 @@ public class YouTubeSpan extends UrlBitmapSpan {
 
     }
 
-    WeakReference<RichContentViewDisplay> mRef;
+
 
     @Override
     public void onSpannedSetToView(RichContentView view) {
+        super.onSpannedSetToView(view);
 
         if(mYoutubeIcon == null){
-            mYoutubeIcon = BitmapFactory.decodeResource(view.getContext().getResources(),
-                    R.drawable.youtube_play);; //view.getContext().getResources().getDrawable(R.drawable.youtube_play);
+            mYoutubeIcon = view.getContext().getResources().getDrawable(R.drawable.youtube_play);
+            mYoutubeIcon.setBounds(0,0,mYoutubeIcon.getIntrinsicWidth(), mYoutubeIcon.getIntrinsicHeight());
         }
-        super.onSpannedSetToView(view);
+
     }
 
 
@@ -112,40 +128,35 @@ public class YouTubeSpan extends UrlBitmapSpan {
     public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
         super.draw(canvas,text,start,end,x,top,y,bottom,paint);
         if(getBitmap() == null) return;
-        final Rect bitmapBounds = getBitmap().getBounds();
-        drawBitmap(canvas, mYoutubeIcon, bitmapBounds, start, end, x, top, y, bottom, paint);
-    }
 
+        final Rect bitmapBounds = mYoutubeIcon.getBounds();
 
+        Rect currentImage = getImageBounds();
 
-
-    private static void drawBitmap(Canvas canvas,
-                                   Bitmap bitmap,
-                                   Rect bounds,
-                                   int start,
-                                   int end,
-                                   float x,
-                                   int top,
-                                   int y,
-                                   int bottom,
-                                   Paint paint){
-
-
-        int transY = bottom - bounds.bottom;
-        transY -= paint.getFontMetricsInt().descent;
+        int transY = bottom - (bitmapBounds.bottom / 2) - (currentImage.height() / 2) ;
 
         canvas.save();
-        canvas.translate(x, transY);
-        bitmap.getWidth();
+        //center
+        int containerViewMeasure = mRef.get().getMeasuredWidth();
 
-        int offsetX = (bounds.width() - bitmap.getWidth()) / 2 ;
-        int offsetY = (bounds.height() - bitmap.getHeight()) / 2 ;
-        canvas.drawBitmap(bitmap,offsetX,offsetY, paint);
+        x = x + (containerViewMeasure - bitmapBounds.width()) / 2;
+        x = x - mRef.get().getPaddingLeft();
+        canvas.translate(x, transY);
+
+        if (mYoutubeIcon != null) {
+            mYoutubeIcon.setBounds(bitmapBounds);
+            mYoutubeIcon.draw(canvas);
+        }
+
         canvas.restore();
+
+        //final Rect bitmapBounds = getBitmap().getBounds();
+        //drawBitmap(canvas, mYoutubeIcon, bitmapBounds, start, end, x, top, y, bottom, paint);
     }
 
 
-
-
-
+    @Override
+    public String getAction() {
+        return "http://www.youtube.com/watch?v=" + getYoutubeId();
+    }
 }

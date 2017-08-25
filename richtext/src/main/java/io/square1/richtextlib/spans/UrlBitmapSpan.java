@@ -156,13 +156,11 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
 
     @Override
     public void onAttachedToWindow(RichContentViewDisplay view) {
-
         onViewAttachedToWindow(getCurrentRichContentView());
     }
 
     @Override
     public void onDetachedFromWindow(RichContentViewDisplay view) {
-
         onViewDetachedFromWindow(getCurrentRichContentView());
     }
 
@@ -197,7 +195,7 @@ public class UrlBitmapSpan extends ReplacementSpan implements RemoteBitmapSpan, 
         return NumberUtils.INVALID;
     }
 
-    private Rect getImageBounds(){
+    protected Rect getImageBounds(){
 
         final int maxAvailableWidth = containerViewHasMeasure();
 

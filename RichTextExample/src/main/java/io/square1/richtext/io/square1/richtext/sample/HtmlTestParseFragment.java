@@ -40,6 +40,7 @@ import io.square1.richtext.R;
 import io.square1.richtextlib.spans.ClickableSpan;
 import io.square1.richtextlib.spans.RemoteBitmapSpan;
 import io.square1.richtextlib.spans.UrlBitmapDownloader;
+import io.square1.richtextlib.spans.YouTubeSpan;
 import io.square1.richtextlib.ui.RichContentView;
 import io.square1.richtextlib.ui.RichContentViewDisplay;
 import io.square1.richtextlib.v2.RichTextV2;
@@ -94,7 +95,7 @@ public class HtmlTestParseFragment extends Fragment {
                 String action = span.getAction();
                 action = TextUtils.isEmpty(action) ? " no action" : action;
                 Toast.makeText(getContext(), action, Toast.LENGTH_LONG).show();
-                return true;
+                return !(span instanceof YouTubeSpan);
             }
         });
 

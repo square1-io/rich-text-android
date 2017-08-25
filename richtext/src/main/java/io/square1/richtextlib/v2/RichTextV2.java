@@ -26,6 +26,7 @@ import android.content.res.Resources;
 import android.graphics.Color;
 
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Patterns;
 
@@ -157,6 +158,7 @@ public class RichTextV2 {
     private Stack<MarkupContext> mMarkupContextStack = new Stack<>();
     private RichTextDocumentElement mOutput;
     private MarkupContext mCurrentContext;
+
 
     private int mOembedCount;
 
@@ -357,36 +359,48 @@ public class RichTextV2 {
             mOutput.append(buffer);
 
             CharSequence link = accumulatedText.subSequence(matchStart, matchEnd);
+            boolean linkingToEmbed = getCurrentStyle().extractEmbeds();
+            if( linkingToEmbed == true){
+                // in case we find  embeds we add them as individual elements to the RichDocument
+                // is the current link an embed ?
+                linkingToEmbed = EmbedUtils.parseLink(accumulatedText, String.valueOf(link), new EmbedUtils.ParseLinkCallback() {
 
-            if( getCurrentStyle().extractEmbeds() == true &&
-                    EmbedUtils.parseLink(accumulatedText, String.valueOf(link), new EmbedUtils.ParseLinkCallback() {
+                    @Override
+                    public void onLinkParsed(Object callingObject, String result, EmbedUtils.TEmbedType type) {
+                        if(type == EmbedUtils.TEmbedType.EYoutube){
+                            //we just take care of youtbe videos inline
+                            SpannedBuilderUtils.makeYoutube(result, getCurrentStyle().maxImageWidth(), mOutput);
+                        }else{
+                            onEmbedFound(type, result);
+                        }
+                    }
+                });
+            }
+            // the link wasn't a recognised embed or extractEmbeds = false
+            if(linkingToEmbed == false) {
 
-                @Override
-                public void onLinkParsed(Object callingObject, String result, EmbedUtils.TEmbedType type) {
-                    if(type == EmbedUtils.TEmbedType.EYoutube){
-                        SpannedBuilderUtils.makeYoutube(result, getCurrentStyle().maxImageWidth(), mOutput);
-                    }else{
-                        onEmbedFound(type, result);
+                //double check if it is a youtube video ?
+                final String youtubeId = EmbedUtils.getYoutubeVideoId(String.valueOf(link));
+                if(TextUtils.isEmpty(youtubeId) == false) {
+                    SpannedBuilderUtils.makeYoutube(youtubeId, getCurrentStyle().maxImageWidth(), mOutput);
+                }else {
+
+                    //is there any white space here ??
+                    Pattern pattern = Pattern.compile("\\s");
+                    Matcher matcher = pattern.matcher(link);
+                    boolean found = matcher.find();
+
+                    // is not empty and the string doesn't contain empty spaces !
+                    if (TextUtils.isEmpty(link) == false && found == false) {
+                        SpannedBuilderUtils.makeLink(link.toString(), null, mOutput);
+                    } else if (TextUtils.isEmpty(link) == false) {
+                        mOutput.append(link);
                     }
                 }
-            }) == false){
-
-                //is there any white space here ??
-                Pattern pattern = Pattern.compile("\\s");
-                Matcher matcher = pattern.matcher(link);
-                boolean found = matcher.find();
-
-                // is not empty and the string doesn't contain empty spaces !
-                if(TextUtils.isEmpty(link) == false && found == false) {
-                    SpannedBuilderUtils.makeLink(link.toString(), null, mOutput);
-                }else if(TextUtils.isEmpty(link) == false) {
-                    mOutput.append(link);
-                }
-
             }
 
-
         }
+
         StringBuffer buffer = new StringBuffer();
         m.appendTail(buffer);
         mOutput.append(buffer);

@@ -20,9 +20,11 @@
 package io.square1.richtextlib.v2.parser.handlers;
 
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.webkit.URLUtil;
 
 import io.square1.richtextlib.EmbedUtils;
+import io.square1.richtextlib.spans.YouTubeSpan;
 import io.square1.richtextlib.util.NumberUtils;
 import io.square1.richtextlib.util.WebAddress;
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
@@ -40,33 +42,31 @@ public class IFRAMEHandler extends TagHandler  {
     @Override
     public void onTagOpen(MarkupContext context, MarkupTag tag, final RichTextDocumentElement out) {
 
-        String href = tag.attributes.getValue("", "src");
+        final String href = tag.attributes.getValue("", "src");
 
         SpannedBuilderUtils.trimTrailNewlines(out, 0);
+        boolean embedFound = false;
+        if(context.getStyle().extractEmbeds()  == true){
 
-        if( context.getStyle().extractEmbeds() == true && EmbedUtils.parseLink(context, href, new EmbedUtils.ParseLinkCallback() {
+            embedFound = EmbedUtils.parseLink(context, href, new EmbedUtils.ParseLinkCallback() {
 
-            @Override
-            public void onLinkParsed(Object callingObject, String result, EmbedUtils.TEmbedType type) {
-                MarkupContext context = (MarkupContext)callingObject;
-                if(type == EmbedUtils.TEmbedType.EYoutube){
-                    SpannedBuilderUtils.makeYoutube(result,context.getStyle().maxImageWidth(), out);
-                    return;
+                @Override
+                public void onLinkParsed(Object callingObject, String result, EmbedUtils.TEmbedType type) {
+                    MarkupContext context = (MarkupContext) callingObject;
+                    if (type == EmbedUtils.TEmbedType.EYoutube) {
+                        SpannedBuilderUtils.makeYoutube(result, context.getStyle().maxImageWidth(), out);
+                        return;
+                    }
+                    //remove new lines here as we are splitting content
+                    context.getRichText().onEmbedFound(type, result);
                 }
-                //remove new lines here as we are splitting content
-                context.getRichText().onEmbedFound(type,result);
-                //we have to remove embeds from quotes tags
-               // context.buildNewSpannable();
-               // HashMap<String,Object> attrs = new HashMap<>();
-               // attrs.put(RichText.EMBED_TYPE,type);
-               // mCallback.onElementFound(RichText.TNodeType.EEmbed, result, attrs);
+            });
+        }
 
-            }
-
-        }) == false) {
+        if(embedFound == false){
 
             if(context.getStyle().extractEmbeds() == true) {
-                //USE IFRAME CELL
+                // we use the webview cell
                 WebAddress webAddress = WebAddress.parseWebAddress(href);
                 if (webAddress != null) {
                     //ensure we have a scheme here
@@ -78,10 +78,16 @@ public class IFRAMEHandler extends TagHandler  {
                     context.getRichText().onIframeFound(webAddress.toString(), w, h);
                 }
             }else {
-                SpannedBuilderUtils.makeUnsupported(href, null, out);
+                String youtubeId = EmbedUtils.getYoutubeVideoId(href);
+                if(TextUtils.isEmpty(youtubeId) == true) {
+                    SpannedBuilderUtils.makeUnsupported(href, null, out);
+                }else {
+                    int w = NumberUtils.parseAttributeDimension(tag.attributes.getValue("width"), YouTubeSpan.DEFAULT_WIDTH);
+                    int h = NumberUtils.parseAttributeDimension(tag.attributes.getValue("height"), YouTubeSpan.DEFAULT_HEIGHT);
+                    SpannedBuilderUtils.makeYoutube(youtubeId, w, h, context.getStyle().maxImageWidth(), out);
+                }
             }
         }
-
 
     }
 

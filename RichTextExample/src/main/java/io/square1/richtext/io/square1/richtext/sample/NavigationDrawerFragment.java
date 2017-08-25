@@ -140,6 +140,14 @@ public class NavigationDrawerFragment extends Fragment {
 
         mSampleFiles.add(openBuilder);
 
+
+        openBuilder = new Uri.Builder()
+                .scheme("youtube_test")
+                .appendPath("test")
+                .appendEncodedPath("Youtube - test").build();
+
+        mSampleFiles.add(openBuilder);
+
 //        Uri openVideo = new Uri.Builder()
 //                .scheme("fragment")
 //                .appendPath("video")
