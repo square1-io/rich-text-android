@@ -66,6 +66,7 @@ public class EmbedUtils {
         EVine,
         EInstagram,
        EFacebook,
+       EAudio,
        EUnsupported
     }
 

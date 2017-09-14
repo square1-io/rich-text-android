@@ -20,6 +20,8 @@
 package io.square1.richtextlib.v2.parser;
 
 
+import java.util.TreeSet;
+
 import io.square1.richtextlib.v2.content.RichTextDocumentElement;
 
 /**
@@ -29,7 +31,12 @@ public abstract class TagHandler {
 
     private MarkupContext mInitialContext;
 
-
+    /**
+     * somethimes if we are inside a particular tag we want to ensure only the
+     * content of certain other tags is taken into account
+     * for examlpe an audio tag containing source and an <a></a> tag. in this case we want to ingnore the a tags.
+     */
+    private TreeSet<String> mAllowedTags;
 
     public TagHandler(){
 
@@ -82,6 +89,12 @@ public abstract class TagHandler {
 
 
     public boolean processContent() {
+        return true;
+    }
+
+
+
+    public boolean childAllowed(MarkupTag childTag){
         return true;
     }
 }

@@ -104,10 +104,30 @@ public class MarkupContext {
         return handler;
     }
 
+    public final TagHandler parentTagHandlerInstance(MarkupTag tag){
+
+        MarkupTag parentTag = tag.getParent();
+        if(parentTag != null){
+            return parentTag.getTagHandler();
+        }
+        return null;
+    }
+
+    public boolean tagAllowedByParent(MarkupTag current){
+        TagHandler parentHandler = parentTagHandlerInstance(current);
+        return parentHandler != null ? parentHandler.childAllowed(current) : true;
+    }
+
     public final MarkupContext onTagOpen(MarkupTag current, RichTextDocumentElement builder, boolean newOutput) {
+
         builder = replaceBuilder(builder);
         TagHandler handler = tagHandlerInstance(current);
-        if( (newOutput && handler.openWhenSplitting()) || !newOutput ) {
+        // the parent tag might decide that we don't need to process this child.
+        // this case apply for example in <audio> that contain a message for the user when
+        // the browser doesn't support the audio and we don't want to show the
+        // message ( https://www.w3.org/wiki/HTML/Elements/audio#Examples )
+        boolean allowedByParent = tagAllowedByParent(current);
+        if( ((newOutput && handler.openWhenSplitting()) || !newOutput ) && allowedByParent ) {
             handler.onTagOpen(this, current, builder);
             return handler.replaceContext(this);
         }
@@ -130,7 +150,8 @@ public class MarkupContext {
         builder = replaceBuilder(builder);
         TagHandler handler = tag.getTagHandler();
         //getTagHandler(tag);
-        if( (newOutput && handler.closeWhenSplitting()) || !newOutput ) {
+        boolean allowedByParent = tagAllowedByParent(tag);
+        if( ((newOutput && handler.closeWhenSplitting()) || !newOutput ) && allowedByParent ) {
             handler.onTagClose(this, tag, builder);
             return handler.getInitialContext();
         }

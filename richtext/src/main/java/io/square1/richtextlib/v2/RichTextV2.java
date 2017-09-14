@@ -305,14 +305,14 @@ public class RichTextV2 {
     public void startElement(String uri, String localName, Attributes atts, String textContent) {
 
         //a new tag is starting here , this is text from previous tag should we process ?
-        MarkupTag previous = getPrevious();
-        if( previous == null || previous.getTagHandler().processContent()) {
+        MarkupTag parentTag = getParent();
+        if( parentTag == null || parentTag.getTagHandler().processContent()) {
             processAccumulatedTextContent(textContent);
         }
         //MarkupTag last = mStack.peek();
         MarkupTag tag = new MarkupTag(localName,atts);
-        if(previous != null){
-            previous.addChild(tag);
+        if(parentTag != null){
+            parentTag.addChild(tag);
         }
         mStack.push(tag);
         mCurrentContext = mCurrentContext.onTagOpen(tag, mOutput, false);
@@ -324,7 +324,8 @@ public class RichTextV2 {
 
         MarkupTag tag = mStack.peek();
 
-        if(tag.getTagHandler().processContent() == true) {
+         boolean allowedByParent =  mCurrentContext.tagAllowedByParent(tag);
+        if(tag.getTagHandler().processContent() == true && allowedByParent) {
             processAccumulatedTextContent(textContent);
         }
 
@@ -484,10 +485,10 @@ public class RichTextV2 {
 
 
 
-    public final MarkupTag getPrevious(){
+    public final MarkupTag getParent(){
 
-        if(mHistory.size() > 0) {
-            return mHistory.get(mHistory.size() - 1);
+        if(mStack.size() > 0) {
+            return mStack.peek();
         }
         return null;
     }

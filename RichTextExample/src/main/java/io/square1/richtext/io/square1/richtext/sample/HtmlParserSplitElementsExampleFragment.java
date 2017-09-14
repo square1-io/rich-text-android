@@ -84,7 +84,7 @@ public class HtmlParserSplitElementsExampleFragment extends Fragment {
         Uri html5File = new Uri.Builder()
                 .scheme("file")
                 .appendPath(NavigationDrawerFragment.SAMPLES_FOLDER)
-                .appendEncodedPath("html5.html")
+                .appendEncodedPath("test.html")
                 .build();
 
         new ParseContentTask(getContext()).execute(html5File);
