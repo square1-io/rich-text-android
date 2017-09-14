@@ -114,4 +114,17 @@ public interface Markers {
 
     public class Alignment {
     }
+
+    public abstract class MarkerWithSource {
+        public String src;
+        public String type;
+    }
+
+    public class Audio extends MarkerWithSource {
+
+    }
+
+    public class Video extends MarkerWithSource {
+
+    }
 }

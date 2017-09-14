@@ -86,4 +86,8 @@ public class MarkupTag {
         classAttribute = classAttribute.trim().replaceAll(" +", " ");
         return Arrays.asList(classAttribute.split(" "));
     }
+
+    public MarkupTag getParent() {
+        return mParent;
+    }
 }
