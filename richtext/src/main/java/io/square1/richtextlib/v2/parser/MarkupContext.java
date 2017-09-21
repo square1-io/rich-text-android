@@ -120,6 +120,10 @@ public class MarkupContext {
 
     public final MarkupContext onTagOpen(MarkupTag current, RichTextDocumentElement builder, boolean newOutput) {
 
+        if(current.ignoreTag()){
+            return this;
+        }
+
         builder = replaceBuilder(builder);
         TagHandler handler = tagHandlerInstance(current);
         // the parent tag might decide that we don't need to process this child.
@@ -136,6 +140,11 @@ public class MarkupContext {
     }
 
     public final MarkupContext onTagOpenAfterSplit(MarkupTag current, RichTextDocumentElement builder, boolean newOutput) {
+
+        if(current.ignoreTag()){
+            return this;
+        }
+
         builder = replaceBuilder(builder);
         TagHandler handler = tagHandlerInstance(current);
         if( (newOutput && handler.openWhenSplitting()) || !newOutput ) {
@@ -147,6 +156,11 @@ public class MarkupContext {
     }
 
     public final MarkupContext onTagClose(MarkupTag tag, RichTextDocumentElement builder, boolean newOutput) {
+
+        if(tag.ignoreTag()){
+            return this;
+        }
+
         builder = replaceBuilder(builder);
         TagHandler handler = tag.getTagHandler();
         //getTagHandler(tag);
