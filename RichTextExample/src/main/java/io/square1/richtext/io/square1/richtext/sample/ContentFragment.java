@@ -97,11 +97,19 @@ public  class ContentFragment extends Fragment implements UrlBitmapDownloader {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        mContentAdapter = new ContentAdapter(this);
+        mContentAdapter = new ContentAdapter(this, activity);
         Uri sampleFileName = getArguments().getParcelable(ARG_SAMPLE_FILE_NAME);
         ((MainActivity) activity).onSectionAttached(sampleFileName);
          new ParseContentTask(activity).execute(sampleFileName);
 
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        if(mContentAdapter != null){
+            mContentAdapter.destroy();
+        }
     }
 
     @Override
