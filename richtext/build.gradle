@@ -1,5 +1,7 @@
 apply plugin: 'com.android.library'
 
+def appLibs = rootProject.ext.appLibraries;
+
 
 ext {
     bintrayRepo = 'maven'
@@ -15,7 +17,7 @@ ext {
     gitUrl = 'https://bitbucket.org/square1mobileteam/rich-content-android'
 
 
-    libraryVersion = '5.0.2'
+    libraryVersion = '5.0.4'
 
     developerId = 'square1io'
     developerName = 'Roberto Prato'
@@ -27,12 +29,12 @@ ext {
 }
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion '25.0.0'
+    compileSdkVersion 26
+    buildToolsVersion '26.0.0'
 
     defaultConfig {
         minSdkVersion 15
-        targetSdkVersion 24
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
     }
@@ -55,11 +57,11 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    //compile 'org.ccil.cowan.tagsoup:tagsoup:1.2'
-    // https://mvnrepository.com/artifact/org.ccil.cowan.tagsoup/tagsoup
-    compile group: 'org.ccil.cowan.tagsoup', name: 'tagsoup', version: '1.2.1'
-    compile 'com.android.support:support-v4:24.2.1'
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile "org.ccil.cowan.tagsoup:tagsoup:${appLibs.TAGSOUP_VERSION}"
+    compile "com.google.android.exoplayer:exoplayer:${appLibs.ANDROID_EXOPLAYER_VERSION}"
+    compile "com.android.support:support-v4:${appLibs.ANDROID_SUPPORT_VERSION}"
+
 }
 
 apply plugin: 'com.jfrog.bintray'
@@ -122,6 +124,7 @@ bintray {
         }
     }
 }
+
 
 apply plugin: 'com.github.dcendents.android-maven'
 

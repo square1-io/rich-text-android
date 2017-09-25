@@ -53,6 +53,13 @@ public class HtmlParserSplitElementsExampleFragment extends Fragment {
         // Required empty public constructor
     }
 
+    @Override
+    public void onPause(){
+        super.onPause();
+        if(mAdapter != null){
+            mAdapter.destroy();
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -77,7 +84,7 @@ public class HtmlParserSplitElementsExampleFragment extends Fragment {
                         .skipMemoryCache(true)
                         .into(new GlideTarget(getActivity(),urlBitmapSpan));
             }
-        });
+        }, getContext());
 
         mListContentView.setAdapter(mAdapter);
 

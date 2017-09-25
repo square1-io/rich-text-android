@@ -27,7 +27,7 @@ public class Media {
     public static final int DURATION_UNKNOWN = -1;
 
     public  String file;
-    public int duration = DURATION_UNKNOWN;
+    public long duration = DURATION_UNKNOWN;
 
 
 

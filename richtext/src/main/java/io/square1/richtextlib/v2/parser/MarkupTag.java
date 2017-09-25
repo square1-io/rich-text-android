@@ -30,6 +30,7 @@ import java.util.List;
 
 public class MarkupTag {
 
+    public static final String ATT_IGNORE_TAG = "app-ignore";
 
     public final String tag;
     public boolean closeOnEnd;
@@ -89,5 +90,22 @@ public class MarkupTag {
 
     public MarkupTag getParent() {
         return mParent;
+    }
+
+    /**
+     * the ignore flag is either set on the current tag
+     * or it is set on the parent !
+     *
+     * @return true or false
+     */
+    public boolean ignoreTag(){
+
+        boolean ignore = this.attributes.getIndex("", ATT_IGNORE_TAG) > -1;
+
+        if(ignore == false && mParent != null ){
+            ignore = mParent.ignoreTag();
+        }
+
+        return ignore;
     }
 }

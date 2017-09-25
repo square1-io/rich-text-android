@@ -20,6 +20,8 @@
 package io.square1.richtextlib.ui.audio;
 
 import android.text.TextUtils;
+import android.view.DragEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -52,6 +54,8 @@ public class AudioPlayerHolder {
         void onRew(String audio);
 
         void onFwd(String audio);
+
+        void seek(String audio, long position);
 
         int getDuration(String audio);
 
@@ -113,14 +117,19 @@ public class AudioPlayerHolder {
 
     private View mView;
 
+    private boolean mUserDraggringSeekBar;
+
     public AudioPlayerHolder(View v, AudioPlayerProvider provider) {
 
         mView = v;
         mAudioPlayerProvider = provider;
-
+        mUserDraggringSeekBar = false;
         ZERO_TIME = v.getContext().getString(R.string.zero_time);
 
         mProgress = (SeekBar) v.findViewById(R.id.mediacontroller_progress);
+        mProgress.setOnSeekBarChangeListener(mSeekBarListener);
+
+
         mTimeLabel = (TextView) v.findViewById(R.id.time);
         mTimeCurrentLabel = (TextView) v.findViewById(R.id.time_current);
 
@@ -138,13 +147,20 @@ public class AudioPlayerHolder {
         int duration = mAudioPlayerProvider.getDuration(mCurrentFile);
         //is duration available ?
         if (duration > 0) {
+            mRewButton.setVisibility(View.VISIBLE);
+            mFfwdButton.setVisibility(View.VISIBLE);
+            mProgress.setVisibility(View.VISIBLE);
             mTimeLabel.setText(mAudioPlayerProvider.getLabelForProgress(duration, mCurrentFile));
             mProgress.setMax(duration);
+        }else {
+            mProgress.setVisibility(View.INVISIBLE);
+            mRewButton.setVisibility(View.INVISIBLE);
+            mFfwdButton.setVisibility(View.INVISIBLE);
         }
 
         int progress = mAudioPlayerProvider.getProgress(mCurrentFile);
         //is progress available ?
-        if (progress >= 0) {
+        if (progress >= 0 && mUserDraggringSeekBar == false) {
             mTimeCurrentLabel.setText(mAudioPlayerProvider.getLabelForProgress(progress, mCurrentFile));
             mProgress.setProgress(progress);
         }
@@ -158,19 +174,7 @@ public class AudioPlayerHolder {
             mPlayButton.setVisibility(View.GONE);
             mPauseButton.setVisibility(View.VISIBLE);
         }
-//
-//        else if(PPlusNavigation.PlayStateRequest.EStop == request){
-//            mPlayButton.setVisibility(View.VISIBLE);
-//            mPauseButton.setVisibility(View.GONE);
-//        }else if(PPlusNavigation.PlayStateRequest.EStopReplaced == request){
-//
-//            mTimeLabel.setText(ZERO_TIME);
-//            mTimeCurrentLabel.setText(ZERO_TIME);
-//            mProgress.setProgress(0);
-//
-//            mPlayButton.setVisibility(View.VISIBLE);
-//            mPauseButton.setVisibility(View.GONE);
-//        }
+
 
     }
 
@@ -210,5 +214,30 @@ public class AudioPlayerHolder {
         mAudioPlayerProvider.onStop(mCurrentFile);
         mAudioPlayerProvider = null;
     }
+
+
+    private SeekBar.OnSeekBarChangeListener mSeekBarListener = new SeekBar.OnSeekBarChangeListener() {
+
+        @Override
+        public void onProgressChanged(SeekBar seekBar,  int progress, boolean fromUser) {
+
+            if(fromUser){
+                mTimeCurrentLabel.setText(mAudioPlayerProvider.getLabelForProgress(progress, mCurrentFile));
+            }
+
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+            mUserDraggringSeekBar = true;
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+            mUserDraggringSeekBar = false;
+            mAudioPlayerProvider.seek(mCurrentFile, seekBar.getProgress());
+        }
+    };
+
 
 }

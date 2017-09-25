@@ -22,13 +22,40 @@ package io.square1.richtextlib.ui.audio;
 import android.app.Activity;
 import android.content.Context;
 
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.PlaybackParameters;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
+import com.google.android.exoplayer2.extractor.ExtractorsFactory;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
+import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.upstream.BandwidthMeter;
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
+
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -38,21 +65,25 @@ import io.square1.richtextlib.R;
 /**
  * Created by roberto on 17/09/15.
  */
-public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider, MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener {
+public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider,
+        PlayerListener.PlayerObserver {
 
     private static HashMap<String, Media> mMediaMap;
 
     private HashMap<AudioPlayerHolder, String> mAudioToPlayer;
 
-    private MediaPlayer mMediaPlayer;
+    private PlayerListener mPlayerListener;
+    private ExoPlayer mMediaPlayer;
     private Context mContext;
     private String mCurrentFile;
     private String mPendingFile;
     private Handler mHandler;
 
-    public AudioPlayer(Context activity) {
+    private String mAppName;
 
+    public AudioPlayer(Context activity) {
         mContext = activity.getApplicationContext();
+        mAppName = getApplicationName();
         mAudioToPlayer = new HashMap<>();
         mMediaMap = new HashMap<>();
         mHandler = new Handler() {
@@ -97,10 +128,9 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider, Media
         for (Map.Entry<AudioPlayerHolder, String> entry : entries) {
             if (TextUtils.equals(entry.getValue(), mCurrentFile)) {
                 entry.getKey().synchronizeState();
-                mHandler.sendEmptyMessageDelayed(1, 1000);
-                return;
             }
         }
+        mHandler.sendEmptyMessageDelayed(1, 1000);
     }
 
     public void onCreate() {
@@ -148,18 +178,30 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider, Media
 
             replaceCurrentPLayer();
 
-            //prepare
 
-            MediaPlayer mediaPlayer = new MediaPlayer();
+            BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
+            TrackSelection.Factory audioTrackSelectionFactory = new AdaptiveTrackSelection.Factory(bandwidthMeter);
+            TrackSelector trackSelector = new DefaultTrackSelector(audioTrackSelectionFactory);
 
-            mediaPlayer.setOnPreparedListener(this);
-            mediaPlayer.setOnCompletionListener(this);
-            mediaPlayer.setOnErrorListener(this);
+
+            ExoPlayer mediaPlayer = ExoPlayerFactory.newSimpleInstance(mContext, trackSelector);
+            mediaPlayer.setPlayWhenReady(true);
+            mPlayerListener = new PlayerListener(mediaPlayer, this);
+            mediaPlayer.addListener(mPlayerListener);
+
+            DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(mContext, mAppName);
+            ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
+
 
             try {
+
                 mPendingFile = audio;
-                mediaPlayer.setDataSource(audio);
-                mediaPlayer.prepareAsync();
+                Handler handler = new Handler(Looper.getMainLooper());
+                MediaSource videoSource = new ExtractorMediaSource(Uri.parse(audio),
+                        dataSourceFactory, extractorsFactory, handler, mPlayerListener);
+                // Prepare the player with the source.
+                mediaPlayer.prepare(videoSource);
+
             }
             catch (Exception exc) {
                 if (mediaPlayer != null) {
@@ -169,8 +211,8 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider, Media
             }
         }
         else if (mMediaPlayer != null &&
-                mMediaPlayer.isPlaying() == false) {
-            mMediaPlayer.start();
+                mMediaPlayer.getPlayWhenReady() == false) {
+            mMediaPlayer.setPlayWhenReady(true);
             mHandler.sendEmptyMessage(1);
             notifyState();
         }
@@ -185,7 +227,7 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider, Media
         }
 
         if (TextUtils.equals(mCurrentFile, audio) == true) {
-            mMediaPlayer.pause();
+            mMediaPlayer.setPlayWhenReady(false);
             mHandler.removeMessages(0);
             mHandler.removeMessages(1);
             notifyState();
@@ -212,7 +254,7 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider, Media
     @Override
     public int getDuration(String audio) {
 
-        return getMedia(audio).duration;
+        return (int)getMedia(audio).duration;
     }
 
     @Override
@@ -220,7 +262,7 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider, Media
 
         if (mMediaPlayer != null &&
                 TextUtils.equals(mCurrentFile, audio)) {
-            return mMediaPlayer.getCurrentPosition();
+            return (int)mMediaPlayer.getCurrentPosition();
         }
 
         return 0;
@@ -231,7 +273,7 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider, Media
 
         if (mMediaPlayer != null &&
                 TextUtils.equals(audio, mCurrentFile)) {
-            return mMediaPlayer.isPlaying();
+            return mMediaPlayer.getPlayWhenReady();
         }
         if (TextUtils.equals(mPendingFile, audio) == true) {
             return true;
@@ -285,10 +327,10 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider, Media
         if (TextUtils.equals(mCurrentFile, file) &&
                 mMediaPlayer != null) {
 
-            int currentPosition = mMediaPlayer.getCurrentPosition();
+            long currentPosition = mMediaPlayer.getCurrentPosition();
             Media media = getMedia(file);
             if (media.duration == Media.DURATION_UNKNOWN) {
-                int duration = mMediaPlayer.getDuration();
+                long duration = mMediaPlayer.getDuration();
                 media.duration = duration;
             }
             final int delta = 2 * 1000;
@@ -301,6 +343,25 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider, Media
             mMediaPlayer.seekTo(currentPosition);
 
         }
+
+    }
+
+    @Override
+    public void seek(String file, long position){
+
+        if (TextUtils.equals(mCurrentFile, file) &&
+                mMediaPlayer != null) {
+
+
+            Media media = getMedia(file);
+            if (media.duration == Media.DURATION_UNKNOWN) {
+                long duration = mMediaPlayer.getDuration();
+                media.duration = duration;
+            }
+
+            mMediaPlayer.seekTo(position);
+
+        }
     }
 
     private void notifyState() {
@@ -308,35 +369,52 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider, Media
         mHandler.sendEmptyMessage(0);
     }
 
-    @Override
-    public void onPrepared(MediaPlayer mp) {
 
-        mMediaPlayer = mp;
-        //ready to play
-        mCurrentFile = mPendingFile;
-        mPendingFile = null;
-        Media media = getMedia(mCurrentFile);
-        if (media.duration == Media.DURATION_UNKNOWN) {
-            int duration = mMediaPlayer.getDuration();
-            media.duration = duration;
-        }
-        mMediaPlayer.start();
-        notifyState();
-        mHandler.sendEmptyMessageDelayed(1, 1000);
+    @Override
+    public void onSeekComplete(ExoPlayer player) {
+
     }
 
     @Override
-    public void onCompletion(MediaPlayer mp) {
+    public void onBufferingUpdate(ExoPlayer player, int progress) {
 
-        if (mp == mMediaPlayer) {
+    }
+
+    @Override
+    public void onCompletion(ExoPlayer player) {
+
+        if (player == mMediaPlayer) {
             //ready to play
             notifyState();
             cleanCurrentPLayer();
         }
+
     }
 
     @Override
-    public boolean onError(MediaPlayer mp, int what, int extra) {
+    public void onPrepared(ExoPlayer player) {
+
+        if(player.getPlayWhenReady() == true &&
+                mPendingFile != null) {// if this is null we are already playing a file
+
+            mMediaPlayer = player;
+            //ready to play
+            mCurrentFile = mPendingFile;
+            mPendingFile = null;
+            Media media = getMedia(mCurrentFile);
+            if (media.duration == Media.DURATION_UNKNOWN) {
+                long duration = mMediaPlayer.getDuration();
+                media.duration = duration;
+            }
+        }
+        notifyState();
+        mHandler.sendEmptyMessageDelayed(1, 1000);
+
+    }
+
+    @Override
+    public void onPlayerError(ExoPlayer error) {
+
 
         Toast.makeText(mContext,
                 R.string.audio_media_player,
@@ -349,6 +427,21 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider, Media
             }
         }
 
-        return false;
     }
+
+    private String getApplicationName(){
+
+        final PackageManager pm = mContext.getPackageManager();
+        ApplicationInfo ai;
+        try {
+            ai = pm.getApplicationInfo( mContext.getPackageName(), 0);
+            final String applicationName = (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
+            return  applicationName;
+        } catch (final PackageManager.NameNotFoundException e) {
+            ai = null;
+        }
+
+        return "(unknown)";
+    }
+
 }
