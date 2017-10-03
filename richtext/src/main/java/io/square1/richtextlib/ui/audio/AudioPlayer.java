@@ -19,43 +19,34 @@
 
 package io.square1.richtextlib.ui.audio;
 
-import android.app.Activity;
 import android.content.Context;
-
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.media.MediaPlayer;
+import android.media.AudioManager;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
 import android.widget.Toast;
 
-import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.PlaybackParameters;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -184,7 +175,9 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider,
             TrackSelector trackSelector = new DefaultTrackSelector(audioTrackSelectionFactory);
 
 
-            ExoPlayer mediaPlayer = ExoPlayerFactory.newSimpleInstance(mContext, trackSelector);
+            SimpleExoPlayer mediaPlayer = ExoPlayerFactory.newSimpleInstance(mContext, trackSelector);
+            mediaPlayer.setAudioAttributes(new AudioAttributes.Builder().setContentType(AudioManager.STREAM_MUSIC).build());
+
             mediaPlayer.setPlayWhenReady(true);
             mPlayerListener = new PlayerListener(mediaPlayer, this);
             mediaPlayer.addListener(mPlayerListener);
