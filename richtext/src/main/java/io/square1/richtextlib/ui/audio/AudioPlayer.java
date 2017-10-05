@@ -73,6 +73,7 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider,
     private String mAppName;
 
     public AudioPlayer(Context activity) {
+
         mContext = activity.getApplicationContext();
         mAppName = getApplicationName();
         mAudioToPlayer = new HashMap<>();
@@ -169,11 +170,9 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider,
 
             replaceCurrentPLayer();
 
-
             BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
             TrackSelection.Factory audioTrackSelectionFactory = new AdaptiveTrackSelection.Factory(bandwidthMeter);
             TrackSelector trackSelector = new DefaultTrackSelector(audioTrackSelectionFactory);
-
 
             SimpleExoPlayer mediaPlayer = ExoPlayerFactory.newSimpleInstance(mContext, trackSelector);
             mediaPlayer.setAudioAttributes(new AudioAttributes.Builder().setContentType(AudioManager.STREAM_MUSIC).build());
@@ -184,7 +183,6 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider,
 
             DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(mContext, mAppName);
             ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
-
 
             try {
 
@@ -247,7 +245,7 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider,
     @Override
     public int getDuration(String audio) {
 
-        return (int)getMedia(audio).duration;
+        return (int) getMedia(audio).duration;
     }
 
     @Override
@@ -255,7 +253,7 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider,
 
         if (mMediaPlayer != null &&
                 TextUtils.equals(mCurrentFile, audio)) {
-            return (int)mMediaPlayer.getCurrentPosition();
+            return (int) mMediaPlayer.getCurrentPosition();
         }
 
         return 0;
@@ -340,11 +338,10 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider,
     }
 
     @Override
-    public void seek(String file, long position){
+    public void seek(String file, long position) {
 
         if (TextUtils.equals(mCurrentFile, file) &&
                 mMediaPlayer != null) {
-
 
             Media media = getMedia(file);
             if (media.duration == Media.DURATION_UNKNOWN) {
@@ -361,7 +358,6 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider,
 
         mHandler.sendEmptyMessage(0);
     }
-
 
     @Override
     public void onSeekComplete(ExoPlayer player) {
@@ -387,7 +383,7 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider,
     @Override
     public void onPrepared(ExoPlayer player) {
 
-        if(player.getPlayWhenReady() == true &&
+        if (player.getPlayWhenReady() == true &&
                 mPendingFile != null) {// if this is null we are already playing a file
 
             mMediaPlayer = player;
@@ -408,6 +404,13 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider,
     @Override
     public void onPlayerError(ExoPlayer error) {
 
+        try {
+            cleanCurrentPLayer();
+        }
+        catch (Exception e) {
+
+            e.printStackTrace();
+        }
 
         Toast.makeText(mContext,
                 R.string.audio_media_player,
@@ -422,15 +425,16 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider,
 
     }
 
-    private String getApplicationName(){
+    private String getApplicationName() {
 
         final PackageManager pm = mContext.getPackageManager();
         ApplicationInfo ai;
         try {
-            ai = pm.getApplicationInfo( mContext.getPackageName(), 0);
+            ai = pm.getApplicationInfo(mContext.getPackageName(), 0);
             final String applicationName = (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
-            return  applicationName;
-        } catch (final PackageManager.NameNotFoundException e) {
+            return applicationName;
+        }
+        catch (final PackageManager.NameNotFoundException e) {
             ai = null;
         }
 
