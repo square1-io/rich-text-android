@@ -36,23 +36,27 @@ import java.io.IOException;
  * Created by roberto on 22/09/2017.
  */
 
-public class PlayerListener implements Player.EventListener, ExtractorMediaSource.EventListener  {
-
+public class PlayerListener implements Player.EventListener, ExtractorMediaSource.EventListener {
 
     public interface PlayerObserver {
 
-            void onSeekComplete(ExoPlayer player);
-            void onBufferingUpdate(ExoPlayer player, int progress);
-            void onPlayerError(ExoPlayer player);
-            void onCompletion(ExoPlayer player);
-            void onPrepared(ExoPlayer player);
+        void onSeekComplete(ExoPlayer player);
+
+        void onBufferingUpdate(ExoPlayer player, int progress);
+
+        void onPlayerError(ExoPlayer player);
+
+        void onCompletion(ExoPlayer player);
+
+        void onPrepared(ExoPlayer player);
 
     }
 
     private PlayerObserver mObserver;
     private ExoPlayer mPlayer;
 
-    public PlayerListener(ExoPlayer player, PlayerObserver observer){
+    public PlayerListener(ExoPlayer player, PlayerObserver observer) {
+
         mPlayer = player;
         player.addListener(this);
         mObserver = observer;
@@ -76,11 +80,11 @@ public class PlayerListener implements Player.EventListener, ExtractorMediaSourc
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
 
-        switch (playbackState){
+        switch (playbackState) {
             /**
              * The player does not have any media to play.
              */
-            case Player.STATE_IDLE:{
+            case Player.STATE_IDLE: {
 
             }
             break;
@@ -88,7 +92,7 @@ public class PlayerListener implements Player.EventListener, ExtractorMediaSourc
              * The player is not able to immediately play from its current position. This state typically
              * occurs when more data needs to be loaded.
              */
-            case Player.STATE_BUFFERING:{
+            case Player.STATE_BUFFERING: {
 
             }
             break;
@@ -96,14 +100,14 @@ public class PlayerListener implements Player.EventListener, ExtractorMediaSourc
              * The player is able to immediately play from its current position. The player will be playing if
              * {@link #getPlayWhenReady()} is true, and paused otherwise.
              */
-            case Player.STATE_READY:{
+            case Player.STATE_READY: {
                 mObserver.onPrepared(mPlayer);
             }
             break;
             /**
              * The player has finished playing the media.
              */
-            case Player.STATE_ENDED:{
+            case Player.STATE_ENDED: {
                 mObserver.onCompletion(mPlayer);
             }
         }
@@ -112,6 +116,14 @@ public class PlayerListener implements Player.EventListener, ExtractorMediaSourc
 
     @Override
     public void onLoadError(IOException error) {
+
+        try {
+            mPlayer.stop();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
         mObserver.onPlayerError(mPlayer);
     }
 
@@ -122,6 +134,14 @@ public class PlayerListener implements Player.EventListener, ExtractorMediaSourc
 
     @Override
     public void onPlayerError(ExoPlaybackException error) {
+
+        try {
+            mPlayer.stop();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
         mObserver.onPlayerError(mPlayer);
     }
 
