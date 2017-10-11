@@ -19,6 +19,7 @@ ext {
 
     libraryVersion = '5.1.1'
 
+
     developerId = 'square1io'
     developerName = 'Roberto Prato'
     developerEmail = 'roberto@square1.io'
@@ -66,7 +67,7 @@ dependencies {
 
 apply plugin: 'com.jfrog.bintray'
 
-version = libraryVersion
+version = appLibs.RICH_TEXT_VERSION
 
 if (project.hasProperty("android")) { // Android libraries
 
