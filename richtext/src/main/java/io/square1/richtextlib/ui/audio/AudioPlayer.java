@@ -181,6 +181,7 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider,
             TrackSelector trackSelector = new DefaultTrackSelector(audioTrackSelectionFactory);
 
             SimpleExoPlayer mediaPlayer = ExoPlayerFactory.newSimpleInstance(mContext, trackSelector);
+
             mediaPlayer.setAudioAttributes(new AudioAttributes.Builder().setContentType(AudioManager.STREAM_MUSIC).build());
 
             mediaPlayer.setPlayWhenReady(true);
@@ -196,10 +197,11 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider,
 
                 mPendingFile = audio;
                 Handler handler = new Handler(Looper.getMainLooper());
-                MediaSource videoSource = new ExtractorMediaSource(Uri.parse(audio),
+                MediaSource mediaSource = new ExtractorMediaSource(Uri.parse(audio),
                         dataSource, extractorsFactory, handler, mPlayerListener);
                 // Prepare the player with the source.
-                mediaPlayer.prepare(videoSource);
+                mediaPlayer.prepare(mediaSource);
+                mMediaPlayer = mediaPlayer;
             }
             catch (Exception exc) {
                 if (mediaPlayer != null) {
