@@ -409,7 +409,9 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider,
     }
 
     @Override
-    public void onPlayerError(ExoPlayer error) {
+    public void onPlayerError(ExoPlayer player) {
+
+        mMediaPlayer = player;
 
         try {
             cleanCurrentPLayer();
@@ -419,9 +421,7 @@ public class AudioPlayer implements AudioPlayerHolder.AudioPlayerProvider,
             e.printStackTrace();
         }
 
-        Toast.makeText(mContext,
-                R.string.audio_media_player,
-                Toast.LENGTH_LONG).show();
+        //Toast.makeText(mContext,R.string.audio_media_player,Toast.LENGTH_SHORT).show();
 
         Set<Map.Entry<AudioPlayerHolder, String>> entries = mAudioToPlayer.entrySet();
         for (Map.Entry<AudioPlayerHolder, String> entry : entries) {
