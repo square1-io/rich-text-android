@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="richFontFamily" format="string"/>
+    <attr name="richTextSize" format="dimension"/>
+    <attr name="richTextColor" format="color"/>
+    <attr name="richTextColorLink" format="color"/>
+    <attr name="richTextColorQuote" format="color"/>
+    <attr name="richQuoteDrawable" format="reference"/>
+    <attr name="richQuoteBackgroundColor" format="color"/>
+    <attr name="richQuoteFontFamily" format="string"/>
+    <attr name="richQuoteTextSize" format="dimension" />
+    <attr name="richQuoteTextColor" format="color" />
+    <attr name="richHeaderTextColor" format="color" />
+    <attr name="richLineSpacingMultiplier" format="float"/>
+    <attr name="richLineSpacingExtra" format="dimension"/>
+    <declare-styleable name="RichContentView">
+        <attr name="android:text"/>
+        <attr name="android:fontFamily"/>
+        <attr name="android:textSize" />
+        <attr name="android:textColor" />
+        <attr name="android:textColorLink"/>
+        <attr name="richQuoteDrawable"/>
+        <attr name="richQuoteBackgroundColor"/>
+        <attr name="richQuoteFontFamily"/>
+        <attr name="richQuoteTextSize"/>
+        <attr name="richQuoteTextColor"/>
+        <attr name="richHeaderTextColor"/>
+        <attr name="richLineSpacingMultiplier"/>
+        <attr name="richLineSpacingExtra"/>
+    </declare-styleable>
+</resources>

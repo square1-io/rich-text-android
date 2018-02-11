@@ -1,0 +1,26 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+     tools:context=".OldActivity">
+    <io.square1.richtextlib.ui.RichContentView
+        android:id="@+id/fixed"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:paddingLeft="25dip"
+        android:paddingRight="25dip"
+        android:paddingBottom="0dip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </io.square1.richtextlib.ui.RichContentView>
+    <ListView
+        android:background="#ddffdd"
+        android:layout_weight="1"
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"></ListView>
+<Button
+    android:id="@+id/button"
+    android:text="Pass to separate activity"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" />
+</LinearLayout>

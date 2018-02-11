@@ -1,0 +1,18 @@
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+<!--<io.square1.richtextlib.ui.RichContentView-->
+    <!--android:id="@+id/content"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:padding="10dip"-->
+    <!--tools:context="io.square1.richtext.io.square1.richtext.sample.VideoTestFragment">-->
+
+
+<!--</io.square1.richtextlib.ui.RichContentView>-->
+
+</ScrollView>

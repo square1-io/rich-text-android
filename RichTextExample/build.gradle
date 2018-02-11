@@ -1,0 +1,41 @@
+apply plugin: 'com.android.application'
+
+def appLibs = rootProject.ext.appLibraries;
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion '26.0.2'
+
+    defaultConfig {
+        applicationId "io.square1.richtext"
+        minSdkVersion 15
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            buildConfigField "boolean", "publishedSample", "false"
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    lintOptions {
+        abortOnError false
+    }
+
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile project(':richtext')
+    compile "org.ccil.cowan.tagsoup:tagsoup:${appLibs.TAGSOUP_VERSION}"
+    compile "com.github.bumptech.glide:glide:${appLibs.GLIDE_VERSION}"
+    compile "com.android.support:support-annotations:${appLibs.ANDROID_SUPPORT_VERSION}"
+    compile "com.android.support:support-v4:${appLibs.ANDROID_SUPPORT_VERSION}"
+    compile "com.android.support:appcompat-v7:${appLibs.ANDROID_SUPPORT_VERSION}"
+    compile "com.android.support:recyclerview-v7:${appLibs.ANDROID_SUPPORT_VERSION}"
+}
+
+
+

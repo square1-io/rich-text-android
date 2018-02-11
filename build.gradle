@@ -1,0 +1,51 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+def getRichTextLibVersionName = { ->
+
+    if(System.getenv('BUILD_DISPLAY_NAME')){
+        def name = System.getenv('BUILD_DISPLAY_NAME');
+        println "Richtext lib Version set to $name by Jenkins";
+        return name;
+    }
+
+    def name = new File('version.txt').getText('UTF-8');
+    println "Richtext lib Version set to $name by reading local version.txt";
+    return name;
+}
+
+ext {
+
+    //control from here the libraries versions
+    appLibraries = [
+            ANDROID_SUPPORT_VERSION: '26.1.0',
+            ANDROID_EXOPLAYER_VERSION: 'r2.5.2',
+            TAGSOUP_VERSION: '1.2',
+            GLIDE_VERSION: '3.6.0',
+            RICH_TEXT_VERSION: getRichTextLibVersionName()
+    ]
+}
+
+
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.4'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        jcenter()
+
+    }
+}

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<io.square1.richtextlib.ui.RichContentView
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:richQuoteDrawable="@drawable/quote2"
+    app:richQuoteBackgroundColor="@android:color/transparent"
+    app:richQuoteFontFamily="fonts/Velino_Text-Bold.otf"
+    android:textSize="20dip"
+    app:richLineSpacingMultiplier="1"
+    app:richHeaderTextColor="#ff0000"
+    android:textColor="#dd99dd"
+    android:textColorLink="#995500"
+    app:richQuoteTextSize="45dip"
+    app:richQuoteTextColor="#334400"
+    android:background="#d3d3d3"
+    android:paddingLeft="25dip"
+    android:paddingRight="25dip"
+    android:paddingBottom="0dip"
+    android:paddingTop="0dip"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+</io.square1.richtextlib.ui.RichContentView>

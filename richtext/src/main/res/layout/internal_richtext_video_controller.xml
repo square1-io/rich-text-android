@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="#cc000000"
+    android:id="@+id/controls_container"
+    android:layout_gravity="center_horizontal|bottom"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:showIn="@layout/internal_richtext_video_display">
+
+    <ImageButton
+        android:id="@+id/play"
+        android:layout_gravity="center"
+        style="@android:style/MediaButton.Play" />
+
+    <ImageButton
+        android:id="@+id/pause"
+        style="@android:style/MediaButton.Pause"
+        android:layout_gravity="center"
+        android:visibility="visible" />
+
+    <ImageButton
+        android:visibility="visible"
+        android:id="@+id/full_screen"
+        android:layout_gravity="right|top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/fullscreen_enter" />
+</FrameLayout>
