@@ -46,18 +46,31 @@ Supply an instance of a class that implements UrlImageDownloader instance and ca
 from the network: 
 
 ```java
-       contentView.setUrlBitmapDownloader(new UrlBitmapDownloader() {
+    contentView.setUrlBitmapDownloader(new UrlBitmapDownloader() {
+      @Override
+      public void downloadImage(final RemoteBitmapSpan urlBitmapSpan, Uri image) {
+        Glide.with(activity)
+            .load(image)
+            .into(new BaseTarget<Drawable>() {
+              @Override
+              public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                urlBitmapSpan.updateBitmap(activity, resource);
+              }
 
-            @Override
-            public void downloadImage(RemoteBitmapSpan urlBitmapSpan, Uri image) {
-                    Glide.with(getActivity())
-                            .load(image)
-                            .diskCacheStrategy(DiskCacheStrategy.NONE)
-                            .skipMemoryCache(true)
-                            .into(new GlideTarget(getActivity(),urlBitmapSpan));
-                }
+              @Override
+              public void getSize(@NonNull SizeReadyCallback cb) {
+                cb.onSizeReady(urlBitmapSpan.getPossibleSize().width(), urlBitmapSpan.getPossibleSize().height());
+              }
 
-        });
+              @Override
+              public void removeCallback(@NonNull SizeReadyCallback cb) {
+
+              }
+            });
+
+      }
+
+    });
 ```
 
 Enable click events  
