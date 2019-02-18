@@ -254,7 +254,7 @@ public class RichContentView extends FrameLayout implements RichContentViewDispl
             try {
               mLayout = makeLayout(widthSize - getPaddingLeft() - getPaddingRight());
             } catch (Exception e) {
-              mLayout = null
+              mLayout = null;
             }
         }
 
